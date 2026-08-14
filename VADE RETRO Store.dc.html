@@ -130,8 +130,11 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     height:min(76vh,760px)!important;border:none!important}
 
   .vr-m-hero{display:block!important;position:absolute;inset:0;z-index:3;pointer-events:none}
+  /* El degradado arranca a oscurecer antes del titular: la foto es clara justo
+     donde cae el texto y a .34 el blanco sobre la medalla no se sostenía. */
   .vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
-    rgba(15,35,73,.58) 0%,rgba(15,35,73,.06) 24%,rgba(15,35,73,.34) 54%,rgba(15,35,73,.90) 100%)}
+    rgba(15,35,73,.55) 0%,rgba(15,35,73,.05) 20%,rgba(15,35,73,.30) 44%,
+    rgba(15,35,73,.74) 64%,rgba(15,35,73,.95) 100%)}
   .vr-m-hero-top{position:absolute;top:0;left:0;right:0;padding:15px 18px;display:flex;gap:9px;
     font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
     color:rgba(249,240,237,.92)}
