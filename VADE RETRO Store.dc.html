@@ -49,6 +49,12 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   html{-webkit-text-size-adjust:100%}
   body{overflow-x:hidden}
 
+  /* Un track 1fr no baja del contenido mínimo de su hijo, y en la ficha de
+     producto ese mínimo era 434px: la grilla desbordaba la pantalla. minmax(0,1fr)
+     habilita el encogido, y min-width:0 hace lo propio con cada hijo. */
+  .vr-hero-grid > *,.vr-shop-grid > *,.vr-pillars > *,.vr-trust > *,.vr-p-grid > *,
+  .vr-cart-sum > *,.vr-co-grid > *,.vr-co-fields > *,.vr-ft-grid > *{min-width:0!important}
+
   /* ---------- Barra superior ----------
      En escritorio son tres bloques en fila (marfil con logo | utilidades |
      idioma + carrito) y a 375px eso se desborda: el carrito quedaba fuera de
@@ -89,7 +95,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-scr-top{padding-top:calc(var(--vr-hd-h) + 40px)!important;padding-bottom:56px!important}
 
   /* ---------- Menú ---------- */
-  .vr-menu{grid-template-columns:1fr!important;grid-template-rows:1fr auto!important}
+  .vr-menu{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:1fr auto!important}
   .vr-menu-nav{padding:calc(env(safe-area-inset-top,0px) + 20px) 20px 24px!important}
   .vr-menu-nav img{width:172px!important}
   .vr-menu-links{margin:28px 0 auto!important;gap:0!important}
@@ -103,7 +109,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      Las dos fotos del hero pasan a full-bleed: en una pantalla angosta el
      margen lateral les come el impacto y son lo primero que se ve. */
   .vr-home-hero{border-bottom:none!important}
-  .vr-hero-grid{grid-template-columns:1fr!important;gap:0!important;padding:0 0 4px!important}
+  .vr-hero-grid{grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
   .vr-hero-a > div:first-child{aspect-ratio:3 / 4!important;border:none!important;
     border-bottom:1px solid rgba(15,35,73,.14)!important}
   .vr-hero-cap{padding:0 18px!important;margin-top:12px!important;font-size:10.5px!important}
@@ -136,7 +142,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-shop-wrap{gap:22px!important}
   .vr-shop-aside{width:100%!important;box-sizing:border-box}
   .vr-shop-col{min-width:0!important;width:100%}
-  .vr-shop-grid{grid-template-columns:1fr!important;gap:18px!important}
+  .vr-shop-grid{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
   .vr-shop-cardimg{height:66vw!important;max-height:320px}
   .vr-shop-cardbody{padding:20px 20px 22px!important}
   .vr-shop-actions{flex-direction:column!important;gap:9px!important}
@@ -144,7 +150,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 
   /* ---------- Nuestra historia ---------- */
   .vr-hist-body{padding:64px 20px!important}
-  .vr-pillars{grid-template-columns:1fr!important;gap:30px!important}
+  .vr-pillars{grid-template-columns:minmax(0,1fr)!important;gap:30px!important}
   .vr-deco-pax{font-size:150px!important;bottom:-26px!important;right:-8px!important}
   .vr-hist-cta{padding:58px 22px!important}
 
@@ -157,7 +163,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-ticket-num{font-size:17cqw!important}
   .vr-ticket-paso{font-size:7cqw!important}
   .vr-trust-sec{padding:64px 20px!important}
-  .vr-trust{grid-template-columns:1fr!important;gap:24px!important}
+  .vr-trust{grid-template-columns:minmax(0,1fr)!important;gap:24px!important}
 
   /* ---------- FAQ ---------- */
   .vr-faq-rows{gap:14px!important;margin:32px -18px 0!important}
@@ -168,7 +174,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* ---------- Producto ----------
      La botonera queda pegada abajo: en una ficha larga es la acción principal
      y de otro modo hay que volver a subir para comprar. */
-  .vr-p-grid{grid-template-columns:1fr!important;gap:26px!important;margin-top:20px!important}
+  .vr-p-grid{grid-template-columns:minmax(0,1fr)!important;gap:26px!important;margin-top:20px!important}
   .vr-deco{display:none!important}
   .vr-p-frame{padding:8px!important}
   .vr-p-main{height:74vw!important;max-height:420px}
@@ -193,14 +199,14 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-cart-total{grid-area:total;min-width:0!important;font-size:24px!important}
   .vr-cart-rm{grid-area:rm;justify-self:start;padding:0!important}
   .vr-cart-foot{padding:32px 18px 70px!important}
-  .vr-cart-sum{grid-template-columns:1fr!important;gap:26px!important}
+  .vr-cart-sum{grid-template-columns:minmax(0,1fr)!important;gap:26px!important}
   .vr-cart-panel{margin:0 -18px!important;padding:28px 20px!important}
 
   /* ---------- Checkout ----------
      16px en los campos no es capricho: por debajo de eso iOS hace zoom solo
      al enfocar un input y deja la página corrida. */
-  .vr-co-grid{grid-template-columns:1fr!important;gap:20px!important}
-  .vr-co-fields{grid-template-columns:1fr!important;gap:14px!important}
+  .vr-co-grid{grid-template-columns:minmax(0,1fr)!important;gap:20px!important}
+  .vr-co-fields{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
   .vr-co-form{padding:22px 18px!important}
   .vr-co-sum{padding:22px 18px!important}
   input,textarea,select{font-size:16px!important}
@@ -209,7 +215,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-thanks{padding:40px 22px!important}
   .vr-thanks h1{font-size:32px!important}
   footer#contacto{padding:52px 20px 26px!important}
-  .vr-ft-grid{grid-template-columns:1fr!important;gap:30px!important;padding-bottom:34px!important}
+  .vr-ft-grid{grid-template-columns:minmax(0,1fr)!important;gap:30px!important;padding-bottom:34px!important}
 
   /* áreas de toque cómodas */
   button,a[href]{-webkit-tap-highlight-color:rgba(207,157,89,.18)}
