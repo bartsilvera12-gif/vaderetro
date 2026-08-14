@@ -296,8 +296,15 @@
     // .frame img (clipped) and .spill (unclipped ghost + handles) share the
     // same left/top/width/height in frame-%, computed by _applyView(), so the
     // inside-mask crop and the outside-mask spill stay pixel-aligned.
+    // touch-action:none sirve para arrastrar/reencuadrar la foto con el dedo,
+    // pero eso solo existe editando. En la página publicada dejaba una zona
+    // muerta: un dedo que empieza sobre la imagen no scrollea, y una foto
+    // grande se come la pantalla. Por eso el bloqueo se limita a [data-editable];
+    // 'auto' y no 'pan-y' para que el scroll horizontal de los carruseles siga
+    // funcionando al arrastrar sobre una tarjeta.
     '.frame img{position:absolute;max-width:none;transform:translate(-50%,-50%);' +
-    '  -webkit-user-drag:none;user-select:none;touch-action:none}' +
+    '  -webkit-user-drag:none;user-select:none;touch-action:auto}' +
+    ':host([data-editable]) .frame img{touch-action:none}' +
     // Reframe mode (double-click): the full image spills past the mask. The
     // spill layer is sized to the IMAGE bounds so its corners are where the
     // resize handles belong. The ghost <img> inside is translucent; the real

@@ -110,13 +110,20 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      margen lateral les come el impacto y son lo primero que se ve. */
   .vr-home-hero{border-bottom:none!important}
   .vr-hero-grid{grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
-  .vr-hero-a > div:first-child{aspect-ratio:3 / 4!important;border:none!important;
-    border-bottom:1px solid rgba(15,35,73,.14)!important}
+  /* La foto de portada se limita a poco menos de media pantalla. A pantalla
+     completa la primera vista era únicamente una imagen: ni titular, ni precio,
+     ni acción, hasta que el visitante scrolleara a ciegas. */
+  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(43vh,400px)!important;
+    border:none!important;border-bottom:1px solid rgba(15,35,73,.14)!important}
   .vr-hero-cap{padding:0 18px!important;margin-top:12px!important;font-size:10.5px!important}
-  .vr-hero-b{padding:26px 18px 0!important}
-  .vr-hero-b > div:first-child{aspect-ratio:16 / 10!important}
-  .vr-hero-b p{font-size:clamp(23px,6.2vw,30px)!important;margin-top:24px!important;max-width:none!important}
-  .vr-hero-b > div:nth-child(3){max-width:none!important;margin-top:26px!important}
+  /* El titular y las dos acciones se reordenan por encima de la segunda foto,
+     así entran en la primera pantalla junto con la imagen. */
+  .vr-hero-b{display:flex!important;flex-direction:column!important;padding:22px 18px 0!important}
+  .vr-hero-b > div:first-child{order:5;aspect-ratio:16 / 10!important;margin-top:30px}
+  .vr-hero-b p{order:1;font-size:clamp(23px,6.2vw,30px)!important;margin:0!important;max-width:none!important}
+  .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:22px 0 0!important}
+  .vr-hero-b > a:nth-of-type(1){order:3}
+  .vr-hero-b > a:nth-of-type(2){order:4}
   .vr-hero-b a{max-width:none!important;padding:18px 0!important}
   .vr-hero-list{padding:24px 18px 30px!important;justify-content:flex-start!important}
   .vr-hero-list > div{align-items:flex-start!important;gap:9px!important}
