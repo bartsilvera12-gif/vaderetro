@@ -27,6 +27,9 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 @keyframes vr-in-right{from{transform:translateX(100%)}to{transform:translateX(0)}}
 @keyframes vr-out-left{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @keyframes vr-out-right{from{transform:translateX(0)}to{transform:translateX(100%)}}
+@keyframes vr-m-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* La capa de portada de teléfono nace apagada: el escritorio nunca la enciende. */
+.vr-m-hero{display:none}
 
 /* ==========================================================================
    SMARTPHONE
@@ -106,60 +109,69 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-menu-art-quote{font-size:20px!important;max-width:none!important}
 
   /* ---------- Home ----------
-     Las dos fotos del hero pasan a full-bleed: en una pantalla angosta el
-     margen lateral les come el impacto y son lo primero que se ve. */
-  /* Portada guiada por tipografía, no por fotos. El orden del escritorio deja
-     primero las dos imágenes y el titular recién en la sección siguiente: en
-     un teléfono eso es una foto atrás de otra antes de leer nada. Acá se
-     reordena a kicker + titular, después el texto y las acciones, y al final
-     una sola imagen con su bajada. */
-  /* Grid y no flex: el reordenado necesita un contenedor flex o grid, pero en
-     un flex column el hijo no baja de su contenido mínimo y .vr-hero-a se iba
-     a 544px, desbordando la pantalla. Un track minmax(0,1fr) sí lo acota, y
-     'order' funciona igual. */
+     Portada de teléfono: la foto ocupa casi toda la primera pantalla y el
+     titular va montado encima con un degradado, en vez de foto y texto en
+     bloques separados. El titular sale de .vr-m-hero (markup propio de mobile,
+     alimentado por las mismas variables), y la sección de bienvenida que lo
+     traía en escritorio se apaga acá para que no aparezca dos veces.
+     Grid y no flex en el contenedor: el reordenado necesita flex o grid, pero
+     con flex column el hijo no baja de su contenido mínimo y .vr-hero-a se iba
+     a 544px, desbordando la pantalla. minmax(0,1fr) sí lo acota. */
   main[data-screen-label="Home"]{display:grid!important;
     grid-template-columns:minmax(0,1fr)!important}
   main[data-screen-label="Home"] > *{min-width:0!important}
-  .vr-home-welcome{order:-1}
+  .vr-home-welcome{display:none!important}
   .vr-home-hero{border-bottom:none!important}
   .vr-hero-grid{display:grid!important;
-    grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
-  .vr-hero-b{order:-1}
-  /* la segunda foto sale: es la que producía el efecto de imagen tras imagen */
+    grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0!important}
   .vr-hero-b > div:first-child{display:none!important}
-  /* La foto de portada se limita a poco menos de media pantalla. A pantalla
-     completa la primera vista era únicamente una imagen: ni titular, ni precio,
-     ni acción, hasta que el visitante scrolleara a ciegas. */
-  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(43vh,400px)!important;
-    border:none!important;border-bottom:1px solid rgba(15,35,73,.14)!important}
-  .vr-hero-cap{padding:0 18px!important;margin-top:12px!important;font-size:10.5px!important}
-  /* El titular y las dos acciones se reordenan por encima de la segunda foto,
-     así entran en la primera pantalla junto con la imagen. */
-  .vr-hero-b{display:flex!important;flex-direction:column!important;padding:22px 18px 0!important;
-    min-width:0!important}
-  .vr-hero-b p{order:1;font-size:clamp(23px,6.2vw,30px)!important;margin:0!important;max-width:none!important}
-  .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:22px 0 0!important}
+  .vr-hero-cap{display:none!important}
+  .vr-hero-a > div:first-child{aspect-ratio:auto!important;
+    height:min(76vh,760px)!important;border:none!important}
+
+  .vr-m-hero{display:block!important;position:absolute;inset:0;z-index:3;pointer-events:none}
+  .vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
+    rgba(15,35,73,.58) 0%,rgba(15,35,73,.06) 24%,rgba(15,35,73,.34) 54%,rgba(15,35,73,.90) 100%)}
+  .vr-m-hero-top{position:absolute;top:0;left:0;right:0;padding:15px 18px;display:flex;gap:9px;
+    font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(249,240,237,.92)}
+  .vr-m-hero-body{position:absolute;left:0;right:0;bottom:0;padding:0 18px 28px}
+  .vr-m-hero-kicker{font-size:10px;font-weight:700;letter-spacing:.26em;color:#CF9D59;
+    animation:vr-m-rise .7s .05s both cubic-bezier(.22,1,.36,1)}
+  .vr-m-hero-title{font-family:'Cormorant Garamond',serif;font-weight:600;
+    font-size:clamp(40px,11.4vw,58px);line-height:1.02;letter-spacing:-.01em;
+    color:#F9F0ED;margin:14px 0 0;text-wrap:balance;
+    animation:vr-m-rise .8s .14s both cubic-bezier(.22,1,.36,1)}
+  .vr-m-hero-rule{width:54px;height:2px;background:#CF9D59;margin:20px 0 14px;
+    animation:vr-m-rise .8s .26s both cubic-bezier(.22,1,.36,1)}
+  .vr-m-hero-foot{font-size:9.5px;font-weight:600;letter-spacing:.2em;line-height:1.8;
+    text-transform:uppercase;color:rgba(249,240,237,.75);
+    animation:vr-m-rise .8s .34s both cubic-bezier(.22,1,.36,1)}
+
+  /* Bloque editorial debajo de la portada */
+  .vr-hero-b{display:flex!important;flex-direction:column!important;
+    padding:40px 18px 8px!important;min-width:0!important}
+  .vr-hero-b p{order:1;font-size:clamp(24px,6.6vw,32px)!important;line-height:1.35!important;
+    margin:0!important;max-width:none!important}
+  .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:26px 0 0!important}
   .vr-hero-b > a:nth-of-type(1){order:3}
   .vr-hero-b > a:nth-of-type(2){order:4}
-  .vr-hero-b a{max-width:none!important;padding:18px 0!important}
-  .vr-hero-list{padding:24px 18px 30px!important;justify-content:flex-start!important}
-  .vr-hero-list > div{align-items:flex-start!important;gap:9px!important}
-  .vr-hero-list a{font-size:clamp(21px,5.8vw,27px)!important}
-  /* Bloque de apertura: alineado a la izquierda y con el titular al cuerpo que
-     le corresponde. Centrado y a 30px, que es lo que daba el clamp del
-     escritorio en un ancho de teléfono, no sostiene una portada. */
-  .vr-home-welcome{padding:38px 20px 44px!important}
-  .vr-home-welcome > div{text-align:left!important}
-  .vr-home-welcome h1{font-size:clamp(34px,9.2vw,46px)!important;line-height:1.06!important}
-  .vr-home-welcome > div > div:first-child{margin-bottom:14px!important}
-  .vr-home-welcome > div > div:last-child{justify-content:flex-start!important;
-    margin-top:22px!important}
+  .vr-hero-b a{max-width:none!important;padding:19px 0!important;font-size:11.5px!important}
+  .vr-hero-list{padding:8px 18px 34px!important;justify-content:flex-start!important}
+  .vr-hero-list > div{align-items:flex-start!important;gap:0!important;width:100%}
+  .vr-hero-list a{font-size:clamp(20px,5.4vw,26px)!important;width:100%;
+    padding:13px 0!important;border-bottom:1px solid rgba(15,35,73,.10)}
   .vr-home-featured{padding:64px 0!important}
   .vr-home-featured > div:first-child{padding:0 18px!important}
   .vr-feat-head{margin-bottom:28px!important;gap:14px!important}
   .vr-feat-head > div:last-child{width:100%;justify-content:space-between!important;padding-bottom:0!important}
-  .vr-home-quote{padding:70px 22px!important}
-  .vr-home-cta{padding:64px 22px!important}
+  .vr-home-quote{padding:76px 22px!important}
+  .vr-home-quote p{font-size:clamp(26px,7.4vw,34px)!important;line-height:1.32!important}
+  /* Cierre: el botón ocupa el ancho, que en un teléfono es el gesto natural */
+  .vr-home-cta{padding:64px 20px 70px!important}
+  .vr-home-cta p{font-size:clamp(25px,7vw,32px)!important;margin-bottom:34px!important}
+  .vr-home-cta a{display:block!important;padding:19px 28px!important;font-size:12.5px!important;
+    letter-spacing:.14em!important}
 
   /* carrusel: tarjetas asomando para que se lea como deslizable */
   .vr-rail{gap:14px!important;padding:6px 18px!important;scroll-snap-type:x mandatory!important}
@@ -379,6 +391,20 @@ select,option,svg text{font-family:Montserrat,sans-serif}
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
           <image-slot id="hero-inset" shape="rect" src="assets/medalla-dorada.webp" placeholder="foto principal — medalla (cliente)"></image-slot>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
+          <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
+               mismas variables que la sección de bienvenida, que en mobile se oculta,
+               así que no hay texto duplicado que se pueda desincronizar. Nace en
+               display:none y solo el @media de smartphone la enciende. -->
+          <div class="vr-m-hero">
+            <div class="vr-m-hero-scrim"></div>
+            <div class="vr-m-hero-top"><span>{{ t.hero_frame_label }}</span><span>·</span><span>USD</span></div>
+            <div class="vr-m-hero-body">
+              <div class="vr-m-hero-kicker">[ {{ t.bienvenido }} ]</div>
+              <h1 class="vr-m-hero-title">{{ t.giant1 }} {{ t.giant2 }}</h1>
+              <div class="vr-m-hero-rule"></div>
+              <div class="vr-m-hero-foot">{{ t.personalidad }}</div>
+            </div>
+          </div>
         </div>
         <div class="vr-hero-cap" style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:14px;font-size:11.5px;font-weight:600;letter-spacing:.14em;color:#0F2349;text-transform:uppercase">
           <span>{{ t.hero_frame_foot }}</span>
