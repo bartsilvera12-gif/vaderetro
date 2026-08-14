@@ -149,11 +149,24 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-shop-wrap{gap:22px!important}
   .vr-shop-aside{width:100%!important;box-sizing:border-box}
   .vr-shop-col{min-width:0!important;width:100%}
-  .vr-shop-grid{grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
-  .vr-shop-cardimg{height:66vw!important;max-height:320px}
-  .vr-shop-cardbody{padding:20px 20px 22px!important}
-  .vr-shop-actions{flex-direction:column!important;gap:9px!important}
-  .vr-shop-actions > *{padding:15px 0!important}
+  /* Dos productos por fila, como en escritorio: a una sola columna entraba
+     una pieza por pantalla y el catálogo se volvía interminable. Al angostarse
+     la tarjeta hay que bajar los cuerpos y recortar la descripción a 3 líneas,
+     o el bloque de texto pesa más que la foto. */
+  .vr-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+  .vr-shop-cardimg{height:42vw!important;max-height:210px}
+  .vr-shop-cardbody{padding:13px 13px 15px!important;gap:7px!important}
+  .vr-shop-cardbody h3{font-size:16px!important;line-height:1.15!important}
+  .vr-shop-cardbody p{font-size:11px!important;line-height:1.45!important;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .vr-shop-cardbody span[style*="font-size:20px"]{font-size:17px!important}
+  .vr-shop-cardbody span[style*="font-size:13px"]{font-size:11.5px!important}
+  .vr-shop-cardbody div[style*="letter-spacing:.18em"]{font-size:9px!important}
+  .vr-shop-cardbody div[style*="letter-spacing:.06em"]{font-size:10px!important}
+  .vr-shop-cardimg span[style*="letter-spacing:.14em"]{font-size:8.5px!important;
+    padding:4px 7px!important;top:9px!important;left:9px!important}
+  .vr-shop-actions{flex-direction:column!important;gap:7px!important}
+  .vr-shop-actions > *{padding:11px 0!important;font-size:10.5px!important}
 
   /* ---------- Nuestra historia ---------- */
   .vr-hist-body{padding:64px 20px!important}
@@ -221,8 +234,18 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* ---------- Confirmación y pie ---------- */
   .vr-thanks{padding:40px 22px!important}
   .vr-thanks h1{font-size:32px!important}
-  footer#contacto{padding:52px 20px 26px!important}
-  .vr-ft-grid{grid-template-columns:minmax(0,1fr)!important;gap:30px!important;padding-bottom:34px!important}
+  /* El pie a una columna eran cuatro bloques apilados y quedaba tan alto como
+     una pantalla entera. Las tres listas de enlaces van a dos columnas y el
+     bloque de marca cruza el ancho completo. */
+  footer#contacto{padding:44px 18px 24px!important}
+  .vr-ft-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:26px 18px!important;padding-bottom:28px!important}
+  .vr-ft-grid > div:first-child{grid-column:1 / -1}
+  .vr-ft-grid > div:first-child p{max-width:none!important;font-size:15px!important}
+  .vr-ft-grid > div:first-child img{height:42px!important}
+  .vr-ft-grid > div:first-child > div:first-child{margin-bottom:14px!important;padding:6px!important}
+  .vr-ft-grid > div:first-child > div:first-child > div{padding:10px 18px!important}
+  footer#contacto > div > div:nth-child(2){padding-top:24px!important}
 
   /* áreas de toque cómodas */
   button,a[href]{-webkit-tap-highlight-color:rgba(207,157,89,.18)}
