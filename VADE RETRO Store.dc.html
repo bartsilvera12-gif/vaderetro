@@ -198,7 +198,17 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-shop-body{padding:34px 18px 70px!important}
   .vr-shop-filtbtn{width:100%!important;padding:15px 20px!important}
   .vr-shop-wrap{gap:22px!important}
-  .vr-shop-aside{width:100%!important;box-sizing:border-box}
+  /* Los filtros se ven abiertos en teléfono. Van a dos columnas para que el
+     panel no empuje el catálogo media pantalla hacia abajo: categorías junto a
+     material, precio junto a disponibilidad, y limpiar cruzando el ancho. */
+  .vr-shop-aside{width:100%!important;box-sizing:border-box;
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:18px 16px!important;padding:20px 16px 20px!important}
+  .vr-shop-aside > *{min-width:0}
+  .vr-shop-aside > button{grid-column:1 / -1;justify-self:start}
+  .vr-shop-aside button{font-size:12.5px!important}
+  .vr-shop-aside > div > div:first-child{font-size:10px!important;
+    padding-bottom:8px!important;margin-bottom:8px!important}
   .vr-shop-col{min-width:0!important;width:100%}
   /* Dos productos por fila, como en escritorio: a una sola columna entraba
      una pieza por pantalla y el catálogo se volvía interminable. Al angostarse
@@ -1056,7 +1066,10 @@ class Component extends DCLogic {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
       scrolled: false, openFaq: -1, err: '',
-      fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, counter: 0, now: new Date(),
+      // filtersOpen arranca en true para que en teléfono los filtros se vean
+      // sin tener que descubrir el botón. Solo afecta a mobile: en escritorio
+      // showFilters ya da true por !isMobile. El botón sigue colapsándolos.
+      fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: true, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
     };
