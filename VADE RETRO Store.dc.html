@@ -135,7 +135,14 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-hero-b > div:first-child{display:none!important}
   .vr-hero-cap{display:none!important}
   .vr-hero-a > div:first-child{aspect-ratio:auto!important;
-    height:min(76vh,760px)!important;border:none!important}
+    height:min(76vh,760px)!important;border:none!important;position:relative}
+  /* Encuadre: al cargar, la mitad superior del marco era tela vacía y las
+     medallas quedaban abajo, pisadas por el titular. image-slot no expone punto
+     focal (el encuadre se guarda por slot en el editor), así que se agranda el
+     slot y se lo ancla al pie: el sobrante se recorta por arriba y el motivo
+     sube al centro del marco. */
+  .vr-hero-a > div:first-child > image-slot{position:absolute!important;
+    left:0;right:0;bottom:0;height:132%!important}
 
   .vr-m-hero{display:block!important;position:absolute;inset:0;z-index:3;pointer-events:none}
   /* El degradado arranca a oscurecer antes del titular: la foto es clara justo
