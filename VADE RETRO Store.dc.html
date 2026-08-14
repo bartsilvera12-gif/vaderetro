@@ -108,8 +108,19 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* ---------- Home ----------
      Las dos fotos del hero pasan a full-bleed: en una pantalla angosta el
      margen lateral les come el impacto y son lo primero que se ve. */
+  /* Portada guiada por tipografía, no por fotos. El orden del escritorio deja
+     primero las dos imágenes y el titular recién en la sección siguiente: en
+     un teléfono eso es una foto atrás de otra antes de leer nada. Acá se
+     reordena a kicker + titular, después el texto y las acciones, y al final
+     una sola imagen con su bajada. */
+  main[data-screen-label="Home"]{display:flex!important;flex-direction:column!important}
+  .vr-home-welcome{order:-1}
   .vr-home-hero{border-bottom:none!important}
-  .vr-hero-grid{grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
+  .vr-hero-grid{display:flex!important;flex-direction:column!important;
+    grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
+  .vr-hero-b{order:-1}
+  /* la segunda foto sale: es la que producía el efecto de imagen tras imagen */
+  .vr-hero-b > div:first-child{display:none!important}
   /* La foto de portada se limita a poco menos de media pantalla. A pantalla
      completa la primera vista era únicamente una imagen: ni titular, ni precio,
      ni acción, hasta que el visitante scrolleara a ciegas. */
@@ -119,7 +130,6 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* El titular y las dos acciones se reordenan por encima de la segunda foto,
      así entran en la primera pantalla junto con la imagen. */
   .vr-hero-b{display:flex!important;flex-direction:column!important;padding:22px 18px 0!important}
-  .vr-hero-b > div:first-child{order:5;aspect-ratio:16 / 10!important;margin-top:30px}
   .vr-hero-b p{order:1;font-size:clamp(23px,6.2vw,30px)!important;margin:0!important;max-width:none!important}
   .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:22px 0 0!important}
   .vr-hero-b > a:nth-of-type(1){order:3}
@@ -128,7 +138,15 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-hero-list{padding:24px 18px 30px!important;justify-content:flex-start!important}
   .vr-hero-list > div{align-items:flex-start!important;gap:9px!important}
   .vr-hero-list a{font-size:clamp(21px,5.8vw,27px)!important}
-  .vr-home-welcome{padding:64px 22px!important}
+  /* Bloque de apertura: alineado a la izquierda y con el titular al cuerpo que
+     le corresponde. Centrado y a 30px, que es lo que daba el clamp del
+     escritorio en un ancho de teléfono, no sostiene una portada. */
+  .vr-home-welcome{padding:38px 20px 44px!important}
+  .vr-home-welcome > div{text-align:left!important}
+  .vr-home-welcome h1{font-size:clamp(34px,9.2vw,46px)!important;line-height:1.06!important}
+  .vr-home-welcome > div > div:first-child{margin-bottom:14px!important}
+  .vr-home-welcome > div > div:last-child{justify-content:flex-start!important;
+    margin-top:22px!important}
   .vr-home-featured{padding:64px 0!important}
   .vr-home-featured > div:first-child{padding:0 18px!important}
   .vr-feat-head{margin-bottom:28px!important;gap:14px!important}
