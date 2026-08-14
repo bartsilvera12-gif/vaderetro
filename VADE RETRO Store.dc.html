@@ -113,10 +113,16 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      un teléfono eso es una foto atrás de otra antes de leer nada. Acá se
      reordena a kicker + titular, después el texto y las acciones, y al final
      una sola imagen con su bajada. */
-  main[data-screen-label="Home"]{display:flex!important;flex-direction:column!important}
+  /* Grid y no flex: el reordenado necesita un contenedor flex o grid, pero en
+     un flex column el hijo no baja de su contenido mínimo y .vr-hero-a se iba
+     a 544px, desbordando la pantalla. Un track minmax(0,1fr) sí lo acota, y
+     'order' funciona igual. */
+  main[data-screen-label="Home"]{display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important}
+  main[data-screen-label="Home"] > *{min-width:0!important}
   .vr-home-welcome{order:-1}
   .vr-home-hero{border-bottom:none!important}
-  .vr-hero-grid{display:flex!important;flex-direction:column!important;
+  .vr-hero-grid{display:grid!important;
     grid-template-columns:minmax(0,1fr)!important;gap:0!important;padding:0 0 4px!important}
   .vr-hero-b{order:-1}
   /* la segunda foto sale: es la que producía el efecto de imagen tras imagen */
@@ -129,7 +135,8 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-hero-cap{padding:0 18px!important;margin-top:12px!important;font-size:10.5px!important}
   /* El titular y las dos acciones se reordenan por encima de la segunda foto,
      así entran en la primera pantalla junto con la imagen. */
-  .vr-hero-b{display:flex!important;flex-direction:column!important;padding:22px 18px 0!important}
+  .vr-hero-b{display:flex!important;flex-direction:column!important;padding:22px 18px 0!important;
+    min-width:0!important}
   .vr-hero-b p{order:1;font-size:clamp(23px,6.2vw,30px)!important;margin:0!important;max-width:none!important}
   .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:22px 0 0!important}
   .vr-hero-b > a:nth-of-type(1){order:3}
