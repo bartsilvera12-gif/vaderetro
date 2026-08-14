@@ -279,7 +279,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
             <span>{{ t.solo_stock }}</span>
           </button>
         </div>
-        <button onClick="{{ clearFilters }}" style="align-self:flex-start;background:none;border:none;border-bottom:1px solid rgba(87,30,11,.4);cursor:pointer;font-size:11.5px;font-weight:600;letter-spacing:.1em;color:#571E0B;padding:0 0 3px">{{ t.limpiar }}</button>
+        <button onClick="{{ clearFilters }}" style="align-self:flex-start;background:none;border:none;border-bottom:1px solid rgba(28,28,36,.4);cursor:pointer;font-size:11.5px;font-weight:600;letter-spacing:.1em;color:#1C1C24;padding:0 0 3px">{{ t.limpiar }}</button>
       </aside>
       </sc-if>
       <div style="flex:1;min-width:min(100%,300px)">
@@ -309,7 +309,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
               </sc-if>
             </div>
             <sc-if value="{{ item.inStock }}" hint-placeholder-val="{{ true }}"><div style="font-size:11px;letter-spacing:.06em;color:#7a6a4f">{{ item.stockLabel }}</div></sc-if>
-            <sc-if value="{{ item.outStock }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;letter-spacing:.06em;color:#571E0B;font-weight:600">{{ t.sin_stock }}</div></sc-if>
+            <sc-if value="{{ item.outStock }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;letter-spacing:.06em;color:#1C1C24;font-weight:600">{{ t.sin_stock }}</div></sc-if>
             <div style="display:flex;gap:10px;margin-top:6px">
               <sc-if value="{{ item.inStock }}" hint-placeholder-val="{{ true }}">
                 <button onClick="{{ item.buy }}" style="flex:1;background:#CF9D59;color:#0F2349;border:none;cursor:pointer;font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:12px 0;transition:background .25s" style-hover="background:#b9873f">{{ t.btn_comprar }}</button>
@@ -324,7 +324,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
       </sc-for>
         </div>
         <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
-          <div style="background:#fff;border:1px solid rgba(15,35,73,.09);border-top:3px solid #571E0B;padding:48px 30px;text-align:center;font-size:14px;color:#5c5c63">{{ t.sin_resultados }}</div>
+          <div style="background:#fff;border:1px solid rgba(15,35,73,.09);border-top:3px solid #1C1C24;padding:48px 30px;text-align:center;font-size:14px;color:#5c5c63">{{ t.sin_resultados }}</div>
         </sc-if>
       </div>
     </div>
@@ -384,7 +384,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
       <div style="display:flex;flex-direction:column;gap:26px">
         <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
           <div data-reveal style="position:relative;width:100%;max-width:1060px;aspect-ratio:1060 / 400;container-type:inline-size;background:#F9F0ED;border-radius:2.1cqw;overflow:hidden;user-select:none;transition:transform .45s cubic-bezier(.22,1,.36,1)" style-hover="transform:translateY(-4px) scale(1.012)">
-            <dither-bg style="position:absolute;inset:0;opacity:.22;mix-blend-mode:multiply" back="#F9F0ED" front="#0F2349" size="1.6" scale="1" speed="0.4"></dither-bg>
+            <dither-bg style="position:absolute;inset:0;opacity:.22;mix-blend-mode:multiply" back="#F9F0ED" front="#CF9D59" size="1.6" scale="1" speed="0.4"></dither-bg>
             <div style="position:absolute;top:0;bottom:0;left:75.76%;width:1px;background-image:repeating-linear-gradient(to bottom,rgba(15,35,73,.45) 0 .8cqw,transparent .8cqw 1.6cqw)"></div>
             <div style="position:absolute;left:75.76%;top:0;transform:translate(-50%,-50%);width:3.7cqw;height:3.7cqw;border-radius:50%;background:#F9F0ED"></div>
             <div style="position:absolute;left:75.76%;bottom:0;transform:translate(-50%,50%);width:3.7cqw;height:3.7cqw;border-radius:50%;background:#F9F0ED"></div>
@@ -461,7 +461,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     <div style="display:flex;width:max-content;animation:vr-scroll-rev 48s linear infinite">
       <div style="display:flex;gap:22px;padding:0 11px">
         <sc-for list="{{ faqRow2 }}" as="f" hint-placeholder-count="2">
-          <div style="width:400px;flex-shrink:0;background:#571E0B;border-top:2px solid #CF9D59;padding:26px 28px;display:flex;flex-direction:column;gap:12px">
+          <div style="width:400px;flex-shrink:0;background:#1C1C24;border-top:2px solid #CF9D59;padding:26px 28px;display:flex;flex-direction:column;gap:12px">
             <h3 style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#F9F0ED;margin:0;line-height:1.2">{{ f.q }}</h3>
             <p style="font-size:13.5px;line-height:1.7;color:rgba(249,240,237,.75);margin:0">{{ f.a }}</p>
           </div>
@@ -469,7 +469,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
       </div>
       <div style="display:flex;gap:22px;padding:0 11px" aria-hidden="true">
         <sc-for list="{{ faqRow2 }}" as="f" hint-placeholder-count="2">
-          <div style="width:400px;flex-shrink:0;background:#571E0B;border-top:2px solid #CF9D59;padding:26px 28px;display:flex;flex-direction:column;gap:12px">
+          <div style="width:400px;flex-shrink:0;background:#1C1C24;border-top:2px solid #CF9D59;padding:26px 28px;display:flex;flex-direction:column;gap:12px">
             <h3 style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#F9F0ED;margin:0;line-height:1.2">{{ f.q }}</h3>
             <p style="font-size:13.5px;line-height:1.7;color:rgba(249,240,237,.75);margin:0">{{ f.a }}</p>
           </div>
@@ -519,9 +519,9 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     </div>
     <div>
       <sc-if value="{{ cur.hasBadge }}" hint-placeholder-val="{{ false }}">
-        <span style="display:inline-block;background:#571E0B;color:#F9F0ED;font-size:10px;font-weight:600;letter-spacing:.14em;padding:6px 11px;margin-bottom:16px">{{ cur.badge }}</span>
+        <span style="display:inline-block;background:#1C1C24;color:#F9F0ED;font-size:10px;font-weight:600;letter-spacing:.14em;padding:6px 11px;margin-bottom:16px">{{ cur.badge }}</span>
       </sc-if>
-      <div style="width:44px;height:2px;background:#571E0B;margin-bottom:20px"></div>
+      <div style="width:44px;height:2px;background:#1C1C24;margin-bottom:20px"></div>
       <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(34px,4vw,46px);color:#0F2349;margin:0 0 16px;line-height:1.1">{{ cur.name }}</h1>
       <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:22px">
         <span style="font-size:30px;font-weight:700;color:#0F2349">{{ cur.priceFmt }}</span>
@@ -602,7 +602,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
             <button onClick="{{ l.inc }}" style="width:38px;height:38px;border:1px solid rgba(15,35,73,.25);background:none;cursor:pointer;font-size:16px;color:#0F2349;transition:border-color .25s,background .25s" style-hover="border-color:#CF9D59;background:rgba(207,157,89,.12)">+</button>
           </div>
           <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#0F2349;min-width:110px;text-align:right">{{ l.lineFmt }}</div>
-          <button onClick="{{ l.remove }}" aria-label="Eliminar" style="border:none;background:none;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.16em;color:rgba(28,28,36,.4);padding:6px 2px;text-transform:uppercase;transition:color .25s" style-hover="color:#571E0B">{{ t.quitar }}</button>
+          <button onClick="{{ l.remove }}" aria-label="Eliminar" style="border:none;background:none;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.16em;color:rgba(28,28,36,.4);padding:6px 2px;text-transform:uppercase;transition:color .25s" style-hover="color:#1C1C24">{{ t.quitar }}</button>
         </div>
       </sc-for>
     </div>
@@ -614,7 +614,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
         <a href="#/tienda" style="font-size:12px;font-weight:700;letter-spacing:.16em;color:#0F2349;text-transform:uppercase;border-bottom:1px solid #CF9D59;padding-bottom:6px" style-hover="color:#b9873f">‹ {{ t.continuar }}</a>
         <p style="font-size:12.5px;font-style:italic;line-height:1.7;color:rgba(28,28,36,.55);margin:30px 0 0;max-width:340px">{{ t.pago_note }}</p>
       </div>
-      <div style="background:#0F2349;padding:34px clamp(24px,3vw,36px) 34px;border-top:3px solid #571E0B">
+      <div style="background:#0F2349;padding:34px clamp(24px,3vw,36px) 34px;border-top:3px solid #CF9D59">
         <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(249,240,237,.65);padding:10px 0;text-transform:uppercase"><span>{{ t.subtotal }}</span><span style="letter-spacing:0">{{ subtotalFmt }}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(249,240,237,.65);padding:10px 0;border-bottom:1px solid rgba(249,240,237,.18);text-transform:uppercase"><span>{{ t.envio }}</span><span style="font-style:italic;letter-spacing:0;text-transform:none">{{ t.envio_valor }}</span></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;padding:22px 0 26px">
@@ -658,10 +658,10 @@ select,option,svg text{font-family:Montserrat,sans-serif}
         <div style="grid-column:1 / -1"><label style="display:block;font-size:10.5px;font-weight:700;letter-spacing:.12em;color:#0F2349;margin-bottom:6px">{{ t.f_obs }}</label><textarea rows="3" value="{{ form.obs }}" onChange="{{ on.obs }}" style="width:100%;box-sizing:border-box;padding:12px 13px;border:1px solid rgba(15,35,73,.25);border-radius:2px;font-size:13.5px;background:#fff;resize:vertical"></textarea></div>
       </div>
       <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}">
-        <p style="color:#571E0B;font-size:12.5px;font-weight:600;margin:18px 0 0">{{ errMsg }}</p>
+        <p style="color:#1C1C24;font-size:12.5px;font-weight:600;margin:18px 0 0">{{ errMsg }}</p>
       </sc-if>
     </div>
-    <div style="background:#fff;border:1px solid rgba(15,35,73,.1);border-top:3px solid #571E0B;padding:30px">
+    <div style="background:#fff;border:1px solid rgba(15,35,73,.1);border-top:3px solid #1C1C24;padding:30px">
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#0F2349;margin:0 0 20px">{{ t.resumen }}</h2>
       <div style="display:flex;flex-direction:column;gap:10px;border-bottom:1px solid rgba(15,35,73,.1);padding-bottom:16px;margin-bottom:6px">
         <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="2">
@@ -680,7 +680,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 
 <sc-if value="{{ isThanks }}" hint-placeholder-val="{{ false }}">
 <main data-screen-label="Confirmación" style="padding:186px 24px 110px;display:flex;justify-content:center">
-  <div style="position:relative;overflow:hidden;background:#fff;border:1px solid rgba(15,35,73,.1);border-top:3px solid #571E0B;padding:56px 44px;max-width:600px;text-align:center">
+  <div style="position:relative;overflow:hidden;background:#fff;border:1px solid rgba(15,35,73,.1);border-top:3px solid #1C1C24;padding:56px 44px;max-width:600px;text-align:center">
     <div style="position:absolute;top:-90px;right:-90px;width:240px;height:240px;border-radius:50%;border:1px solid rgba(207,157,89,.3);pointer-events:none"></div>
     <div style="position:absolute;bottom:-110px;left:-110px;width:260px;height:260px;border-radius:50%;border:1px solid rgba(15,35,73,.08);pointer-events:none"></div>
     <div style="position:relative;width:64px;height:64px;margin:0 auto 26px">
@@ -933,7 +933,7 @@ class Component extends DCLogic {
     const featured = ['demo-01', 'demo-03', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
     const cats = ['medallas', 'con-cadena', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
-    const MAT_DOTS = { dorado: '#CF9D59', plata: '#9aa2ad', esmaltado: '#0F2349', personalizado: '#571E0B' };
+    const MAT_DOTS = { dorado: '#CF9D59', plata: '#9aa2ad', esmaltado: '#0F2349', personalizado: '#1C1C24' };
     const mats = ['dorado', 'plata', 'esmaltado', 'personalizado'].map((k) => ({ key: k, label: T.mat_labels[k], dot: MAT_DOTS[k], count: items.filter((p) => p.material === k).length, active: S.fMats.includes(k), inactive: !S.fMats.includes(k), toggle: togA('fMats', k) }));
     let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (S.fMats.length === 0 || S.fMats.includes(p.material)) && p.price <= S.fMax && (!S.fStock || p.stock > 0));
     if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => a.price - b.price);
@@ -1030,7 +1030,7 @@ class Component extends DCLogic {
 Component.TICKET_PALETTE = [
   { bg: '#0F2349', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' },
   { bg: '#CF9D59', ink: '#0F2349', front: '#0F2349', wm: 'rgba(15,35,73,.18)', sub: 'rgba(15,35,73,.7)' },
-  { bg: '#571E0B', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' },
+  { bg: '#F9F0ED', ink: '#0F2349', front: '#0F2349', wm: 'rgba(15,35,73,.18)', sub: 'rgba(15,35,73,.7)' },
   { bg: '#1C1C24', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.7)' },
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];

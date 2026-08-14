@@ -331,7 +331,14 @@
     '.empty:hover .sub{opacity:1}' +
     ':host([data-over]) .frame{outline:2px solid #c96442;outline-offset:-2px;' +
     '  background:rgba(201,100,66,.10)}' +
-    '.ring{position:absolute;inset:0;pointer-events:none;border:1.5px dashed currentColor;' +
+    // display:none — el anillo punteado es una ayuda de autor (marca dónde se
+    // puede soltar una foto) y en la tienda publicada se ve como un borde
+    // discontinuo alrededor de cada imagen. Se apaga en la regla base, no solo
+    // en [data-filled], para que tampoco asome mientras el slot todavía no se
+    // marcó como lleno. _render() escribe display:'' (no 'none'), así que esta
+    // regla sigue mandando.
+    '.ring{display:none;position:absolute;inset:0;pointer-events:none;' +
+    '  border:1.5px dashed currentColor;' +
     '  opacity:.35;transition:border-color .12s,opacity .12s}' +
     ':host([data-over]) .ring{border-color:#c96442;opacity:1}' +
     ':host([data-filled]) .ring{display:none}' +
