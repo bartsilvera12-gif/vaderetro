@@ -140,9 +140,14 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      medallas quedaban abajo, pisadas por el titular. image-slot no expone punto
      focal (el encuadre se guarda por slot en el editor), así que se agranda el
      slot y se lo ancla al pie: el sobrante se recorta por arriba y el motivo
-     sube al centro del marco. */
+     sube al centro del marco.
+     El valor está acotado por el recorte lateral: la foto es 882x1103 y el
+     marco ~390x640, así que a escala normal se ve entera de alto y se pierden
+     61px por lado. Como el ajuste es 'cover', agrandar el slot también amplía:
+     al 132% el recorte lateral saltaba a 143px por lado y cortaba el segundo
+     medallón. 118% recorta el 15% superior con solo 45px extra por lado. */
   .vr-hero-a > div:first-child > image-slot{position:absolute!important;
-    left:0;right:0;bottom:0;height:132%!important}
+    left:0;right:0;bottom:0;height:118%!important}
 
   .vr-m-hero{display:block!important;position:absolute;inset:0;z-index:3;pointer-events:none}
   /* El degradado arranca a oscurecer antes del titular: la foto es clara justo
