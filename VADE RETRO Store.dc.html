@@ -28,8 +28,9 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 @keyframes vr-out-left{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @keyframes vr-out-right{from{transform:translateX(0)}to{transform:translateX(100%)}}
 @keyframes vr-m-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-/* La capa de portada de teléfono nace apagada: el escritorio nunca la enciende. */
-.vr-m-hero{display:none}
+/* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
+   así el escritorio no las ve nunca. */
+.vr-m-hero,.vr-m-filtbtn{display:none}
 
 /* ==========================================================================
    SMARTPHONE
@@ -196,11 +197,24 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* ---------- Tienda ---------- */
   .vr-shop-hero{padding:52px 18px 40px!important}
   .vr-shop-body{padding:34px 18px 70px!important}
-  .vr-shop-filtbtn{width:100%!important;padding:15px 20px!important}
-  .vr-shop-wrap{gap:22px!important}
-  /* Los filtros se ven abiertos en teléfono. Van a dos columnas para que el
-     panel no empuje el catálogo media pantalla hacia abajo: categorías junto a
-     material, precio junto a disponibilidad, y limpiar cruzando el ancho. */
+  /* Barra de controles: FILTRAR a la izquierda y el orden a la derecha, en una
+     sola línea. El disparador de escritorio, que va suelto arriba del panel, se
+     apaga; en su lugar actúa .vr-m-filtbtn, que vive dentro de esa misma línea.
+     El conteo de piezas sale: a 375px no entra sin partir la línea en dos. */
+  .vr-shop-filtbtn{display:none!important}
+  .vr-shop-count{display:none!important}
+  .vr-shop-bar{margin-bottom:18px!important;gap:10px!important;flex-wrap:nowrap!important;
+    border-bottom:1px solid rgba(15,35,73,.16);padding-bottom:12px}
+  .vr-m-filtbtn{display:inline-flex!important;align-items:center;gap:7px;
+    background:none;border:none;cursor:pointer;padding:6px 0;white-space:nowrap;
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#0F2349}
+  .vr-shop-bar select{border:none!important;background:none!important;
+    padding:6px 0!important;font-size:11px!important;font-weight:700!important;
+    letter-spacing:.16em!important;text-transform:uppercase!important;color:#0F2349!important;
+    text-align:right;text-align-last:right}
+  /* Cuando se abren, los filtros van a dos columnas para no empujar el catálogo
+     media pantalla hacia abajo: categorías junto a material, precio junto a
+     disponibilidad, y limpiar cruzando el ancho. */
   .vr-shop-aside{width:100%!important;box-sizing:border-box;
     display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
     gap:18px 16px!important;padding:20px 16px 20px!important}
@@ -586,8 +600,13 @@ select,option,svg text{font-family:Montserrat,sans-serif}
       </aside>
       </sc-if>
       <div class="vr-shop-col" style="flex:1;min-width:min(100%,300px)">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px">
-          <span style="font-size:12.5px;color:#5c5c63">{{ resultCount }} {{ piezasLabel }}</span>
+        <div class="vr-shop-bar" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px">
+          <!-- Disparador de filtros propio de teléfono. Va acá adentro, y no
+               arriba como el de escritorio, para quedar en la misma línea que
+               el orden. Comparte el mismo toggleFilters, así que no hay dos
+               estados que puedan discrepar. Nace apagado; solo el @media lo enciende. -->
+          <button class="vr-m-filtbtn" onClick="{{ toggleFilters }}">{{ t.filtros }} {{ filterMark }}</button>
+          <span class="vr-shop-count" style="font-size:12.5px;color:#5c5c63">{{ resultCount }} {{ piezasLabel }}</span>
           <select value="{{ sort }}" onChange="{{ onSort }}" style="border:1px solid rgba(15,35,73,.25);background:#fff;color:#0F2349;font-size:12.5px;padding:9px 12px;border-radius:2px;cursor:pointer">
             <sc-for list="{{ sortOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.key }}">{{ o.label }}</option></sc-for>
           </select>
@@ -1066,10 +1085,7 @@ class Component extends DCLogic {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
       scrolled: false, openFaq: -1, err: '',
-      // filtersOpen arranca en true para que en teléfono los filtros se vean
-      // sin tener que descubrir el botón. Solo afecta a mobile: en escritorio
-      // showFilters ya da true por !isMobile. El botón sigue colapsándolos.
-      fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: true, counter: 0, now: new Date(),
+      fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
     };
