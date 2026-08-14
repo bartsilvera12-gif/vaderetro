@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/VADE%20RETRO%20Store.dc.html" }
+  ]
+}
