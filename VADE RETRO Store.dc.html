@@ -173,6 +173,23 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 .vr-hito-text{font-size:clamp(14px,1.05vw,15.5px);line-height:1.8;color:#4a4a52;margin:0}
 
 /* ==========================================================================
+   PIE
+   Sin el logotipo —ya esta en la barra superior, repetirlo abajo solo sumaba
+   alto— y con los espacios ajustados: era la seccion mas alta del sitio sin
+   necesitarlo, porque todo su contenido son cuatro listas cortas.
+   ========================================================================== */
+footer#contacto{padding:52px 24px 24px!important}
+.vr-ft-grid{gap:34px!important;padding-bottom:34px!important}
+.vr-ft-grid > div:first-child > div:first-child{display:none!important}
+.vr-ft-grid > div:first-child p{margin-top:0!important;font-size:15px}
+.vr-ft-grid > div > div:first-child{margin-bottom:14px!important}
+.vr-ft-grid > div > div:last-child{gap:9px!important}
+footer#contacto > div > div:nth-child(2){padding-top:24px!important}
+footer#contacto > div > div:nth-child(2) p:first-child{margin-bottom:8px!important;
+  line-height:1.6!important}
+footer#contacto > div > div:last-child{margin-top:10px!important}
+
+/* ==========================================================================
    NUESTRA HISTORIA: bloque de marca
    Texto largo, asi que manda la lectura: una sola columna angosta, medida de
    linea corta y jerarquia por tamano y color, no por cajas ni recuadros.
@@ -702,14 +719,11 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
   /* El pie a una columna eran cuatro bloques apilados y quedaba tan alto como
      una pantalla entera. Las tres listas de enlaces van a dos columnas y el
      bloque de marca cruza el ancho completo. */
-  footer#contacto{padding:44px 18px 24px!important}
+  footer#contacto{padding:40px 18px 20px!important}
   .vr-ft-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:26px 18px!important;padding-bottom:28px!important}
+    gap:24px 18px!important;padding-bottom:24px!important}
   .vr-ft-grid > div:first-child{grid-column:1 / -1}
   .vr-ft-grid > div:first-child p{max-width:none!important;font-size:15px!important}
-  .vr-ft-grid > div:first-child img{height:42px!important}
-  .vr-ft-grid > div:first-child > div:first-child{margin-bottom:14px!important;padding:6px!important}
-  .vr-ft-grid > div:first-child > div:first-child > div{padding:10px 18px!important}
   footer#contacto > div > div:nth-child(2){padding-top:24px!important}
 
   /* áreas de toque cómodas */
