@@ -173,6 +173,19 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 .vr-hito-text{font-size:clamp(14px,1.05vw,15.5px);line-height:1.8;color:#4a4a52;margin:0}
 
 /* ==========================================================================
+   MENU: panel izquierdo mas angosto
+   Estaba al 50% por el auto-fit de columnas iguales. Pasa a poco mas de un
+   tercio, que es lo que necesitan seis enlaces y dos listas cortas, y le deja
+   el resto del ancho a la foto.
+   ========================================================================== */
+@media (min-width:760px){
+  .vr-menu{grid-template-columns:minmax(340px,36%) minmax(0,1fr)!important}
+  .vr-menu-nav{padding:34px clamp(28px,2.6vw,40px) 36px!important}
+  .vr-menu-links a{font-size:clamp(28px,2.9vw,40px)!important}
+  .vr-menu-meta{gap:26px!important}
+}
+
+/* ==========================================================================
    PIE
    Sin el logotipo —ya esta en la barra superior, repetirlo abajo solo sumaba
    alto— y con los espacios ajustados: era la seccion mas alta del sitio sin
