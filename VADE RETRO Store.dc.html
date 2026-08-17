@@ -121,7 +121,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-m-hero{position:absolute;inset:0;z-index:3;pointer-events:none}
 .vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
   rgba(15,35,73,.55) 0%,rgba(15,35,73,.05) 20%,rgba(15,35,73,.30) 44%,
-  rgba(15,35,73,.74) 64%,rgba(15,35,73,.95) 100%)}
+  rgba(15,35,73,.74) 64%,rgba(15,35,73,1) 97%,rgba(15,35,73,1) 100%)}
 .vr-m-hero-top{position:absolute;top:0;left:0;right:0;display:flex;gap:9px;
   font-weight:700;letter-spacing:.22em;text-transform:uppercase;
   color:rgba(249,240,237,.92)}
@@ -182,8 +182,11 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 
   /* izquierda: la foto ocupa todo el alto y llega al borde */
   .vr-hero-a{position:relative;min-width:0}
+  /* clip-path ademas de overflow: el zoom lento corre en su propia capa de
+     composicion y con overflow solo se escapaba una linea de un pixel del
+     borde inferior de la foto, que sobre el azul se veia como un destello. */
   .vr-hero-a > div:first-child{height:100%!important;aspect-ratio:auto!important;
-    border:none!important}
+    border:none!important;clip-path:inset(0)}
   .vr-m-hero{display:block!important}
   .vr-m-hero-top{display:none}
   .vr-m-hero-body{padding:0 clamp(32px,3.6vw,60px) clamp(38px,4vw,64px)!important}
