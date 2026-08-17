@@ -141,6 +141,15 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-hd-cart-label{color:#0F2349!important}
 .vr-hd-burger span{background:#0F2349!important}
 
+/* Al cambiar de idioma cambiaban de lugar el idioma y la fecha: "CARRITO" mide
+   unos 35px mas que "CART", y como el bloque va anclado a la derecha ese salto
+   corria todo lo que tiene al lado. Con un ancho minimo el boton mide igual en
+   los dos idiomas y nada se mueve. La fecha usa cifras de ancho fijo por el
+   mismo motivo. */
+.vr-hd-cart{min-width:180px;justify-content:center}
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right) > span:last-child{
+  font-variant-numeric:tabular-nums}
+
 /* ==========================================================================
    PORTADA: capa del titular sobre la foto
    Estos estilos estaban dentro del bloque de telefono. Al reusar la capa en
