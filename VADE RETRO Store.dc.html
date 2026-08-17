@@ -79,16 +79,26 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 @media (min-width:760px){
   .vr-hero-grid{padding-top:clamp(20px,2.4vw,34px)!important;
     padding-bottom:clamp(14px,1.8vw,24px)!important}
-  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(48vh,450px)}
+  /* Las dos fotos con alturas parecidas: una vertical alta al lado de una
+     franja apaisada baja se leia desbalanceado, y las columnas terminaban a
+     alturas muy distintas. */
+  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(50vh,470px)}
   .vr-hero-b{padding-top:0!important}
-  .vr-hero-b > div:first-child{aspect-ratio:auto!important;height:min(25vh,235px)}
+  .vr-hero-b > div:first-child{aspect-ratio:auto!important;height:min(33vh,305px)}
   .vr-hero-b p{margin-top:20px!important}
   .vr-hero-b > div:nth-child(3){margin-top:18px!important}
   .vr-hero-b a{padding:14px 0 12px!important}
-  /* La lista de categorias va debajo de la grilla, asi que es lo ultimo en
-     entrar: si no se la aprieta, queda cortada por el borde de la pantalla. */
-  .vr-hero-list{padding-top:0!important;padding-bottom:clamp(18px,2vw,28px)!important}
-  .vr-hero-list a{line-height:1.2!important}
+  /* Las categorias pasan a una tira horizontal bajo un filete. Apiladas en
+     vertical colgaban solas abajo a la derecha y dejaban medio ancho vacio. */
+  .vr-hero-list{justify-content:stretch!important;
+    padding-top:clamp(14px,1.6vw,20px)!important;
+    padding-bottom:clamp(16px,1.8vw,26px)!important}
+  .vr-hero-list > div{flex-direction:row!important;align-items:center!important;
+    justify-content:flex-end!important;flex-wrap:wrap;width:100%;
+    gap:clamp(20px,3.2vw,52px)!important;
+    border-top:1px solid rgba(15,35,73,.14);padding-top:clamp(14px,1.6vw,20px)}
+  .vr-hero-list a{font-size:clamp(15px,1.35vw,20px)!important;
+    line-height:1.2!important;white-space:nowrap}
 }
 
 /* Entrada de la portada al cargar. Es la primera pantalla: si no se mueve nada
