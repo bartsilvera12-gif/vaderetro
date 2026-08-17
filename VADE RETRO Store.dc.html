@@ -1559,12 +1559,23 @@ class Component extends DCLogic {
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
     this.parseRoute();
     requestAnimationFrame(() => { this.initReveal(); this.initRoll(); });
+    // El menu se monta despues, en un ciclo de render que no llega a disparar
+    // initRoll, y sus enlaces quedaban sin partir en letras. Un observador
+    // vuelve a pasar cuando aparecen nodos nuevos. No se cicla: initRoll compara
+    // contra data-roll-src y la segunda pasada no hace nada.
+    this._rollObs = new MutationObserver(() => {
+      if (this._rollT) return;
+      this._rollT = setTimeout(() => { this._rollT = null; this.initRoll(); }, 60);
+    });
+    this._rollObs.observe(document.body, { childList: true, subtree: true });
   }
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
+    if (this._rollObs) this._rollObs.disconnect();
+    if (this._rollT) clearTimeout(this._rollT);
   }
   componentDidUpdate() { requestAnimationFrame(() => { this.initReveal(); this.initRoll(); }); }
   closeMenu() {
