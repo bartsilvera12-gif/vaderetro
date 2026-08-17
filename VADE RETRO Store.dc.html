@@ -228,8 +228,15 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-m-hero{display:block!important}
   .vr-m-hero-top{display:none}
   .vr-m-hero-body{padding:0 clamp(32px,3.6vw,60px) clamp(38px,4vw,64px)!important}
-  .vr-m-hero-title{font-size:clamp(42px,4.4vw,72px)!important}
-  .vr-m-hero-foot{max-width:36ch}
+  /* Titular mas chico y acotado en ancho: a 72px cruzaba la foto de lado a
+     lado y tapaba las medallas. */
+  .vr-m-hero-title{font-size:clamp(30px,2.9vw,48px)!important;max-width:14ch}
+  .vr-m-hero-foot{max-width:30ch;font-size:9px}
+  /* El degradado se concentra abajo, donde va el texto: el centro de la foto,
+     que es donde estan las medallas, queda limpio. */
+  .vr-m-hero-scrim{background:linear-gradient(180deg,
+    rgba(15,35,73,.38) 0%,rgba(15,35,73,0) 20%,rgba(15,35,73,0) 44%,
+    rgba(15,35,73,.5) 70%,rgba(15,35,73,.92) 92%,rgba(15,35,73,1) 100%)!important}
   .vr-hero-cap{position:absolute!important;right:clamp(24px,2.4vw,36px);
     top:clamp(18px,1.8vw,26px);z-index:4;margin:0!important;color:#F9F0ED!important}
   .vr-hero-cap span{color:rgba(249,240,237,.8)!important}
