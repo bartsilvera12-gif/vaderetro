@@ -1085,14 +1085,6 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
     <h1 data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(38px,4.6vw,58px);color:#0F2349;margin:0 auto;max-width:760px;line-height:1.1">{{ t.nav_historia }}</h1>
     <div style="font-size:12px;font-weight:600;letter-spacing:.2em;color:rgba(28,28,36,.45);margin-top:26px">{{ t.personalidad }}</div>
   </section>
-  <section class="vr-origen">
-    <div class="vr-origen-box">
-      <div data-reveal class="vr-origen-kicker">{{ t.origen_kicker }}</div>
-      <div data-reveal="wipe" class="vr-origen-latin">{{ t.origen_latin }}</div>
-      <div data-reveal class="vr-origen-trad">{{ t.origen_trad }}</div>
-      <p data-reveal class="vr-origen-p">{{ t.origen_p }}</p>
-    </div>
-  </section>
   <!-- Texto de marca provisto por la cliente. -->
   <section class="vr-escudo" style="padding:clamp(60px,7vw,110px) 24px;background:#F9F0ED">
     <div class="vr-escudo-box" style="max-width:760px;margin:0 auto">
@@ -1106,39 +1098,6 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
       <blockquote data-reveal="wipe" class="vr-escudo-quote">{{ t.escudo_quote }}</blockquote>
       <p data-reveal class="vr-escudo-cierre">{{ t.escudo_cierre }}</p>
       <p data-reveal class="vr-escudo-final">{{ t.escudo_final }}</p>
-    </div>
-  </section>
-  <section class="vr-hist-body" style="position:relative;overflow:hidden;padding:100px 24px;background:#0F2349;color:#F9F0ED">
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:760px;height:760px;border-radius:50%;border:1px solid rgba(207,157,89,.12);pointer-events:none"></div>
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;height:560px;border-radius:50%;border:1px solid rgba(207,157,89,.08);pointer-events:none"></div>
-    <div class="vr-deco-pax" style="position:absolute;bottom:-60px;right:20px;font-family:'Cormorant Garamond',serif;font-size:280px;line-height:1;color:rgba(249,240,237,.04);pointer-events:none;user-select:none">PAX</div>
-    <div style="position:relative;max-width:1000px;margin:0 auto;text-align:center">
-      <div data-reveal class="vr-medalla-kicker">{{ t.medalla_kicker }}</div>
-      <p data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.6vw,30px);font-weight:500;line-height:1.5;margin:0 auto 60px;max-width:760px;color:rgba(249,240,237,.92)">{{ t.medalla_intro }}</p>
-      <div class="vr-pillars" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:44px;text-align:left">
-        <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
-          <div data-reveal style="border-top:1px solid rgba(207,157,89,.4);padding-top:22px">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:rgba(207,157,89,.55);line-height:1;margin-bottom:14px">{{ p.num }}</div>
-            <div style="font-size:13px;font-weight:700;letter-spacing:.26em;color:#CF9D59;margin-bottom:12px">{{ p.name }}</div>
-            <p style="font-size:14px;line-height:1.7;color:rgba(249,240,237,.78);margin:0">{{ p.desc }}</p>
-          </div>
-        </sc-for>
-      </div>
-      <p data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#CF9D59;margin:70px 0 0">{{ t.esencia_quote }}</p>
-    </div>
-  </section>
-  <section class="vr-linea">
-    <div class="vr-linea-box">
-      <div data-reveal class="vr-linea-kicker">{{ t.hist_kicker }}</div>
-      <h2 data-reveal="wipe" class="vr-linea-h">{{ t.hist_title }}</h2>
-      <div class="vr-linea-lista">
-        <sc-for list="{{ hitos }}" as="h" hint-placeholder-count="6">
-          <div data-reveal class="vr-hito">
-            <div class="vr-hito-year">{{ h.year }}</div>
-            <p class="vr-hito-text">{{ h.text }}</p>
-          </div>
-        </sc-for>
-      </div>
     </div>
   </section>
   <section class="vr-hist-cta" style="padding:84px 24px;background:#16305e;text-align:center">
