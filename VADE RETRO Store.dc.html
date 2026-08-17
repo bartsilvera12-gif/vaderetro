@@ -384,15 +384,16 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-scr-top{padding-top:calc(var(--vr-hd-h) + 40px)!important;padding-bottom:56px!important}
 
   /* ---------- Menú ---------- */
-  .vr-menu{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:1fr auto!important}
+  /* Sin la foto del menu en telefono: se comia el bloque de contacto, que
+     quedaba cortado a media linea. El panel de navegacion toma todo el alto. */
+  .vr-menu{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:1fr!important}
+  .vr-menu-art{display:none!important}
   .vr-menu-nav{padding:calc(env(safe-area-inset-top,0px) + 20px) 20px 24px!important}
   .vr-menu-nav img{width:172px!important}
   .vr-menu-links{margin:28px 0 auto!important;gap:0!important}
   .vr-menu-links a{font-size:clamp(29px,8.4vw,40px)!important;padding:5px 0}
   .vr-menu-meta{gap:24px!important;margin-top:28px!important}
-  .vr-menu-art{min-height:132px!important}
-  .vr-menu-art-top{display:none!important}
-  .vr-menu-art-quote{font-size:20px!important;max-width:none!important}
+
 
   /* ---------- Home ----------
      Portada de teléfono: la foto ocupa casi toda la primera pantalla y el
