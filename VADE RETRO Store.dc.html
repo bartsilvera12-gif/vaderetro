@@ -113,6 +113,35 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
 
 /* ==========================================================================
+   BARRA SUPERIOR EN MARFIL SERENO
+   La barra era Azul Protector con un recuadro marfil detras del logotipo, y se
+   veia el corte entre los dos. Ahora es marfil de lado a lado, del mismo color
+   que ese recuadro, asi el logotipo deja de estar en una isla.
+   Todo lo que iba adentro estaba pensado en marfil sobre azul, asi que hay que
+   darlo vuelta: texto y carrito en Azul Protector, e idioma en Dorado Sagrado
+   con el activo en azul.
+   ========================================================================== */
+.vr-hd{background:#F9F0ED!important;border-bottom:1px solid rgba(15,35,73,.10)}
+.vr-hd-brand{background:none!important}
+/* bloque de utilidades: es el hijo del medio, entre la marca y los controles */
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right){color:#0F2349!important}
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right) > span:last-child{
+  color:rgba(15,35,73,.62)!important}
+/* idioma: inactivo y separador en dorado, activo en azul. Las dos formas del
+   valor porque el framework reserializa los estilos inline via CSSOM y los
+   escribe con espacio tras los dos puntos. */
+.vr-hd-lang button{color:#CF9D59!important}
+.vr-hd-lang button[style*="font-weight: 700"],
+.vr-hd-lang button[style*="font-weight:700"]{color:#0F2349!important}
+.vr-hd-lang span{color:#CF9D59!important}
+/* carrito */
+.vr-hd-cart{border-color:rgba(15,35,73,.28)!important}
+.vr-hd-cart:hover{background:rgba(15,35,73,.05)!important;border-color:#CF9D59!important}
+.vr-hd-cart svg{stroke:#0F2349!important}
+.vr-hd-cart-label{color:#0F2349!important}
+.vr-hd-burger span{background:#0F2349!important}
+
+/* ==========================================================================
    PORTADA: capa del titular sobre la foto
    Estos estilos estaban dentro del bloque de telefono. Al reusar la capa en
    escritorio salia sin formato, asi que viven a nivel global y cada tamano de
@@ -280,16 +309,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     transform:translateY(-50%);padding:0!important;gap:4px!important;z-index:2}
   /* el idioma venía en marfil sobre azul; sobre la barra clara hay que
      reescribirlo. El activo se distingue por su propio inline font-weight:700. */
-  /* Idioma con colores del manual y sin tintes: activo en Azul Protector,
-     inactivo y separador en Dorado Sagrado. El dorado sobre marfil ya es el
-     patrón de los kickers en todo el sitio, así que no introduce un color nuevo. */
-  .vr-hd-lang button{color:#CF9D59!important;padding:6px 4px!important}
-  /* Las dos formas del valor: el framework reserializa los estilos inline vía
-     CSSOM y los escribe con espacio tras los dos puntos, así que el selector
-     sin espacio no matcheaba nunca y el idioma activo quedaba sin resaltar. */
-  .vr-hd-lang button[style*="font-weight: 700"],
-  .vr-hd-lang button[style*="font-weight:700"]{color:#0F2349!important}
-  .vr-hd-lang span{color:#CF9D59!important}
+  .vr-hd-lang button{padding:6px 4px!important}
   .vr-hd-cart{border:none!important;padding:9px!important;gap:0!important}
   .vr-hd-cart svg{stroke:#0F2349!important;width:21px!important;height:21px!important}
   .vr-hd-cart-label{display:none!important}
