@@ -179,6 +179,19 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 .vr-hito-text{font-size:clamp(14px,1.05vw,15.5px);line-height:1.8;color:#4a4a52;margin:0}
 
 /* ==========================================================================
+   BARRA SUPERIOR: fuera la fecha y la linea de utilidades
+   El bloque del medio llevaba "MEDALLAS DE SAN BENITO · USD" y la fecha del
+   dia. Ninguna de las dos ayuda a comprar, y la fecha ademas envejecia la
+   barra sin motivo. La barra queda con marca a la izquierda y controles a la
+   derecha.
+   ========================================================================== */
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right){display:none!important}
+
+/* El giro de letras se muda a los enlaces del menu, que es donde el visitante
+   efectivamente pasa el mouse. */
+.vr-menu-links a{perspective:420px}
+
+/* ==========================================================================
    MENU: panel izquierdo mas angosto
    Estaba al 50% por el auto-fit de columnas iguales. Pasa a poco mas de un
    tercio, que es lo que necesitan seis enlaces y dos listas cortas, y le deja
@@ -770,7 +783,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     </div>
     <sc-if value="{{ notMobile }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1 1 0%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2.5vw,40px);padding:0 clamp(14px,2.5vw,36px);font-size:12px;font-weight:600;letter-spacing:.1em;color:#F9F0ED;text-transform:uppercase;white-space:nowrap">
-        <span class="vr-roll" style="overflow:hidden">{{ t.util_left }}</span>
+        <span style="overflow:hidden">{{ t.util_left }}</span>
         <sc-if value="{{ showClockDate }}" hint-placeholder-val="{{ true }}"><span style="text-transform:none;letter-spacing:.03em;font-weight:500;color:rgba(249,240,237,.7);flex-shrink:0">{{ clockDate }}</span></sc-if>
       </div>
     </sc-if>
@@ -804,12 +817,12 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <button onClick="{{ closeMenu }}" aria-label="Cerrar" style="border:none;background:none;cursor:pointer;font-size:30px;line-height:1;color:#0F2349;padding:0 4px">×</button>
       </div>
       <nav class="vr-menu-links" style="display:flex;flex-direction:column;gap:4px;margin:clamp(34px,5vh,60px) 0 auto">
-        <a href="#/" onClick="{{ goHome }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_inicio }}</a>
-        <a href="#/tienda" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_tienda }}</a>
-        <a href="#/historia" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_historia }}</a>
-        <a href="#/como-comprar" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_como }}</a>
-        <a href="#/faq" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_faq }}</a>
-        <a href="#/carrito" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.cart_title }}</a>
+        <a class="vr-roll" href="#/" onClick="{{ goHome }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_inicio }}</a>
+        <a class="vr-roll" href="#/tienda" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_tienda }}</a>
+        <a class="vr-roll" href="#/historia" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_historia }}</a>
+        <a class="vr-roll" href="#/como-comprar" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_como }}</a>
+        <a class="vr-roll" href="#/faq" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_faq }}</a>
+        <a class="vr-roll" href="#/carrito" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.cart_title }}</a>
       </nav>
       <div class="vr-menu-meta" style="border-top:1px solid rgba(15,35,73,.15);padding-top:26px;margin-top:34px;display:flex;flex-wrap:wrap;gap:36px">
         <div>
