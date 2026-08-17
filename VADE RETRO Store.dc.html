@@ -113,6 +113,47 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
 
 /* ==========================================================================
+   PORTADA: capa del titular sobre la foto
+   Estos estilos estaban dentro del bloque de telefono. Al reusar la capa en
+   escritorio salia sin formato, asi que viven a nivel global y cada tamano de
+   pantalla ajusta despues sus medidas.
+   ========================================================================== */
+.vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
+  rgba(15,35,73,.55) 0%,rgba(15,35,73,.05) 20%,rgba(15,35,73,.30) 44%,
+  rgba(15,35,73,.74) 64%,rgba(15,35,73,.95) 100%)}
+.vr-m-hero-top{position:absolute;top:0;left:0;right:0;display:flex;gap:9px;
+  font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(249,240,237,.92)}
+.vr-m-hero-body{position:absolute;left:0;right:0;bottom:0}
+.vr-m-hero-kicker{font-size:10px;font-weight:700;letter-spacing:.26em;color:#CF9D59;
+  animation:vr-m-rise .7s .05s both cubic-bezier(.22,1,.36,1)}
+.vr-m-hero-title{font-family:'Cormorant Garamond',serif;font-weight:600;
+  line-height:1.02;letter-spacing:-.01em;color:#F9F0ED;margin:14px 0 0;text-wrap:balance;
+  animation:vr-m-rise .8s .14s both cubic-bezier(.22,1,.36,1)}
+.vr-m-hero-rule{width:54px;height:2px;background:#CF9D59;margin:20px 0 14px;
+  animation:vr-m-rise .8s .26s both cubic-bezier(.22,1,.36,1)}
+.vr-m-hero-foot{font-weight:600;letter-spacing:.2em;line-height:1.8;
+  text-transform:uppercase;color:rgba(249,240,237,.75);
+  animation:vr-m-rise .8s .34s both cubic-bezier(.22,1,.36,1)}
+
+/* ==========================================================================
+   BRILLO SOBRIO
+   Movimiento lento y ningun color fuera del manual: un acercamiento muy lento
+   de la foto que da vida sin que se note el gesto, y un reflejo dorado que
+   cruza el boton al pasar el mouse.
+   ========================================================================== */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes vr-kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
+  .vr-hero-a > div:first-child image-slot{animation:vr-kenburns 26s ease-out both}
+  @keyframes vr-sheen{from{transform:translateX(-120%)}to{transform:translateX(220%)}}
+  .vr-hero-b > a:nth-of-type(1){position:relative;overflow:hidden}
+  .vr-hero-b > a:nth-of-type(1)::after{content:"";position:absolute;top:0;bottom:0;width:38%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.42),transparent);
+    transform:translateX(-120%);pointer-events:none}
+  .vr-hero-b > a:nth-of-type(1):hover::after{animation:vr-sheen .9s cubic-bezier(.3,.8,.3,1)}
+}
+
+/* ==========================================================================
    ESCRITORIO: portada a pantalla partida
    Antes eran dos fotos una al lado de la otra con el texto suelto debajo, y
    el titular vivia en la seccion azul siguiente. Ahora la portada es una sola
@@ -294,27 +335,10 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-hero-a > div:first-child{aspect-ratio:auto!important;
     height:min(56vh,470px)!important;border:none!important;position:relative}
 
-  .vr-m-hero{display:block!important;position:absolute;inset:0;z-index:3;pointer-events:none}
-  /* El degradado arranca a oscurecer antes del titular: la foto es clara justo
-     donde cae el texto y a .34 el blanco sobre la medalla no se sostenía. */
-  .vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
-    rgba(15,35,73,.55) 0%,rgba(15,35,73,.05) 20%,rgba(15,35,73,.30) 44%,
-    rgba(15,35,73,.74) 64%,rgba(15,35,73,.95) 100%)}
-  .vr-m-hero-top{position:absolute;top:0;left:0;right:0;padding:15px 18px;display:flex;gap:9px;
-    font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
-    color:rgba(249,240,237,.92)}
-  .vr-m-hero-body{position:absolute;left:0;right:0;bottom:0;padding:0 18px 28px}
-  .vr-m-hero-kicker{font-size:10px;font-weight:700;letter-spacing:.26em;color:#CF9D59;
-    animation:vr-m-rise .7s .05s both cubic-bezier(.22,1,.36,1)}
-  .vr-m-hero-title{font-family:'Cormorant Garamond',serif;font-weight:600;
-    font-size:clamp(40px,11.4vw,58px);line-height:1.02;letter-spacing:-.01em;
-    color:#F9F0ED;margin:14px 0 0;text-wrap:balance;
-    animation:vr-m-rise .8s .14s both cubic-bezier(.22,1,.36,1)}
-  .vr-m-hero-rule{width:54px;height:2px;background:#CF9D59;margin:20px 0 14px;
-    animation:vr-m-rise .8s .26s both cubic-bezier(.22,1,.36,1)}
-  .vr-m-hero-foot{font-size:9.5px;font-weight:600;letter-spacing:.2em;line-height:1.8;
-    text-transform:uppercase;color:rgba(249,240,237,.75);
-    animation:vr-m-rise .8s .34s both cubic-bezier(.22,1,.36,1)}
+  .vr-m-hero-top{padding:15px 18px;font-size:9.5px}
+  .vr-m-hero-body{padding:0 18px 28px}
+  .vr-m-hero-title{font-size:clamp(40px,11.4vw,58px)}
+  .vr-m-hero-foot{font-size:9.5px}
 
   /* Bloque editorial debajo de la portada */
   .vr-hero-b{display:flex!important;flex-direction:column!important;
