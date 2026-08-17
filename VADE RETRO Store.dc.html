@@ -1159,6 +1159,7 @@ class Component extends DCLogic {
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._io) this._io.disconnect();
+    if (this._rvSafety) clearTimeout(this._rvSafety);
     if (this._clock) clearInterval(this._clock);
   }
   componentDidUpdate() { requestAnimationFrame(() => this.initReveal()); }
@@ -1240,9 +1241,31 @@ class Component extends DCLogic {
       }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
     }
 
+    // Red de seguridad: una entrada por scroll esconde contenido y confía en que
+    // algo lo vuelva a mostrar. Si el observer no dispara —navegador sin
+    // IntersectionObserver, un contenedor que no scrollea, la pestaña en
+    // segundo plano al cargar— ese texto queda invisible para siempre. Por eso
+    // todo lo que siga oculto a los 2.5s se revela igual: la animación es un
+    // adorno, la legibilidad no es negociable.
+    const mostrar = (el) => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      if (el.style.clipPath) el.style.clipPath = 'inset(0 0 0 0)';
+      el.style.willChange = 'auto';
+    };
+    if (this._rvSafety) clearTimeout(this._rvSafety);
+    {
+      this._rvSafety = setTimeout(() => {
+        document.querySelectorAll('[data-rv]').forEach((el) => {
+          if (getComputedStyle(el).opacity !== '1') mostrar(el);
+        });
+      }, 2500);
+    }
+
     document.querySelectorAll('[data-reveal]:not([data-rv])').forEach((el) => {
       el.setAttribute('data-rv', '1');
       if (reduce) return;   // sin animación: el contenido queda visible tal cual
+      if (!('IntersectionObserver' in window)) return;   // idem, sin soporte
       const cfg = FROM[el.getAttribute('data-reveal') || ''] || FROM[''];
       const hermanos = el.parentElement
         ? Array.prototype.filter.call(el.parentElement.children, (c) => c.hasAttribute('data-reveal'))
