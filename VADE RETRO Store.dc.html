@@ -70,6 +70,31 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-m-hero,.vr-m-filtbtn,.vr-m-sort{display:none}
 
 /* ==========================================================================
+   NUESTRA HISTORIA: pilares como filas editoriales
+   Eran tres columnas iguales con 01/02/03 y un filete arriba: el layout mas
+   estandar que hay. Pasan a filas a lo ancho, con el numeral grande a la
+   izquierda haciendo de ancla visual y el texto corrido a la derecha. La
+   asimetria es lo que le saca el aire de plantilla.
+   ========================================================================== */
+.vr-pillars{grid-template-columns:minmax(0,1fr)!important;gap:0!important;
+  max-width:920px;margin-left:auto;margin-right:auto}
+.vr-pillars > div{display:grid;
+  grid-template-columns:clamp(72px,11vw,150px) minmax(0,1fr);
+  column-gap:clamp(20px,3.5vw,56px);align-items:start;
+  border-top:1px solid rgba(207,157,89,.26)!important;
+  padding:clamp(22px,2.8vw,38px) 0 clamp(20px,2.4vw,32px)!important}
+.vr-pillars > div:last-child{border-bottom:1px solid rgba(207,157,89,.26)}
+/* el numeral cruza las dos filas de texto */
+.vr-pillars > div > div:first-child{grid-column:1;grid-row:1 / span 2;
+  font-style:italic;font-size:clamp(44px,5.6vw,82px)!important;
+  color:rgba(207,157,89,.38)!important;margin:0!important;
+  line-height:.9!important;letter-spacing:-.02em}
+.vr-pillars > div > div:nth-child(2){grid-column:2;grid-row:1;
+  margin-bottom:10px!important;font-size:12px!important}
+.vr-pillars > div > p{grid-column:2;grid-row:2;
+  font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
+
+/* ==========================================================================
    ESCRITORIO: portada dentro de la primera pantalla
    La foto izquierda usa aspect-ratio 4/5, que a ~570px de ancho da 712px de
    alto: mas que la pantalla menos el header. Resultado, la frase y los dos
