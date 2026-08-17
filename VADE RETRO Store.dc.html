@@ -249,12 +249,15 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     padding:18px 0 0!important;border-bottom:none!important}
 
   /* categorias: tira sobre el azul, al pie de la portada */
-  .vr-hero-list{max-width:none!important;
-    padding:0 clamp(24px,3vw,44px) clamp(18px,2vw,28px)!important}
-  .vr-hero-list > div{width:100%;flex-direction:row!important;align-items:center!important;
-    justify-content:space-between!important;gap:clamp(16px,2.4vw,40px)!important;
-    padding-top:clamp(14px,1.6vw,20px)}
-  .vr-hero-list a{color:#F9F0ED!important;font-size:clamp(14px,1.25vw,19px)!important;
+  /* La tira va pegada a la derecha, como grupo y en una sola linea. Antes se
+     repartia a lo ancho con space-between y quedaba flotando en el medio. */
+  .vr-hero-list{max-width:none!important;justify-content:flex-end!important;
+    padding:0 clamp(24px,3vw,48px) clamp(18px,2vw,28px)!important}
+  .vr-hero-list > div{width:auto!important;max-width:100%;
+    flex-direction:row!important;align-items:center!important;
+    justify-content:flex-end!important;flex-wrap:nowrap!important;
+    gap:clamp(18px,2.6vw,46px)!important;padding-top:clamp(14px,1.6vw,20px)}
+  .vr-hero-list a{color:#F9F0ED!important;font-size:clamp(13px,1.15vw,18px)!important;
     line-height:1.2!important;white-space:nowrap}
 }
 
