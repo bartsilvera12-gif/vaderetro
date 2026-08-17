@@ -46,12 +46,24 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   to{opacity:1;transform:none;clip-path:inset(0 0 0 0)}}
 @keyframes vr-rv-line{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:no-preference){
-  [data-reveal]{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both}
-  [data-reveal="wipe"]{animation-name:vr-rv-wipe;animation-duration:1.05s}
-  [data-reveal="line"]{animation-name:vr-rv-line;transform-origin:left center}
+  /* Camino A: navegadores con scroll timeline (Chrome). El scroll maneja todo. */
   @supports (animation-timeline:view()){
-    [data-reveal]{animation-timeline:view();animation-range:entry 0% cover 26%}
+    [data-reveal]{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both;
+      animation-timeline:view();animation-range:entry 0% cover 26%}
+    [data-reveal="wipe"]{animation-name:vr-rv-wipe;animation-duration:1.05s}
+    [data-reveal="line"]{animation-name:vr-rv-line;transform-origin:left center}
   }
+  /* Camino B: Safari e iOS todavia no soportan scroll timeline, y sin esto las
+     animaciones corrian todas juntas al cargar: al scrollear no quedaba nada.
+     Ahi las dispara el observer agregando .vr-in. La clase vr-anim la pone el
+     propio script, asi que si el JS no corre el contenido se ve normal. */
+  html.vr-anim [data-reveal]{opacity:0;transform:translateY(26px);
+    transition:opacity .9s cubic-bezier(.22,1,.36,1),
+      transform 1.05s cubic-bezier(.22,1,.36,1),
+      clip-path 1.05s cubic-bezier(.22,1,.36,1)}
+  html.vr-anim [data-reveal="wipe"]{transform:translateY(30px);clip-path:inset(0 0 100% 0)}
+  html.vr-anim [data-reveal="line"]{transform:scaleX(0);transform-origin:left center}
+  html.vr-anim [data-reveal].vr-in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
 }
 /* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
    así el escritorio no las ve nunca. */
@@ -1222,17 +1234,34 @@ class Component extends DCLogic {
   // de una máscara —queda bien en titulares—, 'line' dibuja un filete de
   // izquierda a derecha, 'zoom' asienta una imagen, y 'left'/'right' entran de
   // costado. Los hermanos que revelan juntos se escalonan solos.
-  // Las entradas por scroll son 100% CSS (ver @keyframes vr-rv*). Este metodo
-  // ya no esconde nada: la version anterior fijaba opacity:0 por JS y, si el
-  // observer no disparaba, el texto quedaba invisible. Solo limpia estilos
-  // inline que puedan haber quedado de esa version en una pestana cacheada.
+  // Entradas por scroll. Con soporte de animation-timeline no hace falta nada:
+  // se encarga el CSS. Sin soporte (Safari/iOS) las dispara este observer.
   initReveal() {
-    document.querySelectorAll('[data-reveal][style]').forEach((el) => {
-      if (el.style.opacity === '0' || el.style.willChange) {
-        el.style.opacity = ''; el.style.transform = ''; el.style.clipPath = '';
-        el.style.transition = ''; el.style.transitionDelay = ''; el.style.willChange = '';
-      }
+    if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
+    if (!('IntersectionObserver' in window)) return;   // sin soporte: visible tal cual
+    document.documentElement.classList.add('vr-anim');
+    if (!this._io) {
+      this._io = new IntersectionObserver((es) => {
+        es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('vr-in');
+          this._io.unobserve(e.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    }
+    document.querySelectorAll('[data-reveal]:not([data-rv])').forEach((el) => {
+      el.setAttribute('data-rv', '1');
+      const hermanos = el.parentElement
+        ? Array.prototype.filter.call(el.parentElement.children, (c) => c.hasAttribute('data-reveal'))
+        : [el];
+      el.style.transitionDelay = Math.min(Math.max(0, hermanos.indexOf(el)) * 90, 450) + 'ms';
+      this._io.observe(el);
     });
+    // Red de seguridad: si algo no se revela, se muestra igual a los 3s.
+    if (this._rvSafety) clearTimeout(this._rvSafety);
+    this._rvSafety = setTimeout(() => {
+      document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('vr-in'));
+    }, 3000);
   }
 
   parseRoute() {
