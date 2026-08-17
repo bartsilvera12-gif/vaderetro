@@ -249,10 +249,20 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     border:none!important;clip-path:inset(0)}
   /* La foto va limpia: sin titular ni velo encima. Solo un degradado corto
      arriba, para que la etiqueta de pais y moneda se lea sobre la tela clara. */
-  .vr-m-hero{display:none!important}
-  .vr-hero-a > div:first-child::before{content:"";position:absolute;top:0;left:0;right:0;
-    height:26%;z-index:2;pointer-events:none;
-    background:linear-gradient(180deg,rgba(15,35,73,.5),rgba(15,35,73,0))}
+  /* De la capa sobre la foto se muestra solo la linea de personalidad, al pie:
+     la imagen quedaba muy vacia abajo. El titular sigue viviendo en el panel,
+     asi que no hay texto repetido. El degradado es minimo y solo en los
+     extremos: arriba para la etiqueta, abajo para esta linea. El centro, que
+     es donde estan las medallas, queda limpio. */
+  .vr-m-hero{display:block!important}
+  .vr-m-hero-top,.vr-m-hero-kicker,.vr-m-hero-title,.vr-m-hero-rule{display:none!important}
+  .vr-m-hero-scrim{background:linear-gradient(180deg,
+    rgba(15,35,73,.45) 0%,rgba(15,35,73,0) 18%,
+    rgba(15,35,73,0) 64%,rgba(15,35,73,.52) 100%)!important}
+  .vr-m-hero-body{padding:0 clamp(30px,3.4vw,56px) clamp(24px,2.6vw,40px)!important}
+  .vr-m-hero-foot{font-size:clamp(8.5px,.66vw,10px);max-width:none;white-space:nowrap;
+    color:rgba(249,240,237,.82)!important}
+  .vr-panel-foot{display:none!important}
   .vr-hero-cap{position:absolute!important;right:clamp(24px,2.4vw,36px);
     top:clamp(18px,1.8vw,26px);z-index:4;margin:0!important;color:#F9F0ED!important}
   .vr-hero-cap span{color:rgba(249,240,237,.85)!important}
@@ -356,7 +366,8 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   /* el idioma venía en marfil sobre azul; sobre la barra clara hay que
      reescribirlo. El activo se distingue por su propio inline font-weight:700. */
   .vr-hd-lang button{padding:6px 4px!important}
-  .vr-hd-cart{border:none!important;padding:9px!important;gap:0!important}
+  .vr-hd-cart{border:none!important;padding:9px!important;gap:0!important;
+    min-width:0!important;justify-content:flex-end!important}
   .vr-hd-cart svg{stroke:#0F2349!important;width:21px!important;height:21px!important}
   .vr-hd-cart-label{display:none!important}
   .vr-hd-badge{position:absolute;top:0;right:0;min-width:17px!important;height:17px!important;
@@ -776,7 +787,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
       </div>
     </div>
     <div style="position:relative">
-      <div class="vr-rail" ref="{{ galleryRef }}" style="display:flex;gap:26px;overflow-x:auto;scrollbar-width:none;padding:6px max(24px,calc((100vw - 1180px) / 2 + 24px));scroll-snap-type:x proximity;touch-action:pan-y">
+      <div class="vr-rail" ref="{{ galleryRef }}" style="display:flex;gap:26px;overflow-x:auto;scrollbar-width:none;padding:6px max(24px,calc((100vw - 1180px) / 2 + 24px));scroll-snap-type:x proximity;touch-action:pan-x pan-y">
         <sc-for list="{{ items }}" as="item" hint-placeholder-count="6">
           <a class="vr-rail-card" href="#/producto/{{ item.slug }}" style="display:block;width:300px;flex-shrink:0;scroll-snap-align:start;color:#1C1C24;transition:transform .4s cubic-bezier(.22,1,.36,1)" style-hover="transform:translateY(-6px);color:#1C1C24">
             <div class="vr-rail-img" style="position:relative;height:360px;overflow:hidden;border:1px solid rgba(15,35,73,.1);background:#fff">
