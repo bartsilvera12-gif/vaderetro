@@ -76,24 +76,6 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-m-hero,.vr-m-filtbtn,.vr-panel-head,.vr-panel-foot,.vr-readmore{display:none}
 
 /* ==========================================================================
-   RULETA DE LETRAS
-   Cada caracter gira sobre un eje horizontal ubicado detras del glifo
-   (transform-origin con Z negativo), asi no gira sobre si mismo como una
-   moneda: gira como el tambor de una cerradura de valija. El desfase por
-   letra es lo que da la sensacion de ruedas independientes.
-   El texto lo parte en caracteres initRoll(); en el markup sigue siendo una
-   sola variable de idioma.
-   ========================================================================== */
-.vr-roll{perspective:420px}
-.vr-roll-ch{display:inline-block;white-space:pre;
-  transform-origin:50% 50% -0.55em;backface-visibility:hidden}
-@keyframes vr-roll-spin{from{transform:rotateX(0)}to{transform:rotateX(-360deg)}}
-@media (prefers-reduced-motion:no-preference){
-  .vr-roll:hover .vr-roll-ch{animation:vr-roll-spin .62s cubic-bezier(.32,.9,.3,1) both;
-    animation-delay:calc(var(--i) * 38ms)}
-}
-
-/* ==========================================================================
    NUESTRA HISTORIA: pilares como filas editoriales
    Eran tres columnas iguales con 01/02/03 y un filete arriba: el layout mas
    estandar que hay. Pasan a filas a lo ancho, con el numeral grande a la
@@ -186,10 +168,6 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
    derecha.
    ========================================================================== */
 .vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right){display:none!important}
-
-/* El giro de letras se muda a los enlaces del menu, que es donde el visitante
-   efectivamente pasa el mouse. */
-.vr-menu-links a{perspective:420px}
 
 /* ==========================================================================
    MENU: panel izquierdo mas angosto
@@ -817,12 +795,12 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <button onClick="{{ closeMenu }}" aria-label="Cerrar" style="border:none;background:none;cursor:pointer;font-size:30px;line-height:1;color:#0F2349;padding:0 4px">×</button>
       </div>
       <nav class="vr-menu-links" style="display:flex;flex-direction:column;gap:4px;margin:clamp(34px,5vh,60px) 0 auto">
-        <a class="vr-roll" href="#/" onClick="{{ goHome }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_inicio }}</a>
-        <a class="vr-roll" href="#/tienda" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_tienda }}</a>
-        <a class="vr-roll" href="#/historia" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_historia }}</a>
-        <a class="vr-roll" href="#/como-comprar" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_como }}</a>
-        <a class="vr-roll" href="#/faq" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_faq }}</a>
-        <a class="vr-roll" href="#/carrito" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.cart_title }}</a>
+        <a href="#/" onClick="{{ goHome }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_inicio }}</a>
+        <a href="#/tienda" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_tienda }}</a>
+        <a href="#/historia" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_historia }}</a>
+        <a href="#/como-comprar" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_como }}</a>
+        <a href="#/faq" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.nav_faq }}</a>
+        <a href="#/carrito" onClick="{{ closeMenu }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,44px);font-weight:500;line-height:1.25;color:#0F2349" style-hover="color:#b9873f">{{ t.cart_title }}</a>
       </nav>
       <div class="vr-menu-meta" style="border-top:1px solid rgba(15,35,73,.15);padding-top:26px;margin-top:34px;display:flex;flex-wrap:wrap;gap:36px">
         <div>
@@ -1177,7 +1155,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
             </div>
 
             <div class="vr-ticket-title" style="position:absolute;left:7.7%;top:38%;width:56%;font-family:'Cormorant Garamond',serif;font-size:5cqw;font-weight:600;line-height:1.08;letter-spacing:-.01em;color:#0F2349">{{ s.title }}</div>
-            <div class="vr-ticket-foot" style="position:absolute;left:7.7%;top:80%;font-size:1.7cqw;font-weight:500;letter-spacing:.016em;color:#0F2349;white-space:nowrap;text-transform:uppercase">{{ t.ticket_footer }}</div>
           </div>
         </sc-for>
       </div>
@@ -1558,26 +1535,16 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onResize);
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
     this.parseRoute();
-    requestAnimationFrame(() => { this.initReveal(); this.initRoll(); });
-    // El menu se monta despues, en un ciclo de render que no llega a disparar
-    // initRoll, y sus enlaces quedaban sin partir en letras. Un observador
-    // vuelve a pasar cuando aparecen nodos nuevos. No se cicla: initRoll compara
-    // contra data-roll-src y la segunda pasada no hace nada.
-    this._rollObs = new MutationObserver(() => {
-      if (this._rollT) return;
-      this._rollT = setTimeout(() => { this._rollT = null; this.initRoll(); }, 60);
-    });
-    this._rollObs.observe(document.body, { childList: true, subtree: true });
+    requestAnimationFrame(() => this.initReveal());
+
   }
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
-    if (this._rollObs) this._rollObs.disconnect();
-    if (this._rollT) clearTimeout(this._rollT);
   }
-  componentDidUpdate() { requestAnimationFrame(() => { this.initReveal(); this.initRoll(); }); }
+  componentDidUpdate() { requestAnimationFrame(() => this.initReveal()); }
   closeMenu() {
     if (!this.state.menuOpen || this.state.menuClosing) return;
     this.setState({ menuClosing: true });
@@ -1624,25 +1591,6 @@ class Component extends DCLogic {
   // costado. Los hermanos que revelan juntos se escalonan solos.
   // Entradas por scroll. Con soporte de animation-timeline no hace falta nada:
   // se encarga el CSS. Sin soporte (Safari/iOS) las dispara este observer.
-  // Parte el texto de .vr-roll en un <span> por caracter para que cada uno
-  // pueda girar con su propio desfase. Se rehace si el texto cambio (por
-  // ejemplo al cambiar de idioma) y se saltea si ya esta partido, para no
-  // reconstruirlo en cada render.
-  initRoll() {
-    document.querySelectorAll('.vr-roll').forEach((el) => {
-      const actual = el.textContent.replace(/\u00a0/g, ' ');
-      if (el.getAttribute('data-roll-src') === actual) return;
-      el.setAttribute('data-roll-src', actual);
-      el.textContent = '';
-      Array.prototype.forEach.call(actual, (ch, i) => {
-        const sp = document.createElement('span');
-        sp.className = 'vr-roll-ch';
-        sp.textContent = ch === ' ' ? '\u00a0' : ch;
-        sp.style.setProperty('--i', i);
-        el.appendChild(sp);
-      });
-    });
-  }
   initReveal() {
     if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
     if (!('IntersectionObserver' in window)) return;   // sin soporte: visible tal cual
