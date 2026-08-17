@@ -67,7 +67,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 }
 /* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
    así el escritorio no las ve nunca. */
-.vr-m-hero,.vr-m-filtbtn,.vr-panel-head,.vr-panel-foot{display:none}
+.vr-m-hero,.vr-m-filtbtn,.vr-panel-head,.vr-panel-foot,.vr-readmore{display:none}
 
 /* ==========================================================================
    RULETA DE LETRAS
@@ -111,6 +111,26 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   margin-bottom:10px!important;font-size:12px!important}
 .vr-pillars > div > p{grid-column:2;grid-row:2;
   font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
+
+/* ==========================================================================
+   NUESTRA HISTORIA: bloque de marca
+   Texto largo, asi que manda la lectura: una sola columna angosta, medida de
+   linea corta y jerarquia por tamano y color, no por cajas ni recuadros.
+   ========================================================================== */
+.vr-escudo-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-escudo-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:#0F2349;margin:16px 0 0}
+.vr-escudo-rule{width:54px;height:2px;background:#CF9D59;margin:26px 0 34px}
+.vr-escudo-p{font-size:clamp(15px,1.15vw,16.5px);line-height:1.85;color:#4a4a52;
+  margin:0 0 22px;max-width:62ch}
+.vr-escudo-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(22px,2.3vw,31px);line-height:1.35;color:#0F2349;
+  margin:36px 0;padding-left:clamp(18px,2vw,28px);
+  border-left:2px solid #CF9D59}
+.vr-escudo-cierre{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,1.8vw,25px);
+  line-height:1.45;color:#0F2349;margin:34px 0 0}
+.vr-escudo-final{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
+  color:#CF9D59;margin:22px 0 0}
 
 /* ==========================================================================
    ORDEN DE LA TIENDA: menu propio en todos los anchos
@@ -276,6 +296,18 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     font-size:clamp(30px,3.3vw,54px);line-height:1.04;letter-spacing:-.01em;
     color:#F9F0ED;margin:14px 0 0;text-wrap:balance}
   .vr-panel-rule{width:54px;height:2px;background:#CF9D59;margin:22px 0 0}
+  /* "Leer mas" junto al parrafo. Se ordena con order porque el markup va al
+     final, para no correr los nth-of-type de los dos botones. */
+  .vr-hero-b p{order:1}
+  .vr-readmore{display:inline-flex!important;order:2;align-items:center;gap:10px;
+    align-self:flex-start;margin-top:16px;
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#CF9D59!important;border-bottom:1px solid rgba(207,157,89,.45);padding-bottom:5px}
+  .vr-readmore:hover{color:#e0b475!important;border-bottom-color:#e0b475}
+  .vr-readmore-ar{font-size:15px}
+  .vr-hero-b > div:nth-child(3){order:3}
+  .vr-hero-b > a:nth-of-type(1){order:4}
+  .vr-hero-b > a:nth-of-type(2){order:5}
   .vr-panel-foot{display:block!important;order:10;margin-top:clamp(24px,2.6vw,40px);
     font-size:9.5px;font-weight:600;letter-spacing:.2em;line-height:1.9;
     text-transform:uppercase;color:rgba(249,240,237,.6)}
@@ -435,9 +467,13 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     padding:40px 18px 8px!important;min-width:0!important}
   .vr-hero-b p{order:1;font-size:clamp(24px,6.6vw,32px)!important;line-height:1.35!important;
     margin:0!important;max-width:none!important}
-  .vr-hero-b > div:nth-child(3){order:2;max-width:none!important;margin:26px 0 0!important}
-  .vr-hero-b > a:nth-of-type(1){order:3}
-  .vr-hero-b > a:nth-of-type(2){order:4}
+  .vr-readmore{display:inline-flex!important;order:2;align-items:center;gap:9px;
+    align-self:flex-start;margin-top:18px;font-size:10.5px;font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;color:#b9873f!important;
+    border-bottom:1px solid rgba(185,135,63,.5);padding-bottom:5px}
+  .vr-hero-b > div:nth-child(3){order:3;max-width:none!important;margin:26px 0 0!important}
+  .vr-hero-b > a:nth-of-type(1){order:4}
+  .vr-hero-b > a:nth-of-type(2){order:5}
   .vr-hero-b a{max-width:none!important;padding:19px 0!important;font-size:11.5px!important}
   /* Color en el tramo editorial: entre la portada y la selección quedaba una
      extensión plana de marfil. Filete dorado de apertura, la acción principal
@@ -751,6 +787,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
           <div class="vr-panel-rule"></div>
         </div>
         <div class="vr-panel-foot">{{ t.personalidad }}</div>
+        <a class="vr-readmore" href="#/historia"><span>{{ t.leer_mas }}</span><span class="vr-readmore-ar">→</span></a>
       </div>
     </div>
     <div class="vr-hero-list" style="max-width:1400px;margin:0 auto;padding:0 clamp(20px,3vw,40px) clamp(28px,4vw,48px);display:flex;justify-content:flex-end">
@@ -973,6 +1010,21 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     <div style="color:#CF9D59;font-size:11px;font-weight:600;letter-spacing:.34em;margin-bottom:18px">{{ t.esencia_kicker }}</div>
     <h1 data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(38px,4.6vw,58px);color:#0F2349;margin:0 auto;max-width:760px;line-height:1.1">{{ t.nav_historia }}</h1>
     <div style="font-size:12px;font-weight:600;letter-spacing:.2em;color:rgba(28,28,36,.45);margin-top:26px">{{ t.personalidad }}</div>
+  </section>
+  <!-- Texto de marca provisto por la cliente. -->
+  <section class="vr-escudo" style="padding:clamp(60px,7vw,110px) 24px;background:#F9F0ED">
+    <div class="vr-escudo-box" style="max-width:760px;margin:0 auto">
+      <div data-reveal class="vr-escudo-kicker">{{ t.escudo_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-escudo-h">{{ t.escudo_h }}</h2>
+      <div data-reveal="line" class="vr-escudo-rule"></div>
+      <p data-reveal class="vr-escudo-p">{{ t.escudo_p1 }}</p>
+      <p data-reveal class="vr-escudo-p">{{ t.escudo_p2 }}</p>
+      <p data-reveal class="vr-escudo-p">{{ t.escudo_p3 }}</p>
+      <p data-reveal class="vr-escudo-p">{{ t.escudo_p4 }}</p>
+      <blockquote data-reveal="wipe" class="vr-escudo-quote">{{ t.escudo_quote }}</blockquote>
+      <p data-reveal class="vr-escudo-cierre">{{ t.escudo_cierre }}</p>
+      <p data-reveal class="vr-escudo-final">{{ t.escudo_final }}</p>
+    </div>
   </section>
   <section class="vr-hist-body" style="position:relative;overflow:hidden;padding:100px 24px;background:#0F2349;color:#F9F0ED">
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:760px;height:760px;border-radius:50%;border:1px solid rgba(207,157,89,.12);pointer-events:none"></div>
@@ -1768,6 +1820,16 @@ Component.T = {
     steps_kicker: 'PROCESO DE COMPRA', steps_title: 'Cómo comprar',
     steps: ['Elegí tu medalla.', 'Agregala al carrito.', 'Completá tus datos.', 'Confirmá tu pedido.', 'Accedé al link de pago.'],
     steps_note: 'El pago se realiza a través de un link externo seguro que recibirás al confirmar tu pedido.',
+    leer_mas: 'Leer más',
+    escudo_kicker: 'LA MEDALLA DE SAN BENITO',
+    escudo_h: 'Más que una medalla, un escudo de fe',
+    escudo_p1: 'La Medalla de San Benito no es una joya cualquiera. Es un símbolo sagrado que ha acompañado durante siglos a quienes buscan caminar bajo la protección de Dios, encontrar fortaleza en los momentos difíciles y mantener su corazón lejos del mal.',
+    escudo_p2: 'Cada cruz, cada letra y cada inscripción guardan una poderosa oración de fe: una declaración que rechaza la oscuridad y elige la luz. Llevarla cerca del corazón es recordar que, incluso en los días de miedo, incertidumbre o dolor, nunca caminamos solos.',
+    escudo_p3: 'No promete una vida sin pruebas, pero sí representa la fuerza espiritual para enfrentarlas. Es una presencia silenciosa que inspira paz, esperanza y confianza; un recordatorio diario de que la fe puede ser más fuerte que cualquier adversidad.',
+    escudo_p4: 'Puedes llevarla contigo, colocarla en tu hogar o regalarla a alguien que amas como una profunda expresión de cuidado:',
+    escudo_quote: '«Deseo que Dios te acompañe, te fortalezca y proteja cada uno de tus pasos».',
+    escudo_cierre: 'Una medalla. Una oración. Un símbolo eterno de protección, amor y fe.',
+    escudo_final: 'Llévala cerca. Cree profundamente. Camina protegido.',
     esencia_kicker: 'NUESTRA ESENCIA',
     esencia_intro: 'VADE RETRO transforma un símbolo de fe en una presencia protectora para la vida cotidiana. La medalla de San Benito representa resguardo espiritual; la cadena expresa continuidad, unión y cercanía con aquello que más importa: la familia y el hogar.',
     personalidad: 'FIRME · PROTECTORA · SERENA · ESPIRITUAL · CERCANA',
@@ -1854,6 +1916,16 @@ Component.T = {
     steps_kicker: 'HOW IT WORKS', steps_title: 'How to buy',
     steps: ['Choose your medal.', 'Add it to the cart.', 'Fill in your details.', 'Confirm your order.', 'Access the payment link.'],
     steps_note: 'Payment is made through a secure external link you receive after confirming your order.',
+    leer_mas: 'Read more',
+    escudo_kicker: 'THE SAINT BENEDICT MEDAL',
+    escudo_h: 'More than a medal, a shield of faith',
+    escudo_p1: 'The Saint Benedict Medal is not just another piece of jewellery. It is a sacred symbol that for centuries has accompanied those who seek to walk under God\'s protection, to find strength in difficult moments and to keep their heart far from evil.',
+    escudo_p2: 'Every cross, every letter and every inscription holds a powerful prayer of faith: a declaration that rejects darkness and chooses light. To carry it close to the heart is to remember that, even on days of fear, uncertainty or pain, we never walk alone.',
+    escudo_p3: 'It does not promise a life without trials, but it does stand for the spiritual strength to face them. It is a silent presence that inspires peace, hope and confidence; a daily reminder that faith can be stronger than any adversity.',
+    escudo_p4: 'You can carry it with you, place it in your home or give it to someone you love as a deep expression of care:',
+    escudo_quote: '“May God be with you, give you strength and protect every one of your steps.”',
+    escudo_cierre: 'One medal. One prayer. An eternal symbol of protection, love and faith.',
+    escudo_final: 'Keep it close. Believe deeply. Walk protected.',
     esencia_kicker: 'OUR ESSENCE',
     esencia_intro: 'VADE RETRO turns a symbol of faith into a protective presence for everyday life. The Saint Benedict medal represents spiritual shelter; the chain expresses continuity, union and closeness to what matters most: family and home.',
     personalidad: 'FIRM · PROTECTIVE · SERENE · SPIRITUAL · CLOSE',
