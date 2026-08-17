@@ -279,7 +279,11 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-hd-cart:hover{background:rgba(15,35,73,.05)!important;border-color:#CF9D59!important}
 .vr-hd-cart svg{stroke:#0F2349!important}
 .vr-hd-cart-label{color:#0F2349!important}
-.vr-hd-burger span{background:#0F2349!important}
+/* Una raya por color del manual: Azul Protector, Dorado Sagrado y Carbon.
+   Marfil queda afuera porque la barra es marfil y esa raya no se veria. */
+.vr-hd-burger span:nth-child(1){background:#0F2349!important}
+.vr-hd-burger span:nth-child(2){background:#CF9D59!important}
+.vr-hd-burger span:nth-child(3){background:#1C1C24!important}
 
 /* Al cambiar de idioma cambiaban de lugar el idioma y la fecha: "CARRITO" mide
    unos 35px mas que "CART", y como el bloque va anclado a la derecha ese salto
