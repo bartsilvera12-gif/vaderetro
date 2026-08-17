@@ -79,12 +79,16 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 @media (min-width:760px){
   .vr-hero-grid{padding-top:clamp(20px,2.4vw,34px)!important;
     padding-bottom:clamp(14px,1.8vw,24px)!important}
-  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(60vh,540px)}
+  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(48vh,450px)}
   .vr-hero-b{padding-top:0!important}
-  .vr-hero-b > div:first-child{aspect-ratio:auto!important;height:min(32vh,290px)}
-  .vr-hero-b p{margin-top:22px!important}
-  .vr-hero-b > div:nth-child(3){margin-top:22px!important}
-  .vr-hero-list{padding-top:0!important}
+  .vr-hero-b > div:first-child{aspect-ratio:auto!important;height:min(25vh,235px)}
+  .vr-hero-b p{margin-top:20px!important}
+  .vr-hero-b > div:nth-child(3){margin-top:18px!important}
+  .vr-hero-b a{padding:14px 0 12px!important}
+  /* La lista de categorias va debajo de la grilla, asi que es lo ultimo en
+     entrar: si no se la aprieta, queda cortada por el borde de la pantalla. */
+  .vr-hero-list{padding-top:0!important;padding-bottom:clamp(18px,2vw,28px)!important}
+  .vr-hero-list a{line-height:1.2!important}
 }
 
 /* Entrada de la portada al cargar. Es la primera pantalla: si no se mueve nada
