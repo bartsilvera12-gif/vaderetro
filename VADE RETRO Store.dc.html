@@ -67,7 +67,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 }
 /* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
    así el escritorio no las ve nunca. */
-.vr-m-hero,.vr-m-filtbtn,.vr-m-sort{display:none}
+.vr-m-hero,.vr-m-filtbtn,.vr-panel-head,.vr-panel-foot{display:none}
 
 /* ==========================================================================
    RULETA DE LETRAS
@@ -111,6 +111,28 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   margin-bottom:10px!important;font-size:12px!important}
 .vr-pillars > div > p{grid-column:2;grid-row:2;
   font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
+
+/* ==========================================================================
+   ORDEN DE LA TIENDA: menu propio en todos los anchos
+   El desplegable de un <select> lo dibuja el sistema operativo y no acepta
+   CSS: en macOS aparece con su panel gris y el resaltado azul, ajeno a la
+   marca. Estaba resuelto solo en telefono; ahora rige tambien en escritorio.
+   ========================================================================== */
+.vr-shop-bar select{display:none!important}
+.vr-m-sort{display:block!important;position:relative}
+.vr-m-sort-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;
+  cursor:pointer;padding:6px 0;white-space:nowrap;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:#0F2349}
+.vr-m-sort-caret{width:7px;height:7px;border-right:1.5px solid #CF9D59;
+  border-bottom:1.5px solid #CF9D59;transform:translateY(-2px) rotate(45deg)}
+.vr-m-sort-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:40;min-width:196px;
+  background:#F9F0ED;border:1px solid rgba(15,35,73,.12);border-top:2px solid #CF9D59;
+  box-shadow:0 18px 40px rgba(15,35,73,.16);animation:vr-m-rise .22s both}
+.vr-m-sort-opt{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;
+  border-bottom:1px solid rgba(15,35,73,.08);cursor:pointer;text-align:left;padding:13px 15px;
+  font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#0F2349}
+.vr-m-sort-opt:last-child{border-bottom:none}
+.vr-m-sort-mark{width:9px;color:#CF9D59;font-weight:700}
 
 /* ==========================================================================
    BARRA SUPERIOR EN MARFIL SERENO
@@ -225,25 +247,28 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      borde inferior de la foto, que sobre el azul se veia como un destello. */
   .vr-hero-a > div:first-child{height:100%!important;aspect-ratio:auto!important;
     border:none!important;clip-path:inset(0)}
-  .vr-m-hero{display:block!important}
-  .vr-m-hero-top{display:none}
-  .vr-m-hero-body{padding:0 clamp(32px,3.6vw,60px) clamp(38px,4vw,64px)!important}
-  /* Titular mas chico y acotado en ancho: a 72px cruzaba la foto de lado a
-     lado y tapaba las medallas. */
-  /* En una sola linea: el cuerpo va atado al ancho de ventana para que la
-     frase mas larga ("PROTECTION THAT GOES WITH YOU", 29 caracteres) entre
-     sin cortarse en la columna de la foto. */
-  .vr-m-hero-title{font-size:clamp(22px,3.05vw,50px)!important;
-    max-width:none;white-space:nowrap;text-wrap:nowrap}
-  .vr-m-hero-foot{max-width:none;font-size:clamp(8px,.62vw,9.5px);white-space:nowrap}
-  /* El degradado se concentra abajo, donde va el texto: el centro de la foto,
-     que es donde estan las medallas, queda limpio. */
-  .vr-m-hero-scrim{background:linear-gradient(180deg,
-    rgba(15,35,73,.38) 0%,rgba(15,35,73,0) 20%,rgba(15,35,73,0) 44%,
-    rgba(15,35,73,.5) 70%,rgba(15,35,73,.92) 92%,rgba(15,35,73,1) 100%)!important}
+  /* La foto va limpia: sin titular ni velo encima. Solo un degradado corto
+     arriba, para que la etiqueta de pais y moneda se lea sobre la tela clara. */
+  .vr-m-hero{display:none!important}
+  .vr-hero-a > div:first-child::before{content:"";position:absolute;top:0;left:0;right:0;
+    height:26%;z-index:2;pointer-events:none;
+    background:linear-gradient(180deg,rgba(15,35,73,.5),rgba(15,35,73,0))}
   .vr-hero-cap{position:absolute!important;right:clamp(24px,2.4vw,36px);
     top:clamp(18px,1.8vw,26px);z-index:4;margin:0!important;color:#F9F0ED!important}
-  .vr-hero-cap span{color:rgba(249,240,237,.8)!important}
+  .vr-hero-cap span{color:rgba(249,240,237,.85)!important}
+
+  /* El titular pasa al panel derecho, que estaba practicamente vacio. Va al
+     final del markup y se reubica con order, para no correr los indices
+     nth-child de los hijos que ya tenian reglas. */
+  .vr-panel-head{display:block!important;order:-2;margin-bottom:clamp(20px,2.2vw,34px)}
+  .vr-panel-kicker{font-size:10px;font-weight:700;letter-spacing:.26em;color:#CF9D59}
+  .vr-panel-title{font-family:'Cormorant Garamond',serif;font-weight:600;
+    font-size:clamp(30px,3.3vw,54px);line-height:1.04;letter-spacing:-.01em;
+    color:#F9F0ED;margin:14px 0 0;text-wrap:balance}
+  .vr-panel-rule{width:54px;height:2px;background:#CF9D59;margin:22px 0 0}
+  .vr-panel-foot{display:block!important;order:10;margin-top:clamp(24px,2.6vw,40px);
+    font-size:9.5px;font-weight:600;letter-spacing:.2em;line-height:1.9;
+    text-transform:uppercase;color:rgba(249,240,237,.6)}
 
   /* derecha: panel azul con el texto y las acciones, centrado vertical */
   .vr-hero-b{background:#0F2349!important;justify-content:center!important;
@@ -449,21 +474,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   .vr-m-filtbtn{display:inline-flex!important;align-items:center;gap:7px;
     background:none;border:none;cursor:pointer;padding:6px 0;white-space:nowrap;
     font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#0F2349}
-  .vr-shop-bar select{display:none!important}
-  .vr-m-sort{display:block!important;position:relative}
-  .vr-m-sort-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;
-    cursor:pointer;padding:6px 0;white-space:nowrap;font-size:11px;font-weight:700;
-    letter-spacing:.16em;text-transform:uppercase;color:#0F2349}
-  .vr-m-sort-caret{width:7px;height:7px;border-right:1.5px solid #CF9D59;
-    border-bottom:1.5px solid #CF9D59;transform:translateY(-2px) rotate(45deg)}
-  .vr-m-sort-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:40;min-width:196px;
-    background:#F9F0ED;border:1px solid rgba(15,35,73,.12);border-top:2px solid #CF9D59;
-    box-shadow:0 18px 40px rgba(15,35,73,.16);animation:vr-m-rise .22s both}
-  .vr-m-sort-opt{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;
-    border-bottom:1px solid rgba(15,35,73,.08);cursor:pointer;text-align:left;padding:13px 15px;
-    font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#0F2349}
-  .vr-m-sort-opt:last-child{border-bottom:none}
-  .vr-m-sort-mark{width:9px;color:#CF9D59;font-weight:700}
+  .vr-m-sort-btn{font-size:11px}
   /* Cuando se abren, los filtros van a dos columnas para no empujar el catálogo
      media pantalla hacia abajo: categorías junto a material, precio junto a
      disponibilidad, y limpiar cruzando el ancho. */
@@ -718,6 +729,16 @@ select,option,svg text{font-family:Montserrat,sans-serif}
         <a href="#/historia" style="display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:460px;padding:16px 0 0;font-size:12px;font-weight:600;letter-spacing:.16em;color:rgba(15,35,73,.62);text-transform:uppercase" style-hover="color:#b9873f">
           <span>{{ t.hero_cta2 }}</span><span style="font-size:18px">→</span>
         </a>
+        <!-- Titular del panel derecho, propio de escritorio. Va al final del
+             markup y se reubica con order, para no correr los indices
+             nth-child de los hijos que ya tienen reglas. Sale de las mismas
+             variables que la capa del telefono, que aca queda apagada. -->
+        <div class="vr-panel-head">
+          <div class="vr-panel-kicker">[ {{ t.bienvenido }} ]</div>
+          <h1 class="vr-panel-title">{{ t.giant1 }} {{ t.giant2 }}</h1>
+          <div class="vr-panel-rule"></div>
+        </div>
+        <div class="vr-panel-foot">{{ t.personalidad }}</div>
       </div>
     </div>
     <div class="vr-hero-list" style="max-width:1400px;margin:0 auto;padding:0 clamp(20px,3vw,40px) clamp(28px,4vw,48px);display:flex;justify-content:flex-end">
