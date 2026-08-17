@@ -22,7 +22,13 @@
 <script src="./velaris.js"></script>
 <script src="./dither.js"></script>
 <style>
-body{margin:0;background:#F9F0ED;color:#1C1C24;font-family:Montserrat,sans-serif;-webkit-font-smoothing:antialiased}
+/* El lienzo del navegador toma el color del pie. Debajo del contenido, iOS
+   pinta el fondo del documento: siendo marfil, quedaba una franja clara bajo
+   el pie carbon, en la zona de la barra de Safari. Al declararlo en html, el
+   fondo de body deja de propagarse al lienzo y pinta solo su propia caja, que
+   es exactamente el alto del contenido. */
+html{background:#1C1C24}
+body{margin:0;background:#F9F0ED;color:#1C1C24;font-family:Montserrat,sans-serif;-webkit-font-smoothing:antialiased;min-height:100%}
 a{color:#0F2349;text-decoration:none;transition:color .25s}a:hover{color:#CF9D59}
 input,textarea,select,button{font-family:Montserrat,sans-serif}
 input:focus,textarea:focus{outline:none;border-color:#CF9D59 !important}
