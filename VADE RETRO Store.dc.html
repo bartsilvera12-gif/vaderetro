@@ -113,6 +113,49 @@ select,option,svg text{font-family:Montserrat,sans-serif}
   font-size:clamp(14px,1.15vw,15.5px)!important;max-width:56ch}
 
 /* ==========================================================================
+   NUESTRA HISTORIA: el origen del nombre
+   La marca se llama como la primera linea de la oracion grabada en el borde
+   de la medalla. Es el dato que sostiene la pagina, asi que va solo, grande y
+   sin competencia visual.
+   ========================================================================== */
+.vr-origen{background:#0F2349;padding:clamp(64px,8vw,120px) 24px;text-align:center}
+.vr-origen-box{max-width:820px;margin:0 auto}
+.vr-origen-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-origen-latin{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(38px,6vw,88px);line-height:1.05;color:#F9F0ED;margin:22px 0 0}
+.vr-origen-trad{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,2vw,26px);
+  color:#CF9D59;margin:14px 0 0}
+.vr-origen-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.85;
+  color:rgba(249,240,237,.8);margin:clamp(28px,3vw,44px) auto 0;max-width:60ch}
+
+/* Inscripciones. El bloque reutiliza .vr-pillars, pero el numeral pasa a ser la
+   abreviatura grabada (CSSML, NDSMD...): son letras, no numeros, asi que van
+   sin cursiva, mas chicas y espaciadas, como estan en el metal. */
+.vr-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59;
+  margin-bottom:18px}
+.vr-pillars > div > div:first-child{font-style:normal!important;
+  font-size:clamp(15px,1.35vw,20px)!important;letter-spacing:.12em!important;
+  font-weight:600!important;color:#CF9D59!important;line-height:1.25!important;
+  padding-top:.3em}
+.vr-pillars > div > div:nth-child(2){font-size:11px!important;letter-spacing:.16em!important;
+  color:rgba(249,240,237,.95)!important;font-family:'Cormorant Garamond',serif;
+  font-size:clamp(15px,1.5vw,21px)!important;letter-spacing:.04em!important}
+
+/* Linea de tiempo */
+.vr-linea{background:#F9F0ED;padding:clamp(60px,7vw,110px) 24px}
+.vr-linea-box{max-width:820px;margin:0 auto}
+.vr-linea-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-linea-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(28px,3.2vw,44px);color:#0F2349;margin:14px 0 clamp(30px,3.4vw,50px)}
+.vr-hito{display:grid;grid-template-columns:clamp(70px,8vw,110px) minmax(0,1fr);
+  column-gap:clamp(18px,2.6vw,40px);align-items:baseline;
+  border-top:1px solid rgba(15,35,73,.14);padding:clamp(18px,2vw,26px) 0}
+.vr-linea-lista > div:last-child{border-bottom:1px solid rgba(15,35,73,.14)}
+.vr-hito-year{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(19px,1.9vw,26px);color:#CF9D59;line-height:1.2}
+.vr-hito-text{font-size:clamp(14px,1.05vw,15.5px);line-height:1.8;color:#4a4a52;margin:0}
+
+/* ==========================================================================
    NUESTRA HISTORIA: bloque de marca
    Texto largo, asi que manda la lectura: una sola columna angosta, medida de
    linea corta y jerarquia por tamano y color, no por cajas ni recuadros.
@@ -455,8 +498,11 @@ select,option,svg text{font-family:Montserrat,sans-serif}
      Un encuadre más cerrado sobre las medallas necesita una foto con más aire
      a los costados; con esta no se puede sin cortarlas. */
   .vr-hero-a > div:first-child{aspect-ratio:auto!important;
-    height:min(56vh,470px)!important;border:none!important;position:relative}
+    height:min(46vh,400px)!important;border:none!important;position:relative}
 
+  /* Enciende la capa del titular sobre la foto. Se perdio al mover los estilos
+     a global y el telefono quedo con la portada sin texto encima. */
+  .vr-m-hero{display:block!important}
   .vr-m-hero-top{padding:15px 18px;font-size:9.5px}
   .vr-m-hero-body{padding:0 18px 28px}
   .vr-m-hero-title{font-size:clamp(40px,11.4vw,58px)}
@@ -464,7 +510,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 
   /* Bloque editorial debajo de la portada */
   .vr-hero-b{display:flex!important;flex-direction:column!important;
-    padding:40px 18px 8px!important;min-width:0!important}
+    padding:26px 18px 8px!important;min-width:0!important}
   .vr-hero-b p{order:1;font-size:clamp(24px,6.6vw,32px)!important;line-height:1.35!important;
     margin:0!important;max-width:none!important}
   .vr-readmore{display:inline-flex!important;order:2;align-items:center;gap:9px;
@@ -1011,6 +1057,14 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     <h1 data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(38px,4.6vw,58px);color:#0F2349;margin:0 auto;max-width:760px;line-height:1.1">{{ t.nav_historia }}</h1>
     <div style="font-size:12px;font-weight:600;letter-spacing:.2em;color:rgba(28,28,36,.45);margin-top:26px">{{ t.personalidad }}</div>
   </section>
+  <section class="vr-origen">
+    <div class="vr-origen-box">
+      <div data-reveal class="vr-origen-kicker">{{ t.origen_kicker }}</div>
+      <div data-reveal="wipe" class="vr-origen-latin">{{ t.origen_latin }}</div>
+      <div data-reveal class="vr-origen-trad">{{ t.origen_trad }}</div>
+      <p data-reveal class="vr-origen-p">{{ t.origen_p }}</p>
+    </div>
+  </section>
   <!-- Texto de marca provisto por la cliente. -->
   <section class="vr-escudo" style="padding:clamp(60px,7vw,110px) 24px;background:#F9F0ED">
     <div class="vr-escudo-box" style="max-width:760px;margin:0 auto">
@@ -1031,7 +1085,8 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;height:560px;border-radius:50%;border:1px solid rgba(207,157,89,.08);pointer-events:none"></div>
     <div class="vr-deco-pax" style="position:absolute;bottom:-60px;right:20px;font-family:'Cormorant Garamond',serif;font-size:280px;line-height:1;color:rgba(249,240,237,.04);pointer-events:none;user-select:none">PAX</div>
     <div style="position:relative;max-width:1000px;margin:0 auto;text-align:center">
-      <p data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.6vw,30px);font-weight:500;line-height:1.5;margin:0 auto 70px;max-width:760px;color:rgba(249,240,237,.92)">{{ t.esencia_intro }}</p>
+      <div data-reveal class="vr-medalla-kicker">{{ t.medalla_kicker }}</div>
+      <p data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.6vw,30px);font-weight:500;line-height:1.5;margin:0 auto 60px;max-width:760px;color:rgba(249,240,237,.92)">{{ t.medalla_intro }}</p>
       <div class="vr-pillars" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:44px;text-align:left">
         <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
           <div data-reveal style="border-top:1px solid rgba(207,157,89,.4);padding-top:22px">
@@ -1042,6 +1097,20 @@ select,option,svg text{font-family:Montserrat,sans-serif}
         </sc-for>
       </div>
       <p data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:#CF9D59;margin:70px 0 0">{{ t.esencia_quote }}</p>
+    </div>
+  </section>
+  <section class="vr-linea">
+    <div class="vr-linea-box">
+      <div data-reveal class="vr-linea-kicker">{{ t.hist_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-linea-h">{{ t.hist_title }}</h2>
+      <div class="vr-linea-lista">
+        <sc-for list="{{ hitos }}" as="h" hint-placeholder-count="6">
+          <div data-reveal class="vr-hito">
+            <div class="vr-hito-year">{{ h.year }}</div>
+            <p class="vr-hito-text">{{ h.text }}</p>
+          </div>
+        </sc-for>
+      </div>
     </div>
   </section>
   <section class="vr-hist-cta" style="padding:84px 24px;background:#16305e;text-align:center">
@@ -1724,7 +1793,8 @@ class Component extends DCLogic {
       toggleFilters: () => this.setState({ filtersOpen: !S.filtersOpen }),
       filterMark: S.filtersOpen ? '−' : '+',
       steps: T.steps.map((s, i) => Object.assign({ num: '0' + (i + 1), title: s }, Component.TICKET_PALETTE[i % Component.TICKET_PALETTE.length])),
-      pillars: T.pillars.map((p, i) => ({ num: '0' + (i + 1), name: p.name, desc: p.desc })),
+      pillars: T.pillars.map((p, i) => ({ num: p.abbr || ('0' + (i + 1)), name: p.name, desc: p.desc })),
+      hitos: T.hitos,
       trust: T.trust, heroList: T.hero_list,
       faqRow1: T.faqs.slice(0, 2), faqRow2: T.faqs.slice(2, 4), faqRow3: T.faqs.slice(4, 6),
       faqs: T.faqs.map((f, i) => ({
@@ -1833,10 +1903,29 @@ Component.T = {
     esencia_kicker: 'NUESTRA ESENCIA',
     esencia_intro: 'VADE RETRO transforma un símbolo de fe en una presencia protectora para la vida cotidiana. La medalla de San Benito representa resguardo espiritual; la cadena expresa continuidad, unión y cercanía con aquello que más importa: la familia y el hogar.',
     personalidad: 'FIRME · PROTECTORA · SERENA · ESPIRITUAL · CERCANA',
+    origen_kicker: 'EL ORIGEN DEL NOMBRE',
+    origen_latin: 'Vade retro Satana',
+    origen_trad: '«Apártate, Satanás»',
+    origen_p: 'No es una frase elegida al azar. Son las primeras palabras de la oración grabada en el borde de la medalla de San Benito, donde aparece abreviada como V·R·S·N·S·M·V. La marca lleva el nombre de lo que la medalla dice.',
+    medalla_kicker: 'LO QUE DICE LA MEDALLA',
+    medalla_intro: 'Cada letra grabada es la inicial de una palabra latina. Juntas forman una oración de protección cuyo significado permaneció olvidado durante siglos.',
+    hist_kicker: 'CATORCE SIGLOS',
+    hist_title: 'Una historia larga',
+    hitos: [
+      { year: '480', text: 'Nace Benito en Nursia, en la actual Umbría, el 2 de marzo.' },
+      { year: 'c. 530', text: 'Funda el monasterio de Montecassino y escribe su Regla, setenta y tres capítulos que ordenarían la vida monástica de Occidente.' },
+      { year: '547', text: 'Muere el 21 de marzo.' },
+      { year: '1415', text: 'Un manuscrito lo representa junto a las palabras completas de la oración, escritas sin abreviar.' },
+      { year: '1647', text: 'Ese manuscrito aparece en la abadía de Metten y devuelve el sentido a unas letras que llevaban siglos sin descifrarse.' },
+      { year: '1880', text: 'Montecassino acuña la medalla jubilar por los mil cuatrocientos años de su nacimiento. Es el diseño que se sigue usando hoy.' }
+    ],
     pillars: [
-      { name: 'PROTECCIÓN', desc: 'Una identidad que comunica seguridad, cuidado y resguardo espiritual.' },
-      { name: 'FE', desc: 'El símbolo de San Benito es el corazón de una marca con propósito y convicción.' },
-      { name: 'ELEGANCIA', desc: 'Una estética sobria y refinada que eleva el objeto religioso a una pieza de valor.' }
+      { abbr: 'PAX', name: 'PAZ', desc: 'El lema benedictino, grabado en lo alto de la medalla.' },
+      { abbr: 'CSPB', name: 'CRUX SANCTI PATRIS BENEDICTI', desc: 'La cruz del santo padre Benito. Ocupa los cuatro ángulos que forma la cruz.' },
+      { abbr: 'CSSML', name: 'CRUX SACRA SIT MIHI LUX', desc: 'Que la santa cruz sea mi luz. Recorre el brazo vertical.' },
+      { abbr: 'NDSMD', name: 'NON DRACO SIT MIHI DUX', desc: 'Que el dragón no sea mi guía. Recorre el brazo horizontal.' },
+      { abbr: 'VRS · NSMV', name: 'VADE RETRO SATANA · NUNQUAM SUADE MIHI VANA', desc: 'Apártate, Satanás; nunca me aconsejes cosas vanas. De esta línea toma su nombre la marca.' },
+      { abbr: 'SMQL · IVB', name: 'SUNT MALA QUAE LIBAS · IPSE VENENA BIBAS', desc: 'Es malo lo que ofreces; bebe tú mismo tu veneno. Cierra la oración del borde.' }
     ],
     esencia_quote: '«Una joya de fe que protege lo que más importa.»',
     trust_kicker: 'CONFIANZA', trust_title: 'Comprá con tranquilidad',
@@ -1929,10 +2018,29 @@ Component.T = {
     esencia_kicker: 'OUR ESSENCE',
     esencia_intro: 'VADE RETRO turns a symbol of faith into a protective presence for everyday life. The Saint Benedict medal represents spiritual shelter; the chain expresses continuity, union and closeness to what matters most: family and home.',
     personalidad: 'FIRM · PROTECTIVE · SERENE · SPIRITUAL · CLOSE',
+    origen_kicker: 'WHERE THE NAME COMES FROM',
+    origen_latin: 'Vade retro Satana',
+    origen_trad: '“Begone, Satan”',
+    origen_p: 'It is not a phrase chosen at random. These are the opening words of the prayer engraved around the rim of the Saint Benedict medal, where they appear abbreviated as V·R·S·N·S·M·V. The brand is named after what the medal says.',
+    medalla_kicker: 'WHAT THE MEDAL SAYS',
+    medalla_intro: 'Every engraved letter is the initial of a Latin word. Together they form a prayer of protection whose meaning lay forgotten for centuries.',
+    hist_kicker: 'FOURTEEN CENTURIES',
+    hist_title: 'A long history',
+    hitos: [
+      { year: '480', text: 'Benedict is born in Nursia, in present-day Umbria, on 2 March.' },
+      { year: 'c. 530', text: 'He founds the monastery of Monte Cassino and writes his Rule, seventy-three chapters that would order monastic life across the West.' },
+      { year: '547', text: 'He dies on 21 March.' },
+      { year: '1415', text: 'A manuscript depicts him alongside the full words of the prayer, written out in full.' },
+      { year: '1647', text: 'That manuscript comes to light at the abbey of Metten, restoring the meaning of letters that had gone unread for centuries.' },
+      { year: '1880', text: 'Monte Cassino strikes the Jubilee medal for the fourteen hundredth anniversary of his birth. It is the design still in use today.' }
+    ],
     pillars: [
-      { name: 'PROTECTION', desc: 'An identity that communicates safety, care and spiritual shelter.' },
-      { name: 'FAITH', desc: 'The Saint Benedict symbol is the heart of a brand with purpose and conviction.' },
-      { name: 'ELEGANCE', desc: 'A sober, refined aesthetic that elevates the religious object into a piece of value.' }
+      { abbr: 'PAX', name: 'PEACE', desc: 'The Benedictine motto, engraved at the top of the medal.' },
+      { abbr: 'CSPB', name: 'CRUX SANCTI PATRIS BENEDICTI', desc: 'The cross of our holy father Benedict. It sits in the four angles formed by the cross.' },
+      { abbr: 'CSSML', name: 'CRUX SACRA SIT MIHI LUX', desc: 'May the holy cross be my light. It runs down the vertical beam.' },
+      { abbr: 'NDSMD', name: 'NON DRACO SIT MIHI DUX', desc: 'May the dragon never be my guide. It runs along the crossbeam.' },
+      { abbr: 'VRS · NSMV', name: 'VADE RETRO SATANA · NUNQUAM SUADE MIHI VANA', desc: 'Begone, Satan; never tempt me with your vanities. The brand takes its name from this line.' },
+      { abbr: 'SMQL · IVB', name: 'SUNT MALA QUAE LIBAS · IPSE VENENA BIBAS', desc: 'What you offer is evil; drink the poison yourself. It closes the prayer around the rim.' }
     ],
     esencia_quote: '“A jewel of faith that protects what matters most.”',
     trust_kicker: 'TRUST', trust_title: 'Shop with confidence',
