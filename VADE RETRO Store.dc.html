@@ -169,9 +169,12 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
    aire. FAQ se deja: su relleno queda dentro del azul de la seccion.
    ========================================================================== */
 @media (min-width:760px){
-  main[data-screen-label="Producto"],
-  main[data-screen-label="Checkout"]{padding-bottom:54px!important}
-  main[data-screen-label="Confirmación"]{padding-bottom:58px!important}
+  /* 72 y no menos: los circulos decorativos de la ficha van absolutos y
+     sobresalen 46px por debajo de la columna de fotos. Con 54 quedaban a 8px
+     de tocar el pie, y cualquier variacion de alto los metia adentro. */
+  main[data-screen-label="Producto"]{padding-bottom:72px!important}
+  main[data-screen-label="Checkout"]{padding-bottom:56px!important}
+  main[data-screen-label="Confirmación"]{padding-bottom:60px!important}
 }
 
 /* ==========================================================================
