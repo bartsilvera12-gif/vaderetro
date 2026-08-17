@@ -161,6 +161,20 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 .vr-hito-text{font-size:clamp(14px,1.05vw,15.5px);line-height:1.8;color:#4a4a52;margin:0}
 
 /* ==========================================================================
+   HUECO ANTES DEL PIE
+   Producto, Checkout y Confirmacion cierran con 100 y 110px de relleno
+   inferior. Como su fondo es marfil y el del pie es carbon, esa franja vacia
+   se lee como si el pie fuera mas alto en esas paginas. En Inicio y Tienda el
+   hueco es cero, porque la ultima seccion trae su propio fondo y su propio
+   aire. FAQ se deja: su relleno queda dentro del azul de la seccion.
+   ========================================================================== */
+@media (min-width:760px){
+  main[data-screen-label="Producto"],
+  main[data-screen-label="Checkout"]{padding-bottom:54px!important}
+  main[data-screen-label="Confirmación"]{padding-bottom:58px!important}
+}
+
+/* ==========================================================================
    BARRA SUPERIOR: fuera la fecha y la linea de utilidades
    El bloque del medio llevaba "MEDALLAS DE SAN BENITO · USD" y la fecha del
    dia. Ninguna de las dos ayuda a comprar, y la fecha ademas envejecia la
