@@ -36,6 +36,23 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 @keyframes vr-out-left{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 @keyframes vr-out-right{from{transform:translateX(0)}to{transform:translateX(100%)}}
 @keyframes vr-m-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* Entradas por scroll, solo con CSS.
+   Con animation-timeline el scroll maneja la animacion. Si el navegador no lo
+   soporta, el @supports no aplica y la animacion corre una vez al cargar y
+   termina visible: nunca queda contenido escondido. Eso es justamente lo que
+   fallaba con la version por JavaScript. */
+@keyframes vr-rv{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes vr-rv-wipe{from{opacity:0;transform:translateY(30px);clip-path:inset(0 0 100% 0)}
+  to{opacity:1;transform:none;clip-path:inset(0 0 0 0)}}
+@keyframes vr-rv-line{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  [data-reveal]{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both}
+  [data-reveal="wipe"]{animation-name:vr-rv-wipe;animation-duration:1.05s}
+  [data-reveal="line"]{animation-name:vr-rv-line;transform-origin:left center}
+  @supports (animation-timeline:view()){
+    [data-reveal]{animation-timeline:view();animation-range:entry 0% cover 26%}
+  }
+}
 /* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
    así el escritorio no las ve nunca. */
 .vr-m-hero,.vr-m-filtbtn,.vr-m-sort{display:none}
@@ -1158,8 +1175,6 @@ class Component extends DCLogic {
     window.removeEventListener('hashchange', this._onHash);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
-    if (this._io) this._io.disconnect();
-    if (this._rvSafety) clearTimeout(this._rvSafety);
     if (this._clock) clearInterval(this._clock);
   }
   componentDidUpdate() { requestAnimationFrame(() => this.initReveal()); }
@@ -1207,84 +1222,19 @@ class Component extends DCLogic {
   // de una máscara —queda bien en titulares—, 'line' dibuja un filete de
   // izquierda a derecha, 'zoom' asienta una imagen, y 'left'/'right' entran de
   // costado. Los hermanos que revelan juntos se escalonan solos.
+  // Las entradas por scroll son 100% CSS (ver @keyframes vr-rv*). Este metodo
+  // ya no esconde nada: la version anterior fijaba opacity:0 por JS y, si el
+  // observer no disparaba, el texto quedaba invisible. Solo limpia estilos
+  // inline que puedan haber quedado de esa version en una pestana cacheada.
   initReveal() {
-    const FROM = {
-      '':      { t: 'translateY(24px)' },
-      'rise':  { t: 'translateY(24px)' },
-      'left':  { t: 'translateX(-30px)' },
-      'right': { t: 'translateX(30px)' },
-      'zoom':  { t: 'scale(1.05)' },
-      'wipe':  { t: 'translateY(28px)', c: 'inset(0 0 100% 0)' },
-      'line':  { t: 'scaleX(0)', o: 'left center' }
-    };
-    // El easing es un expo-out: arranca rápido y frena largo. Es lo que da la
-    // sensación de peso, en vez del 'ease' plano que había antes.
-    const EASE = 'cubic-bezier(.22,1,.36,1)';
-    const reduce = typeof window !== 'undefined' && window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!this._io) {
-      this._io = new IntersectionObserver((es) => {
-        es.forEach((e) => {
-          if (!e.isIntersecting) return;
-          const el = e.target;
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-          if (el.style.clipPath) el.style.clipPath = 'inset(0 0 0 0)';
-          // willChange se suelta al terminar: dejarlo puesto mantiene una capa
-          // de composición por elemento y eso sí se nota en un teléfono.
-          setTimeout(() => { el.style.willChange = 'auto'; }, 1400);
-          this._io.unobserve(el);
-        });
-      // El margen inferior negativo retrasa un poco el disparo: la entrada
-      // ocurre cuando el elemento ya entró de verdad, no al asomar un pixel.
-      }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
-    }
-
-    // Red de seguridad: una entrada por scroll esconde contenido y confía en que
-    // algo lo vuelva a mostrar. Si el observer no dispara —navegador sin
-    // IntersectionObserver, un contenedor que no scrollea, la pestaña en
-    // segundo plano al cargar— ese texto queda invisible para siempre. Por eso
-    // todo lo que siga oculto a los 2.5s se revela igual: la animación es un
-    // adorno, la legibilidad no es negociable.
-    const mostrar = (el) => {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-      if (el.style.clipPath) el.style.clipPath = 'inset(0 0 0 0)';
-      el.style.willChange = 'auto';
-    };
-    if (this._rvSafety) clearTimeout(this._rvSafety);
-    {
-      this._rvSafety = setTimeout(() => {
-        document.querySelectorAll('[data-rv]').forEach((el) => {
-          if (getComputedStyle(el).opacity !== '1') mostrar(el);
-        });
-      }, 2500);
-    }
-
-    document.querySelectorAll('[data-reveal]:not([data-rv])').forEach((el) => {
-      el.setAttribute('data-rv', '1');
-      if (reduce) return;   // sin animación: el contenido queda visible tal cual
-      if (!('IntersectionObserver' in window)) return;   // idem, sin soporte
-      const cfg = FROM[el.getAttribute('data-reveal') || ''] || FROM[''];
-      const hermanos = el.parentElement
-        ? Array.prototype.filter.call(el.parentElement.children, (c) => c.hasAttribute('data-reveal'))
-        : [el];
-      const i = Math.max(0, hermanos.indexOf(el));
-      el.style.opacity = '0';
-      el.style.transform = cfg.t;
-      if (cfg.o) el.style.transformOrigin = cfg.o;
-      if (cfg.c) el.style.clipPath = cfg.c;
-      // Reflow antes de declarar la transición, para que el estado inicial
-      // quede fijado y el elemento no anime desde su posición final.
-      void el.offsetWidth;
-      el.style.willChange = 'opacity, transform';
-      el.style.transition = 'opacity .9s ' + EASE + ', transform 1.05s ' + EASE +
-        ', clip-path 1.05s ' + EASE;
-      el.style.transitionDelay = Math.min(i * 90, 450) + 'ms';
-      this._io.observe(el);
+    document.querySelectorAll('[data-reveal][style]').forEach((el) => {
+      if (el.style.opacity === '0' || el.style.willChange) {
+        el.style.opacity = ''; el.style.transform = ''; el.style.clipPath = '';
+        el.style.transition = ''; el.style.transitionDelay = ''; el.style.willChange = '';
+      }
     });
   }
+
   parseRoute() {
     const h = (location.hash || '').replace(/^#\/?/, '');
     const parts = h.split('/').filter(Boolean);
