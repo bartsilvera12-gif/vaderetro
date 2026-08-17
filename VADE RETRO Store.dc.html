@@ -70,6 +70,24 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-m-hero,.vr-m-filtbtn,.vr-m-sort{display:none}
 
 /* ==========================================================================
+   RULETA DE LETRAS
+   Cada caracter gira sobre un eje horizontal ubicado detras del glifo
+   (transform-origin con Z negativo), asi no gira sobre si mismo como una
+   moneda: gira como el tambor de una cerradura de valija. El desfase por
+   letra es lo que da la sensacion de ruedas independientes.
+   El texto lo parte en caracteres initRoll(); en el markup sigue siendo una
+   sola variable de idioma.
+   ========================================================================== */
+.vr-roll{perspective:420px}
+.vr-roll-ch{display:inline-block;white-space:pre;
+  transform-origin:50% 50% -0.55em;backface-visibility:hidden}
+@keyframes vr-roll-spin{from{transform:rotateX(0)}to{transform:rotateX(-360deg)}}
+@media (prefers-reduced-motion:no-preference){
+  .vr-roll:hover .vr-roll-ch{animation:vr-roll-spin .62s cubic-bezier(.32,.9,.3,1) both;
+    animation-delay:calc(var(--i) * 38ms)}
+}
+
+/* ==========================================================================
    NUESTRA HISTORIA: pilares como filas editoriales
    Eran tres columnas iguales con 01/02/03 y un filete arriba: el layout mas
    estandar que hay. Pasan a filas a lo ancho, con el numeral grande a la
@@ -484,7 +502,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
     </div>
     <sc-if value="{{ notMobile }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1 1 0%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2.5vw,40px);padding:0 clamp(14px,2.5vw,36px);font-size:12px;font-weight:600;letter-spacing:.1em;color:#F9F0ED;text-transform:uppercase;white-space:nowrap">
-        <span style="overflow:hidden;text-overflow:ellipsis">{{ t.util_left }}</span>
+        <span class="vr-roll" style="overflow:hidden">{{ t.util_left }}</span>
         <sc-if value="{{ showClockDate }}" hint-placeholder-val="{{ true }}"><span style="text-transform:none;letter-spacing:.03em;font-weight:500;color:rgba(249,240,237,.7);flex-shrink:0">{{ clockDate }}</span></sc-if>
       </div>
     </sc-if>
@@ -1251,7 +1269,7 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onResize);
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
     this.parseRoute();
-    requestAnimationFrame(() => this.initReveal());
+    requestAnimationFrame(() => { this.initReveal(); this.initRoll(); });
   }
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
@@ -1259,7 +1277,7 @@ class Component extends DCLogic {
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
   }
-  componentDidUpdate() { requestAnimationFrame(() => this.initReveal()); }
+  componentDidUpdate() { requestAnimationFrame(() => { this.initReveal(); this.initRoll(); }); }
   closeMenu() {
     if (!this.state.menuOpen || this.state.menuClosing) return;
     this.setState({ menuClosing: true });
@@ -1306,6 +1324,25 @@ class Component extends DCLogic {
   // costado. Los hermanos que revelan juntos se escalonan solos.
   // Entradas por scroll. Con soporte de animation-timeline no hace falta nada:
   // se encarga el CSS. Sin soporte (Safari/iOS) las dispara este observer.
+  // Parte el texto de .vr-roll en un <span> por caracter para que cada uno
+  // pueda girar con su propio desfase. Se rehace si el texto cambio (por
+  // ejemplo al cambiar de idioma) y se saltea si ya esta partido, para no
+  // reconstruirlo en cada render.
+  initRoll() {
+    document.querySelectorAll('.vr-roll').forEach((el) => {
+      const actual = el.textContent.replace(/\u00a0/g, ' ');
+      if (el.getAttribute('data-roll-src') === actual) return;
+      el.setAttribute('data-roll-src', actual);
+      el.textContent = '';
+      Array.prototype.forEach.call(actual, (ch, i) => {
+        const sp = document.createElement('span');
+        sp.className = 'vr-roll-ch';
+        sp.textContent = ch === ' ' ? '\u00a0' : ch;
+        sp.style.setProperty('--i', i);
+        el.appendChild(sp);
+      });
+    });
+  }
   initReveal() {
     if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
     if (!('IntersectionObserver' in window)) return;   // sin soporte: visible tal cual
