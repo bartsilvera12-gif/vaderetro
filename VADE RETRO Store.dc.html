@@ -70,6 +70,37 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 .vr-m-hero,.vr-m-filtbtn,.vr-m-sort{display:none}
 
 /* ==========================================================================
+   ESCRITORIO: portada dentro de la primera pantalla
+   La foto izquierda usa aspect-ratio 4/5, que a ~570px de ancho da 712px de
+   alto: mas que la pantalla menos el header. Resultado, la frase y los dos
+   enlaces caian abajo del pliegue y habia que scrollear para verlos.
+   Atando las alturas al alto de ventana, la portada entera entra de una.
+   ========================================================================== */
+@media (min-width:760px){
+  .vr-hero-grid{padding-top:clamp(20px,2.4vw,34px)!important;
+    padding-bottom:clamp(14px,1.8vw,24px)!important}
+  .vr-hero-a > div:first-child{aspect-ratio:auto!important;height:min(60vh,540px)}
+  .vr-hero-b{padding-top:0!important}
+  .vr-hero-b > div:first-child{aspect-ratio:auto!important;height:min(32vh,290px)}
+  .vr-hero-b p{margin-top:22px!important}
+  .vr-hero-b > div:nth-child(3){margin-top:22px!important}
+  .vr-hero-list{padding-top:0!important}
+}
+
+/* Entrada de la portada al cargar. Es la primera pantalla: si no se mueve nada
+   hasta scrollear, la pagina parece estatica. Va escalonada de arriba abajo. */
+@media (prefers-reduced-motion:no-preference){
+  .vr-hero-a{animation:vr-rv 1s cubic-bezier(.22,1,.36,1) both}
+  .vr-hero-b > *{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both}
+  .vr-hero-b > *:nth-child(1){animation-delay:.10s}
+  .vr-hero-b > *:nth-child(2){animation-delay:.18s}
+  .vr-hero-b > *:nth-child(3){animation-delay:.26s}
+  .vr-hero-b > *:nth-child(4){animation-delay:.34s}
+  .vr-hero-b > *:nth-child(5){animation-delay:.42s}
+  .vr-hero-list a{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.5s}
+}
+
+/* ==========================================================================
    SMARTPHONE
    Todo el diseño mobile vive dentro del @media de abajo. Arriba del corte
    ninguna de estas reglas existe, así que el escritorio queda idéntico.
