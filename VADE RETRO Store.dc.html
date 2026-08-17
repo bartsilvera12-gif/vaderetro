@@ -167,10 +167,18 @@ select,option,svg text{font-family:Montserrat,sans-serif}
    ========================================================================== */
 @media (min-width:760px){
   .vr-home-welcome{display:none!important}
-  .vr-home-hero{background:#0F2349!important;border-bottom:none!important}
+  /* La seccion ocupa exactamente el alto de pantalla y reparte: la grilla toma
+     lo que sobra y la tira de categorias su alto natural. Antes la altura de la
+     grilla era un calculo fijo y quedaban unos pixeles libres al pie, por donde
+     asomaba en marfil la seccion siguiente. */
+  .vr-home-hero{background:#0F2349!important;border-bottom:none!important;
+    display:flex!important;flex-direction:column;
+    height:calc(100vh - 132px);min-height:560px}
   .vr-hero-grid{max-width:none!important;margin:0!important;padding:0!important;
     grid-template-columns:61% 39%!important;gap:0!important;align-items:stretch!important;
-    height:calc(100vh - 132px - 124px);min-height:460px}
+    flex:1 1 auto;min-height:0}
+  .vr-hero-grid > *{min-height:0}
+  .vr-hero-list{flex:0 0 auto}
 
   /* izquierda: la foto ocupa todo el alto y llega al borde */
   .vr-hero-a{position:relative;min-width:0}
