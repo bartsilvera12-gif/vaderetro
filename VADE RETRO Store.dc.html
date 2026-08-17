@@ -155,58 +155,48 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 }
 
 /* ==========================================================================
-   ESCRITORIO: portada a pantalla partida
-   Antes eran dos fotos una al lado de la otra con el texto suelto debajo, y
-   el titular vivia en la seccion azul siguiente. Ahora la portada es una sola
-   pieza: foto a sangre a la izquierda con el titular montado encima, y panel
-   Azul Protector a la derecha con el texto, las acciones y las categorias.
-   El titular sale de .vr-m-hero, el mismo bloque que ya usaba el telefono, asi
-   que no hay texto duplicado: la seccion de bienvenida se apaga porque su
-   contenido paso a la portada.
+   ESCRITORIO: portada de una sola foto a todo el ancho
+   Sin division ni panel de color: la foto ocupa el ancho completo y se ve
+   limpia, sin velo encima. El titular y el boton van debajo sobre marfil.
+   La capa de texto sobre la imagen queda apagada aca: existia para el
+   telefono, donde no hay lugar para poner el texto aparte.
    El navbar no se toca.
    ========================================================================== */
 @media (min-width:760px){
-  .vr-home-welcome{display:none!important}
-  .vr-home-hero{background:#0F2349!important;border-bottom:none!important}
+  .vr-m-hero{display:none!important}
+  .vr-home-hero{background:#F9F0ED!important;border-bottom:none!important}
   .vr-hero-grid{max-width:none!important;margin:0!important;padding:0!important;
-    grid-template-columns:61% 39%!important;gap:0!important;align-items:stretch!important;
-    height:calc(100vh - 132px - 124px);min-height:460px}
+    grid-template-columns:minmax(0,1fr)!important;gap:0!important}
 
-  /* izquierda: la foto ocupa todo el alto y llega al borde */
-  .vr-hero-a{position:relative;min-width:0}
-  .vr-hero-a > div:first-child{height:100%!important;aspect-ratio:auto!important;
+  /* la foto, a sangre y sin nada encima */
+  .vr-hero-a > div:first-child{height:min(58vh,600px)!important;aspect-ratio:auto!important;
     border:none!important}
-  .vr-m-hero{display:block!important}
-  .vr-m-hero-top{display:none}
-  .vr-m-hero-body{padding:0 clamp(32px,3.6vw,60px) clamp(38px,4vw,64px)!important}
-  .vr-m-hero-title{font-size:clamp(42px,4.4vw,72px)!important}
-  .vr-m-hero-foot{max-width:36ch}
-  .vr-hero-cap{position:absolute!important;right:clamp(24px,2.4vw,36px);
-    top:clamp(18px,1.8vw,26px);z-index:4;margin:0!important;color:#F9F0ED!important}
-  .vr-hero-cap span{color:rgba(249,240,237,.8)!important}
+  .vr-hero-cap{max-width:1400px;margin:14px auto 0!important;
+    padding:0 clamp(24px,3vw,44px)!important}
 
-  /* derecha: panel azul con el texto y las acciones, centrado vertical */
-  .vr-hero-b{background:#0F2349!important;justify-content:center!important;
-    padding:clamp(34px,3.6vw,64px)!important;min-width:0}
+  /* titular, texto y acciones debajo, sobre marfil */
+  .vr-hero-b{max-width:1400px;margin:0 auto;padding:clamp(30px,3.4vw,52px) clamp(24px,3vw,44px) 0!important;
+    display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+    column-gap:clamp(32px,5vw,90px);align-items:center}
   .vr-hero-b > div:first-child{display:none!important}
-  .vr-hero-b p{color:#F9F0ED!important;font-size:clamp(22px,1.9vw,30px)!important;
-    line-height:1.35!important;margin:0 0 28px!important;max-width:20ch!important}
-  .vr-hero-b > div:nth-child(3){background:rgba(207,157,89,.4)!important;
-    margin:0!important;max-width:none!important}
-  .vr-hero-b a{max-width:none!important}
-  .vr-hero-b > a:nth-of-type(1){background:#CF9D59!important;color:#0F2349!important;
-    padding:18px 22px!important;border-bottom:none!important;margin-top:20px}
-  .vr-hero-b > a:nth-of-type(2){color:rgba(249,240,237,.72)!important;
-    padding:18px 0 0!important;border-bottom:none!important}
+  .vr-hero-b p{grid-column:1;margin:0!important;max-width:none!important;
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(34px,3.6vw,58px)!important;line-height:1.08!important;
+    letter-spacing:-.01em;color:#0F2349!important}
+  .vr-hero-b > div:nth-child(3){display:none!important}
+  .vr-hero-b > a:nth-of-type(1){grid-column:2;background:#CF9D59!important;color:#0F2349!important;
+    padding:20px 26px!important;border-bottom:none!important;max-width:none!important;margin:0}
+  .vr-hero-b > a:nth-of-type(2){grid-column:2;padding:16px 0 0!important;
+    border-bottom:none!important;max-width:none!important}
 
-  /* categorias: tira sobre el azul, al pie de la portada */
-  .vr-hero-list{max-width:none!important;
-    padding:0 clamp(24px,3vw,44px) clamp(18px,2vw,28px)!important}
+  /* categorias: tira al pie, sobre marfil */
+  .vr-hero-list{max-width:1400px;margin:0 auto;
+    padding:clamp(26px,3vw,42px) clamp(24px,3vw,44px) clamp(22px,2.6vw,36px)!important}
   .vr-hero-list > div{width:100%;flex-direction:row!important;align-items:center!important;
     justify-content:space-between!important;gap:clamp(16px,2.4vw,40px)!important;
-    border-top:1px solid rgba(207,157,89,.3);padding-top:clamp(14px,1.6vw,20px)}
-  .vr-hero-list a{color:#F9F0ED!important;font-size:clamp(14px,1.25vw,19px)!important;
-    line-height:1.2!important;white-space:nowrap}
+    border-top:1px solid rgba(15,35,73,.16);padding-top:clamp(16px,1.8vw,24px)}
+  .vr-hero-list a{font-size:clamp(15px,1.3vw,20px)!important;line-height:1.2!important;
+    white-space:nowrap}
 }
 
 /* Entrada de la portada al cargar. Es la primera pantalla: si no se mueve nada
