@@ -157,7 +157,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
    pantalla ajusta despues sus medidas.
    ========================================================================== */
 .vr-m-hero{position:absolute;inset:0;z-index:3;pointer-events:none}
-.vr-m-hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,
+.vr-m-hero-scrim{position:absolute;inset:-2px;background:linear-gradient(180deg,
   rgba(15,35,73,.55) 0%,rgba(15,35,73,.05) 20%,rgba(15,35,73,.30) 44%,
   rgba(15,35,73,.74) 64%,rgba(15,35,73,1) 97%,rgba(15,35,73,1) 100%)}
 .vr-m-hero-top{position:absolute;top:0;left:0;right:0;display:flex;gap:9px;
@@ -264,7 +264,12 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 /* Entrada de la portada al cargar. Es la primera pantalla: si no se mueve nada
    hasta scrollear, la pagina parece estatica. Va escalonada de arriba abajo. */
 @media (prefers-reduced-motion:no-preference){
-  .vr-hero-a{animation:vr-rv 1s cubic-bezier(.22,1,.36,1) both}
+  /* La foto entra solo con opacidad. Con desplazamiento, el transform la manda
+     a su propia capa de composicion y durante los primeros cuadros el recorte
+     dejaba escapar una linea del borde brillante: se veia como un destello
+     dorado que titilaba y desaparecia. */
+  @keyframes vr-fade{from{opacity:0}to{opacity:1}}
+  .vr-hero-a{animation:vr-fade 1s cubic-bezier(.22,1,.36,1) both}
   .vr-hero-b > *{animation:vr-rv .9s cubic-bezier(.22,1,.36,1) both}
   .vr-hero-b > *:nth-child(1){animation-delay:.10s}
   .vr-hero-b > *:nth-child(2){animation-delay:.18s}
