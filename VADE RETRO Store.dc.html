@@ -313,16 +313,17 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    dentro, como un cuadro colgado. La imagen ya trae fondo crema, asi que el
    marco es lo que la separa del blanco de la seccion.
    ========================================================================== */
-.vr-home-medalla{background:#ffffff;padding:clamp(64px,7.5vw,112px) 24px;text-align:center}
+.vr-home-medalla{background:#0F2349;padding:clamp(64px,7.5vw,112px) 24px;text-align:center;
+  border-bottom:1px solid rgba(207,157,89,.22)}
 .vr-home-medalla-box{max-width:760px;margin:0 auto}
 .vr-home-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
 .vr-home-medalla-h{font-family:'Cormorant Garamond',serif;font-weight:600;
-  font-size:clamp(28px,3.2vw,44px);line-height:1.12;color:#0F2349;margin:16px 0 0}
+  font-size:clamp(28px,3.2vw,44px);line-height:1.12;color:#F9F0ED;margin:16px 0 0}
 .vr-home-medalla-rule{width:54px;height:2px;background:#CF9D59;margin:24px auto 0}
 
 .vr-marco{max-width:520px;margin:clamp(38px,4.2vw,58px) auto 0;position:relative;
   padding:clamp(13px,1.5vw,20px);background:#ffffff;
-  border:1px solid rgba(207,157,89,.6);box-shadow:0 20px 48px rgba(15,35,73,.14);
+  border:1px solid rgba(207,157,89,.6);box-shadow:0 26px 60px rgba(0,0,0,.34);
   opacity:1!important;transform:none!important;animation:none!important}
 .vr-marco::after{content:"";position:absolute;inset:6px;pointer-events:none;
   border:1px solid rgba(15,35,73,.16)}
@@ -330,7 +331,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 
 .vr-home-medalla-link{display:inline-block;margin-top:clamp(28px,3.2vw,40px);
   font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  color:#0F2349;border-bottom:1px solid #CF9D59;padding-bottom:5px;
+  color:#F9F0ED;border-bottom:1px solid #CF9D59;padding-bottom:5px;
   transition:color .25s,border-color .25s}
 
 .vr-lamina{margin:clamp(40px,4.4vw,64px) auto 0;max-width:600px;text-align:center;
@@ -1044,21 +1045,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     </div>
   </section>
 
-  <!-- La lamina de inscripciones, tambien en inicio. -->
-  <section class="vr-home-medalla">
-    <div class="vr-home-medalla-box">
-      <div data-reveal class="vr-home-medalla-kicker">{{ t.medalla_kicker }}</div>
-      <h2 data-reveal="wipe" class="vr-home-medalla-h">{{ t.medalla_h }}</h2>
-      <div data-reveal="line" class="vr-home-medalla-rule"></div>
-      <figure class="vr-marco">
-        <img src="assets/inscripciones.webp?v=2" width="1024" height="1536"
-             alt="{{ t.lamina_alt }}">
-      </figure>
-      <a href="#/historia" class="vr-home-medalla-link"
-         style-hover="color:#CF9D59;border-color:#0F2349">{{ t.medalla_link }}</a>
-    </div>
-  </section>
-
   <section class="vr-home-featured" style="padding:100px 0;background:#F9F0ED;overflow:hidden">
     <div style="max-width:1180px;margin:0 auto;padding:0 24px">
       <div class="vr-feat-head" data-reveal style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:46px">
@@ -1099,6 +1085,21 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       </div>
       <div class="vr-rail-fade" style="position:absolute;left:0;top:0;bottom:0;width:70px;pointer-events:none;background:linear-gradient(90deg,#F9F0ED,rgba(249,240,237,0))"></div>
       <div class="vr-rail-fade" style="position:absolute;right:0;top:0;bottom:0;width:70px;pointer-events:none;background:linear-gradient(270deg,#F9F0ED,rgba(249,240,237,0))"></div>
+    </div>
+  </section>
+
+  <!-- La lamina de inscripciones, tambien en inicio. -->
+  <section class="vr-home-medalla">
+    <div class="vr-home-medalla-box">
+      <div data-reveal class="vr-home-medalla-kicker">{{ t.medalla_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-home-medalla-h">{{ t.medalla_h }}</h2>
+      <div data-reveal="line" class="vr-home-medalla-rule"></div>
+      <figure class="vr-marco">
+        <img src="assets/inscripciones.webp?v=2" width="1024" height="1536"
+             alt="{{ t.lamina_alt }}">
+      </figure>
+      <a href="#/historia" class="vr-home-medalla-link"
+         style-hover="color:#CF9D59;border-color:#F9F0ED">{{ t.medalla_link }}</a>
     </div>
   </section>
 
