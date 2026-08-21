@@ -333,8 +333,12 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   width:auto!important;margin:0!important;gap:10px!important}
 .vr-p-media.is-contain .vr-p-thumbs > *{flex:0 0 74px!important;
   width:74px!important;height:74px!important}
+/* El alto queda reservado al maximo que puede alcanzar la foto, y la imagen
+   se centra dentro. Sin esto, al elegir una miniatura de otra proporcion
+   cambiaba el alto de la columna y saltaba toda la pagina, el pie incluido. */
 .vr-p-media.is-contain .vr-p-frame{order:2;flex:0 1 auto;width:max-content;
-  max-width:100%;margin:0}
+  max-width:100%;margin:0;min-height:calc(var(--vr-h) + 26px);
+  display:flex;align-items:center;justify-content:center}
 
 /* El marco toma la forma de la foto que este elegida, no la del producto: si
    se selecciona una miniatura cuadrada el recuadro se hace cuadrado, en vez
@@ -1605,7 +1609,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <sc-if value="{{ cur.hasThumbs }}" hint-placeholder-val="{{ false }}">
         <div class="vr-p-thumbs" style="display:flex;gap:12px;margin-top:12px">
           <sc-for list="{{ galThumbs }}" as="th" hint-placeholder-count="2">
-            <button type="button" class="vr-p-thumb {{ th.cls }}" onClick="{{ th.pick }}"><image-slot id="pgt-{{ th.key }}" shape="rect" src="{{ th.src }}" placeholder="foto"></image-slot></button>
+            <button type="button" class="vr-p-thumb {{ th.cls }}" onClick="{{ th.pick }}"><image-slot id="pgt-{{ th.key }}" shape="rect" fit="contain" src="{{ th.src }}" placeholder="foto"></image-slot></button>
           </sc-for>
         </div>
       </sc-if>
@@ -2122,7 +2126,7 @@ class Component extends DCLogic {
       buy: () => { this.addToCart(p.slug, 1); location.hash = '#/carrito'; }
     });
     const items = prods.map(mk);
-    const featured = ['bendicion-cristal', 'medalla-dorada', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
+    const featured = ['bendicion-cristal', 'medallon-giratorio', 'bendicion-tejida'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
     const cats = ['puerta', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
     let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (typeof p.price !== 'number' || p.price <= S.fMax) && (!S.fStock || p.stock > 0));
@@ -2246,21 +2250,21 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
-  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-full-1.webp', fit: 'contain', ratioNum: '0.523',
-    cardImg: 'assets/bendicion-cristal-1.webp',
-    imgs: ['assets/bendicion-cristal-1.webp', 'assets/bendicion-cristal-2.webp'],
-    colors: [{ css: '#C9A46A', name: { es: 'Miel', en: 'Honey' } },
-             { css: 'linear-gradient(135deg,#0F2349 50%,#C9A46A 50%)', name: { es: 'Azul con miel', en: 'Blue with honey' } }],
+  { slug: 'bendicion-cristal', img: 'assets/cristal-1.webp', fit: 'contain', ratioNum: '0.523',
+    cardImg: 'assets/cristal-card.webp',
+    imgs: ['assets/cristal-1.webp', 'assets/cristal-2.webp'],
     price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Cristal cortado', en: 'Saint Benedict Blessing · Cut crystal' },
     desc: { es: 'Bordada en cristal cortado, con medalla giratoria.', en: 'Embroidered in cut crystal, with a rotating medal.' },
     descLong: { es: 'Bendición de San Benito bordada en cristal cortado, para colgar de la manija de la entrada. La medalla es giratoria, así que pueden verse sus dos caras: la imagen del santo y la cruz con sus inscripciones.', en: 'Saint Benedict blessing embroidered in cut crystal, to hang from the handle of the entrance door. The medal rotates, so both of its faces can be seen: the image of the saint and the cross with its inscriptions.' },
+    colors: [{ css: '#C9A46A', name: { es: 'Miel', en: 'Honey' } },
+             { css: 'linear-gradient(135deg,#0F2349 50%,#C9A46A 50%)', name: { es: 'Azul con miel', en: 'Blue with honey' } }],
     specs: {
       es: ['Bendición de San Benito bordada en cristal cortado.', 'La medalla es giratoria.', 'Medidas: 12 pulgadas de largo · 5,5 pulgadas de ancho de la medalla.'],
       en: ['Saint Benedict blessing embroidered in cut crystal.', 'The medal rotates.', 'Dimensions: 12 inches long · 5.5 inches wide at the medal.'] } },
-  { slug: 'decenario-madera', img: 'assets/decenario-full.webp', fit: 'contain', ratioNum: '0.667',
+  { slug: 'decenario-madera', img: 'assets/decenario-1.webp', fit: 'contain', ratioNum: '0.667',
     cardImg: 'assets/decenario-card.webp',
-    imgs: ['assets/decenario-largo.webp', 'assets/decenario-redondo.webp', 'assets/decenario-detalle.webp'],
+    imgs: ['assets/decenario-1.webp', 'assets/decenario-2.webp', 'assets/decenario-3.webp', 'assets/decenario-4.webp'],
     price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Decenario en madera', en: 'Saint Benedict Blessing · Wooden decade' },
     desc: { es: 'Decenario con cuentas de madera y medalla en metal.', en: 'Wooden-bead decade with a metal medal.' },
@@ -2268,9 +2272,9 @@ Component.DATA = [
     specs: {
       es: ['Decenario con cuentas en madera.', 'Medalla en metal.', 'Dos modos de ajuste: largo o redondo.', 'Medidas: 14 pulgadas de largo · medalla 1 3/4 pulgadas de ancho.'],
       en: ['Decade with wooden beads.', 'Metal medal.', 'Two ways to fit it: long or round.', 'Dimensions: 14 inches long · medal 1 3/4 inches wide.'] } },
-  { slug: 'cordon-largo', img: 'assets/cordon-full.webp', fit: 'contain', ratioNum: '0.523',
+  { slug: 'cordon-largo', img: 'assets/cordon-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/cordon-card.webp',
-    imgs: ['assets/cordon-puerta.webp', 'assets/cordon-piedra.webp', 'assets/cordon-detalle.webp'],
+    imgs: ['assets/cordon-1.webp', 'assets/cordon-2.webp', 'assets/cordon-3.webp', 'assets/cordon-4.webp'],
     price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Cordón largo', en: 'Saint Benedict Blessing · Long cord' },
     desc: { es: 'Medalla en metal sobre cordón con cuentas.', en: 'Metal medal on a beaded cord.' },
@@ -2278,6 +2282,26 @@ Component.DATA = [
     specs: {
       es: ['Medalla en metal.', 'Medidas: 20 pulgadas de largo · 3 1/2 pulgadas de ancho de la medalla.'],
       en: ['Metal medal.', 'Dimensions: 20 inches long · 3 1/2 inches wide at the medal.'] } },
+  { slug: 'bendicion-tejida', img: 'assets/tejida-1.webp', fit: 'contain', ratioNum: '0.571',
+    cardImg: 'assets/tejida-card.webp',
+    imgs: ['assets/tejida-1.webp', 'assets/tejida-2.webp', 'assets/tejida-3.webp'],
+    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Bendición de San Benito · Tejida', en: 'Saint Benedict Blessing · Woven' },
+    desc: { es: 'Tejida en marrón y ámbar, con cinco medallas.', en: 'Woven in brown and amber, with five medals.' },
+    descLong: { es: 'Bendición de San Benito tejida, en marrón y ámbar, con cinco medallas que cuelgan de cordones de distinto largo.', en: 'Woven Saint Benedict blessing, in brown and amber, with five medals hanging from cords of different lengths.' },
+    specs: {
+      es: ['Bendición de San Benito tejida.', '5 medallas.', 'Color marrón y ámbar.', 'Medidas: 15 pulgadas de largo.'],
+      en: ['Woven Saint Benedict blessing.', '5 medals.', 'Brown and amber.', 'Dimensions: 15 inches long.'] } },
+  { slug: 'medallon-giratorio', img: 'assets/giratorio-1.webp', fit: 'contain', ratioNum: '0.546',
+    cardImg: 'assets/giratorio-card.webp',
+    imgs: ['assets/giratorio-1.webp', 'assets/giratorio-2.webp', 'assets/giratorio-3.webp', 'assets/giratorio-4.webp'],
+    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Bendición de San Benito · Medallón giratorio', en: 'Saint Benedict Blessing · Rotating medallion' },
+    desc: { es: 'Medallón de metal giratorio.', en: 'Rotating metal medallion.' },
+    descLong: { es: 'Bendición de San Benito con medallón de metal giratorio, para colgar de la manija de la entrada. Al girar deja ver sus dos caras.', en: 'Saint Benedict blessing with a rotating metal medallion, to hang from the handle of the entrance door. Turning it reveals both of its faces.' },
+    specs: {
+      es: ['Medallón de metal giratorio.', 'Medidas: 13 pulgadas de largo · 4 3/4 pulgadas de ancho de la medalla.'],
+      en: ['Rotating metal medallion.', 'Dimensions: 13 inches long · 4 3/4 inches wide at the medal.'] } },
   { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, cat: 'puerta', badgeTxt: { es: 'OFERTA', en: 'SALE' },
     name: { es: 'Colgante de puerta · Clásico', en: 'Door hanger · Classic' },
     desc: { es: 'Para la manija o la chapa de la entrada principal.', en: 'For the handle or plate of the main entrance.' },
@@ -2303,6 +2327,7 @@ Component.DATA = [
     desc: { es: 'Pieza personalizada bajo pedido.', en: 'Custom piece made to order.' },
     descLong: { es: 'Pieza personalizada, realizada bajo pedido según las medidas y el grabado que se acuerden.', en: 'A custom piece, made to order according to the dimensions and engraving agreed upon.' } }
 ];
+
 
 Component.T = {
   es: {
