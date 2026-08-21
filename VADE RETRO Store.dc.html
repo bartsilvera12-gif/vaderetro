@@ -341,6 +341,35 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   .vr-p-main:hover > image-slot{transform:scale(1.14)}
 }
 
+/* ==========================================================================
+   EL HERO REACCIONA AL SCROLL
+   Solo en escritorio, donde el hero ocupa la pantalla entera. La foto se
+   acerca y el panel azul sube y se desvanece, asi el paso a la seccion
+   siguiente no es un corte seco.
+
+   El zoom va sobre el mismo image-slot que ya llevaba el Ken Burns: es el
+   unico punto donde transformar esa foto no filtra el destello dorado en el
+   borde, porque su contenedor recorta con overflow:hidden y clip-path. En
+   telefono se queda el Ken Burns.
+
+   El shorthand animation resetea animation-timeline, asi que el timeline va
+   declarado despues, no antes.
+   ========================================================================== */
+@media (min-width:760px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:scroll()){
+    @keyframes vr-hero-zoom{from{transform:scale(1.01)}to{transform:scale(1.15)}}
+    .vr-hero-a > div:first-child image-slot{animation:vr-hero-zoom linear both!important}
+    .vr-hero-a > div:first-child image-slot{
+      animation-timeline:scroll(root)!important;
+      animation-range:0 92vh!important}
+
+    @keyframes vr-hero-lift{from{opacity:1;transform:none}
+      to{opacity:0;transform:translateY(-64px)}}
+    .vr-hero-b{animation:vr-hero-lift linear both}
+    .vr-hero-b{animation-timeline:scroll(root);animation-range:18vh 86vh}
+  }
+}
+
 .vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
 .vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
 .vr-p-color{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(15,35,73,.18);
