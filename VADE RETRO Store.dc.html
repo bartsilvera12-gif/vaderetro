@@ -307,6 +307,32 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 /* La lamina de la cliente. Va centrada y con ancho tope: es una imagen
    vertical de 1024x1536, asi que a lo ancho de la seccion quedaria enorme y
    su tipografia interna, ilegible. El borde dorado la despega del azul. */
+/* ==========================================================================
+   LA LAMINA EN INICIO
+   Va enmarcada: filete dorado por fuera, mat blanco y una linea fina azul por
+   dentro, como un cuadro colgado. La imagen ya trae fondo crema, asi que el
+   marco es lo que la separa del blanco de la seccion.
+   ========================================================================== */
+.vr-home-medalla{background:#ffffff;padding:clamp(64px,7.5vw,112px) 24px;text-align:center}
+.vr-home-medalla-box{max-width:760px;margin:0 auto}
+.vr-home-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-home-medalla-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(28px,3.2vw,44px);line-height:1.12;color:#0F2349;margin:16px 0 0}
+.vr-home-medalla-rule{width:54px;height:2px;background:#CF9D59;margin:24px auto 0}
+
+.vr-marco{max-width:520px;margin:clamp(38px,4.2vw,58px) auto 0;position:relative;
+  padding:clamp(13px,1.5vw,20px);background:#ffffff;
+  border:1px solid rgba(207,157,89,.6);box-shadow:0 20px 48px rgba(15,35,73,.14);
+  opacity:1!important;transform:none!important;animation:none!important}
+.vr-marco::after{content:"";position:absolute;inset:6px;pointer-events:none;
+  border:1px solid rgba(15,35,73,.16)}
+.vr-marco img{display:block;width:100%;height:auto;position:relative;z-index:1}
+
+.vr-home-medalla-link{display:inline-block;margin-top:clamp(28px,3.2vw,40px);
+  font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:#0F2349;border-bottom:1px solid #CF9D59;padding-bottom:5px;
+  transition:color .25s,border-color .25s}
+
 .vr-lamina{margin:clamp(40px,4.4vw,64px) auto 0;max-width:600px;text-align:center;
   opacity:1!important;transform:none!important;clip-path:none!important;animation:none!important}
 .vr-lamina img{display:block;width:100%;height:auto;border-radius:3px;
@@ -1015,6 +1041,21 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <div data-reveal style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px 28px;margin-top:clamp(26px,3.5vw,40px);font-size:10.5px;font-weight:600;letter-spacing:.2em;color:rgba(249,240,237,.55);text-transform:uppercase">
         <span>{{ t.personalidad }}</span>
       </div>
+    </div>
+  </section>
+
+  <!-- La lamina de inscripciones, tambien en inicio. -->
+  <section class="vr-home-medalla">
+    <div class="vr-home-medalla-box">
+      <div data-reveal class="vr-home-medalla-kicker">{{ t.medalla_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-home-medalla-h">{{ t.medalla_h }}</h2>
+      <div data-reveal="line" class="vr-home-medalla-rule"></div>
+      <figure class="vr-marco">
+        <img src="assets/inscripciones.webp?v=2" width="1024" height="1536"
+             alt="{{ t.lamina_alt }}">
+      </figure>
+      <a href="#/historia" class="vr-home-medalla-link"
+         style-hover="color:#CF9D59;border-color:#0F2349">{{ t.medalla_link }}</a>
     </div>
   </section>
 
@@ -2109,6 +2150,7 @@ Component.T = {
     medalla_p: 'Cada letra grabada es la abreviatura de una palabra en latín. Leídas en orden, las dos caras forman una sola oración de protección.',
     lamina_alt: 'Lámina de la medalla de San Benito: anverso con la imagen del santo y reverso con la cruz, cada inscripción señalada con su texto en latín y su traducción.',
     lamina_cap: 'Anverso y reverso, inscripción por inscripción',
+    medalla_link: 'Ver el significado completo',
     cara_a_h: 'ANVERSO',
     cara_a_sub: 'La imagen de San Benito',
     cara_a: [
@@ -2273,6 +2315,7 @@ Component.T = {
     medalla_p: 'Every engraved letter stands for a Latin word. Read in order, the two faces form a single prayer of protection.',
     lamina_alt: 'Plate of the Saint Benedict medal: obverse with the image of the saint and reverse with the cross, each inscription labelled with its Latin text and translation.',
     lamina_cap: 'Obverse and reverse, inscription by inscription',
+    medalla_link: 'See the full meaning',
     cara_a_h: 'OBVERSE',
     cara_a_sub: 'The image of Saint Benedict',
     cara_a: [
