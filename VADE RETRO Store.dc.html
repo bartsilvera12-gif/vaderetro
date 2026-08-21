@@ -323,15 +323,27 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    le gana a la hoja, asi que va !important. Y el ancho se calcula a mano en
    vez de con aspect-ratio: con un alto definido y width auto, un bloque se
    estira al contenedor y la proporcion se ignora. */
-.vr-p-media.is-contain .vr-p-frame{width:max-content;max-width:100%;margin:0 auto}
-.vr-p-media.is-contain .vr-p-main{height:var(--vr-h)!important;
-  width:calc(var(--vr-h) * var(--vr-num))!important;max-width:100%}
-.vr-p-media.is-contain .vr-p-frame{margin:0}
-.vr-p-media.is-contain .vr-p-thumbs{width:auto!important;max-width:100%;
-  justify-content:flex-start;gap:10px!important;margin:14px 0 0}
-/* Miniaturas chicas y parejas. El alto y el flex vienen en estilo inline en el
-   markup, asi que van con !important o no se aplican. */
-.vr-p-media.is-contain .vr-p-thumbs > *{flex:0 0 86px!important;height:86px!important}
+/* Galeria: tira de miniaturas en columna a la izquierda y la foto al lado.
+   El orden en el markup es marco-y-despues-miniaturas, asi que el orden
+   visual lo da flex con order. Los circulos decorativos son absolutos, no
+   entran en el flujo. */
+.vr-p-media.is-contain{display:flex;align-items:flex-start;gap:12px;
+  --vr-maxw:min(30vw,400px)}
+.vr-p-media.is-contain .vr-p-thumbs{order:1;flex:0 0 auto;flex-direction:column;
+  width:auto!important;margin:0!important;gap:10px!important}
+.vr-p-media.is-contain .vr-p-thumbs > *{flex:0 0 74px!important;
+  width:74px!important;height:74px!important}
+.vr-p-media.is-contain .vr-p-frame{order:2;flex:0 1 auto;width:max-content;
+  max-width:100%;margin:0}
+
+/* El marco toma la forma de la foto que este elegida, no la del producto: si
+   se selecciona una miniatura cuadrada el recuadro se hace cuadrado, en vez
+   de dejar bandas blancas a los lados. El ancho sale del menor entre lo que
+   pide la proporcion y un tope, y aspect-ratio deduce el alto; --vr-num lo
+   actualiza el JS con la proporcion real de la imagen elegida. */
+.vr-p-media.is-contain .vr-p-main{height:auto!important;
+  width:min(calc(var(--vr-h) * var(--vr-num)), var(--vr-maxw))!important;
+  aspect-ratio:var(--vr-num)}
 
 /* Miniatura elegible: la seleccionada se marca con el filete dorado. */
 .vr-p-thumb{position:relative;padding:0;background:none;cursor:pointer;overflow:hidden;
@@ -675,6 +687,9 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    usa el escritorio.
    ========================================================================== */
 @media (max-width:759.98px){
+  .vr-p-media.is-contain{--vr-maxw:calc(100vw - 136px)}
+  .vr-p-media.is-contain .vr-p-thumbs > *{flex:0 0 62px!important;
+    width:62px!important;height:62px!important}
   :root{
     /* alto real de la barra fija, con el notch sumado */
     --vr-hd-h:calc(58px + env(safe-area-inset-top,0px));
@@ -1881,6 +1896,7 @@ class Component extends DCLogic {
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
     this.parseRoute();
     this.initZoom();
+    this.initGalRatio();
     requestAnimationFrame(() => this.initReveal());
 
   }
@@ -1890,7 +1906,7 @@ class Component extends DCLogic {
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
   }
-  componentDidUpdate() { requestAnimationFrame(() => this.initReveal()); }
+  componentDidUpdate() { this.initGalRatio(); requestAnimationFrame(() => this.initReveal()); }
   closeMenu() {
     if (!this.state.menuOpen || this.state.menuClosing) return;
     this.setState({ menuClosing: true });
@@ -1953,6 +1969,28 @@ class Component extends DCLogic {
       box.style.setProperty('--vr-ox', x.toFixed(2) + '%');
       box.style.setProperty('--vr-oy', y.toFixed(2) + '%');
     }, { passive: true });
+  }
+  // El marco tiene que tomar la forma de la foto elegida. La proporcion no
+  // puede salir del producto, porque cada miniatura puede tener la suya, asi
+  // que se mide la imagen real y se escribe en --vr-num. Se cachea por src y
+  // se reaplica en cada render, porque el re-render reescribe el style inline
+  // del elemento y borraria la variable.
+  initGalRatio() {
+    const media = document.querySelector('.vr-p-media.is-contain');
+    if (!media) return;
+    const slot = media.querySelector('.vr-p-main > image-slot');
+    const src = slot && slot.getAttribute('src');
+    if (!src) return;
+    this._ratios = this._ratios || {};
+    if (this._ratios[src]) { media.style.setProperty('--vr-num', this._ratios[src]); return; }
+    const im = new Image();
+    im.onload = () => {
+      if (!im.naturalHeight) return;
+      this._ratios[src] = (im.naturalWidth / im.naturalHeight).toFixed(4);
+      const m = document.querySelector('.vr-p-media.is-contain');
+      if (m) m.style.setProperty('--vr-num', this._ratios[src]);
+    };
+    im.src = src;
   }
   initReveal() {
     if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline', 'view()')) return;
