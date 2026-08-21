@@ -304,6 +304,40 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-medalla-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
   color:rgba(249,240,237,.72);margin:0;max-width:58ch}
 
+.vr-p-specs{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid rgba(15,35,73,.12)}
+.vr-p-specs li{position:relative;border-bottom:1px solid rgba(15,35,73,.12);padding:11px 0 11px 20px;
+  font-size:13.5px;line-height:1.6;color:#4a4a52}
+.vr-p-specs li::before{content:"";position:absolute;left:2px;top:19px;width:6px;height:6px;
+  background:#CF9D59;transform:rotate(45deg)}
+
+/* ==========================================================================
+   LA LAMINA EN INICIO
+   Va enmarcada: filete dorado por fuera, mat blanco y una linea fina azul por
+   dentro, como un cuadro colgado. La imagen ya trae fondo crema, asi que el
+   marco es lo que la separa del blanco de la seccion.
+   ========================================================================== */
+.vr-home-medalla{background:#0F2349;padding:clamp(64px,7.5vw,112px) 24px;text-align:center;
+  border-bottom:1px solid rgba(207,157,89,.22)}
+.vr-home-medalla-box{max-width:760px;margin:0 auto}
+.vr-home-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-home-medalla-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(28px,3.2vw,44px);line-height:1.12;color:#F9F0ED;margin:16px 0 0}
+.vr-home-medalla-rule{width:54px;height:2px;background:#CF9D59;margin:24px auto 0}
+
+.vr-marco{max-width:520px;margin:clamp(38px,4.2vw,58px) auto 0;position:relative;
+  padding:clamp(13px,1.5vw,20px);background:#ffffff;
+  border:1px solid rgba(207,157,89,.6);box-shadow:0 26px 60px rgba(0,0,0,.34);
+  opacity:1!important;transform:none!important;animation:none!important}
+.vr-marco::after{content:"";position:absolute;inset:6px;pointer-events:none;
+  border:1px solid rgba(15,35,73,.16)}
+.vr-marco img{display:block;width:100%;height:auto;position:relative;z-index:1}
+
+.vr-home-medalla-link{display:inline-block;margin-top:clamp(28px,3.2vw,40px);
+  font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:#F9F0ED;border-bottom:1px solid #CF9D59;padding-bottom:5px;
+  transition:color .25s,border-color .25s}
+
+
 .vr-caras{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));
   gap:clamp(30px,3.6vw,62px);margin-top:clamp(44px,5vw,72px)}
 .vr-cara{min-width:0}
@@ -1172,8 +1206,11 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
             <sc-if value="{{ item.inStock }}" hint-placeholder-val="{{ true }}"><div style="font-size:11px;letter-spacing:.06em;color:#7a6a4f">{{ item.stockLabel }}</div></sc-if>
             <sc-if value="{{ item.outStock }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;letter-spacing:.06em;color:#1C1C24;font-weight:600">{{ t.sin_stock }}</div></sc-if>
             <div class="vr-shop-actions" style="display:flex;gap:10px;margin-top:6px">
-              <sc-if value="{{ item.inStock }}" hint-placeholder-val="{{ true }}">
+              <sc-if value="{{ item.canBuy }}" hint-placeholder-val="{{ true }}">
                 <button onClick="{{ item.buy }}" style="flex:1;background:#CF9D59;color:#0F2349;border:none;cursor:pointer;font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:12px 0;transition:background .25s" style-hover="background:#b9873f">{{ t.btn_comprar }}</button>
+              </sc-if>
+              <sc-if value="{{ item.askPrice }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1;border:1px solid rgba(207,157,89,.6);color:#7a6a4f;font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:12px 0;text-align:center">{{ t.precio_pendiente }}</div>
               </sc-if>
               <sc-if value="{{ item.outStock }}" hint-placeholder-val="{{ false }}">
                 <div style="flex:1;background:rgba(28,28,36,.08);color:rgba(28,28,36,.4);font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:12px 0;text-align:center">{{ t.sin_stock }}</div>
@@ -1467,11 +1504,20 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           <image-slot id="pg-{{ cur.slug }}" shape="rect" src="{{ cur.img }}" placeholder="foto principal (cliente)"></image-slot>
         </div>
       </div>
-      <div class="vr-p-thumbs" style="display:flex;gap:12px;margin-top:12px">
-        <div style="position:relative;height:105px;flex:1"><image-slot id="pg2-{{ cur.slug }}" shape="rect" src="assets/medalla-dorada.webp" placeholder="detalle"></image-slot></div>
-        <div style="position:relative;height:105px;flex:1"><image-slot id="pg3-{{ cur.slug }}" shape="rect" src="assets/medalla-plata.webp" placeholder="reverso"></image-slot></div>
-        <div style="position:relative;height:105px;flex:1"><image-slot id="pg4-{{ cur.slug }}" shape="rect" src="assets/medalla-mini.webp" placeholder="en uso"></image-slot></div>
-      </div>
+      <sc-if value="{{ cur.hasThumbs }}" hint-placeholder-val="{{ false }}">
+        <div class="vr-p-thumbs" style="display:flex;gap:12px;margin-top:12px">
+          <sc-for list="{{ cur.thumbs }}" as="th" hint-placeholder-count="2">
+            <div style="position:relative;height:150px;flex:1"><image-slot id="pgt-{{ th.key }}" shape="rect" src="{{ th.src }}" placeholder="foto"></image-slot></div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cur.noThumbs }}" hint-placeholder-val="{{ true }}">
+        <div class="vr-p-thumbs" style="display:flex;gap:12px;margin-top:12px">
+          <div style="position:relative;height:105px;flex:1"><image-slot id="pg2-{{ cur.slug }}" shape="rect" src="assets/medalla-dorada.webp" placeholder="detalle"></image-slot></div>
+          <div style="position:relative;height:105px;flex:1"><image-slot id="pg3-{{ cur.slug }}" shape="rect" src="assets/medalla-plata.webp" placeholder="reverso"></image-slot></div>
+          <div style="position:relative;height:105px;flex:1"><image-slot id="pg4-{{ cur.slug }}" shape="rect" src="assets/medalla-mini.webp" placeholder="en uso"></image-slot></div>
+        </div>
+      </sc-if>
     </div>
     <div class="vr-p-info">
       <sc-if value="{{ cur.hasBadge }}" hint-placeholder-val="{{ false }}">
@@ -1485,8 +1531,18 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <span style="font-size:11px;letter-spacing:.14em;color:rgba(28,28,36,.45)">USD</span>
       </div>
       <p style="font-size:14.5px;line-height:1.75;color:#4a4a52;margin:0 0 26px">{{ cur.descLong }}</p>
+      <sc-if value="{{ cur.hasSpecs }}" hint-placeholder-val="{{ false }}">
+        <ul class="vr-p-specs">
+          <sc-for list="{{ cur.specs }}" as="sp" hint-placeholder-count="4">
+            <li>{{ sp }}</li>
+          </sc-for>
+        </ul>
+      </sc-if>
       <div data-reveal="line" style="width:44px;height:1px;background:#CF9D59;margin-bottom:22px"></div>
-      <sc-if value="{{ cur.inStock }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ cur.askPrice }}" hint-placeholder-val="{{ false }}">
+        <div style="border:1px solid rgba(207,157,89,.6);color:#7a6a4f;font-size:12.5px;font-weight:600;letter-spacing:.06em;padding:16px;text-align:center;margin-bottom:20px">{{ t.precio_pendiente_largo }}</div>
+      </sc-if>
+      <sc-if value="{{ cur.canBuy }}" hint-placeholder-val="{{ true }}">
         <div style="font-size:12px;letter-spacing:.06em;color:#7a6a4f;margin-bottom:22px">{{ cur.stockLabel }}</div>
         <div class="vr-p-qty" style="display:flex;align-items:center;gap:16px;margin-bottom:26px">
           <span style="font-size:12px;font-weight:600;letter-spacing:.1em;color:#0F2349">{{ t.cantidad }}</span>
@@ -1865,7 +1921,7 @@ class Component extends DCLogic {
   products() {
     const L = this.state.lang;
     const D = Component.DATA;
-    return D.map((p) => Object.assign({}, p, { name: p.name[L], desc: p.desc[L], descLong: p.descLong[L], badge: p.badgeTxt ? p.badgeTxt[L] : '' }));
+    return D.map((p) => Object.assign({}, p, { name: p.name[L], desc: p.desc[L], descLong: p.descLong[L], badge: p.badgeTxt ? p.badgeTxt[L] : '', specs: p.specs ? p.specs[L] : [] }));
   }
   submitOrder() {
     const T = Component.T[this.state.lang];
@@ -1898,7 +1954,14 @@ class Component extends DCLogic {
     const fmt = (n) => '$' + n.toFixed(2);
     const prods = this.products();
     const mk = (p) => Object.assign({}, p, {
-      priceFmt: fmt(p.price),
+      priceFmt: (typeof p.price === 'number') ? fmt(p.price) : T.precio_pendiente,
+      noPrice: typeof p.price !== 'number',
+      canBuy: p.stock > 0 && typeof p.price === 'number',
+      askPrice: p.stock > 0 && typeof p.price !== 'number',
+      thumbs: (p.imgs || []).map((src, i) => ({ src, key: p.slug + '-' + i })),
+      hasThumbs: !!(p.imgs && p.imgs.length),
+      noThumbs: !(p.imgs && p.imgs.length),
+      specs: p.specs || [], hasSpecs: !!(p.specs && p.specs.length),
       hasOld: !!p.oldPrice, oldFmt: p.oldPrice ? fmt(p.oldPrice) : '',
       hasBadge: !!p.badge,
       inStock: p.stock > 0, outStock: p.stock <= 0,
@@ -1907,12 +1970,13 @@ class Component extends DCLogic {
       buy: () => { this.addToCart(p.slug, 1); location.hash = '#/carrito'; }
     });
     const items = prods.map(mk);
-    const featured = ['medalla-dorada', 'medalla-con-cadena', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
+    const featured = ['bendicion-cristal', 'medalla-dorada', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
     const cats = ['puerta', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
-    let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && p.price <= S.fMax && (!S.fStock || p.stock > 0));
-    if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => a.price - b.price);
-    else if (S.sort === 'desc') shopItems = shopItems.slice().sort((a, b) => b.price - a.price);
+    let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (typeof p.price !== 'number' || p.price <= S.fMax) && (!S.fStock || p.stock > 0));
+    const pv = (x) => (typeof x.price === 'number' ? x.price : Infinity);
+    if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => pv(a) - pv(b));
+    else if (S.sort === 'desc') shopItems = shopItems.slice().sort((a, b) => pv(b) - pv(a));
     const cur = S.slug ? items.find((p) => p.slug === S.slug) : null;
     const lines = Object.entries(S.cart).map(([slug, q]) => {
       const p = items.find((x) => x.slug === slug);
@@ -2022,6 +2086,15 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
+  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-anverso.webp',
+    imgs: ['assets/bendicion-cristal-anverso.webp', 'assets/bendicion-cristal-reverso.webp'],
+    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Bendición de San Benito · Cristal cortado', en: 'Saint Benedict Blessing · Cut crystal' },
+    desc: { es: 'Bordada en cristal cortado, con medalla giratoria.', en: 'Embroidered in cut crystal, with a rotating medal.' },
+    descLong: { es: 'Bendición de San Benito bordada en cristal cortado, para colgar de la manija de la entrada. La medalla es giratoria, así que pueden verse sus dos caras: la imagen del santo y la cruz con sus inscripciones.', en: 'Saint Benedict blessing embroidered in cut crystal, to hang from the handle of the entrance door. The medal rotates, so both of its faces can be seen: the image of the saint and the cross with its inscriptions.' },
+    specs: {
+      es: ['Bendición de San Benito bordada en cristal cortado.', 'Disponible en color miel y en azul con miel.', 'La medalla es giratoria.', 'Medidas: 12 pulgadas de largo · 5,5 pulgadas de ancho de la medalla.'],
+      en: ['Saint Benedict blessing embroidered in cut crystal.', 'Available in honey, and in blue with honey.', 'The medal rotates.', 'Dimensions: 12 inches long · 5.5 inches wide at the medal.'] } },
   { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, cat: 'puerta', badgeTxt: { es: 'OFERTA', en: 'SALE' },
     name: { es: 'Colgante de puerta · Clásico', en: 'Door hanger · Classic' },
     desc: { es: 'Para la manija o la chapa de la entrada principal.', en: 'For the handle or plate of the main entrance.' },
@@ -2072,6 +2145,8 @@ Component.T = {
     ver_producto: 'Ver producto', sin_stock: 'Sin stock',
     sin_stock_largo: 'PRODUCTO SIN STOCK ACTUALMENTE',
     filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
+    precio_pendiente: 'Precio a confirmar',
+    precio_pendiente_largo: 'El precio de esta pieza todavía no está definido.',
     solo_stock: 'Solo con stock', limpiar: 'Limpiar filtros ×', piezas: 'piezas', hasta: 'hasta',
     paso: 'Paso', ticket_label: 'VADE RETRO PRESENTA', ticket_event: 'PROCESO DE COMPRA', ticket_footer: 'MEDALLAS DE SAN BENITO · USD',
     sin_resultados: 'No hay piezas que coincidan con los filtros seleccionados.',
@@ -2239,6 +2314,8 @@ Component.T = {
     ver_producto: 'View product', sin_stock: 'Out of stock',
     sin_stock_largo: 'CURRENTLY OUT OF STOCK',
     filtros: 'Filters', f_categorias: 'CATEGORIES', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
+    precio_pendiente: 'Price to be confirmed',
+    precio_pendiente_largo: 'The price for this piece has not been set yet.',
     solo_stock: 'In stock only', limpiar: 'Clear filters ×', piezas: 'pieces', hasta: 'up to',
     paso: 'Step', ticket_label: 'VADE RETRO PRESENTS', ticket_event: 'HOW TO BUY', ticket_footer: 'SAINT BENEDICT MEDALS · USD',
     sin_resultados: 'No pieces match the selected filters.',
