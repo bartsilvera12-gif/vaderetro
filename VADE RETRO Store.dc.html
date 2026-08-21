@@ -36,7 +36,11 @@ body{margin:0;background:#F9F0ED;color:#1C1C24;font-family:Montserrat,sans-serif
    marfil paso a pintar solo hasta donde llega el body, y debajo asomaba una
    banda oscura que se fundia con el pie y lo hacia parecer enorme. Que
    crezca con el contenido y siga llenando la pantalla en paginas cortas. */
+html,body{height:auto!important}
 #dc-root,#dc-root > .sc-host{height:auto!important;min-height:100vh}
+/* Y el marfil va tambien en el contenedor raiz, que abarca todo el alto del
+   contenido: asi el fondo no depende de cuanto mida el body. */
+#dc-root{background:#F9F0ED}
 a{color:#0F2349;text-decoration:none;transition:color .25s}a:hover{color:#CF9D59}
 input,textarea,select,button{font-family:Montserrat,sans-serif}
 input:focus,textarea:focus{outline:none;border-color:#CF9D59 !important}
