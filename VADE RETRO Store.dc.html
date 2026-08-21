@@ -356,16 +356,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-p-thumb:hover{opacity:1}
 .vr-p-thumb.is-sel{opacity:1;border-color:#CF9D59}
 
-/* Mini zoom al pasar el mouse por la foto principal. El recorte lo hace el
-   contenedor; el que escala es el propio image-slot. Se desactiva donde no
-   hay puntero, que en tactil el hover se queda pegado. */
+/* La foto principal se muestra tal cual, sin zoom al pasar el mouse. */
 .vr-p-main{overflow:hidden}
-.vr-p-main > image-slot{transition:transform .35s cubic-bezier(.22,1,.36,1);
-  transform-origin:var(--vr-ox,50%) var(--vr-oy,50%)}
-@media (hover:hover){
-  .vr-p-main{cursor:zoom-in}
-  .vr-p-main:hover > image-slot{transform:scale(1.7)}
-}
 
 /* ==========================================================================
    EL HERO REACCIONA AL SCROLL
@@ -1840,7 +1832,6 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onResize);
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
     this.parseRoute();
-    this.initZoom();
     this.initGalRatio();
     requestAnimationFrame(() => this.initReveal());
 
@@ -1898,23 +1889,6 @@ class Component extends DCLogic {
   // costado. Los hermanos que revelan juntos se escalonan solos.
   // Entradas por scroll. Con soporte de animation-timeline no hace falta nada:
   // se encarga el CSS. Sin soporte (Safari/iOS) las dispara este observer.
-  // El zoom de la ficha sigue al puntero: se guarda la posicion del mouse
-  // dentro del marco como porcentaje y el CSS la usa de transform-origin, asi
-  // que al ampliar se ve la zona que uno esta mirando y no siempre el centro.
-  initZoom() {
-    if (this._zoomOn) return;
-    this._zoomOn = true;
-    document.addEventListener('mousemove', (e) => {
-      const box = e.target && e.target.closest ? e.target.closest('.vr-p-main') : null;
-      if (!box) return;
-      const r = box.getBoundingClientRect();
-      if (!r.width || !r.height) return;
-      const x = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
-      const y = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
-      box.style.setProperty('--vr-ox', x.toFixed(2) + '%');
-      box.style.setProperty('--vr-oy', y.toFixed(2) + '%');
-    }, { passive: true });
-  }
   // El marco tiene que tomar la forma de la foto elegida. La proporcion no
   // puede salir del producto, porque cada miniatura puede tener la suya, asi
   // que se mide la imagen real y se escribe en --vr-num. Se cachea por src y
