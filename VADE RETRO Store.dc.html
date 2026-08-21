@@ -2179,7 +2179,9 @@ class Component extends DCLogic {
       decQty: () => this.setState({ qty: Math.max(1, S.qty - 1) }),
       addCur: () => { if (cur) this.addToCart(cur.slug, S.qty); },
       galSrc: cur ? (S.galSrc || cur.img) : '',
-      galThumbs: cur ? (cur.imgs || []).map((src, i) => ({
+      galThumbs: cur ? [cur.img].concat(cur.imgs || [])
+        .filter((v, i, a) => v && a.indexOf(v) === i)
+        .map((src, i) => ({
         src, key: cur.slug + '-' + i,
         cls: src === (S.galSrc || cur.img) ? 'is-sel' : '',
         pick: () => this.setState({ galSrc: src })
