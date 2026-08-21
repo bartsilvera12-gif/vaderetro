@@ -304,6 +304,13 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-medalla-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
   color:rgba(249,240,237,.72);margin:0;max-width:58ch}
 
+.vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
+.vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+.vr-p-color{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(15,35,73,.18);
+  padding:8px 14px 8px 10px;font-size:12.5px;color:#4a4a52}
+.vr-p-color-dot{width:15px;height:15px;border-radius:50%;flex-shrink:0;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+
 .vr-p-specs{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid rgba(15,35,73,.12)}
 .vr-p-specs li{position:relative;border-bottom:1px solid rgba(15,35,73,.12);padding:11px 0 11px 20px;
   font-size:13.5px;line-height:1.6;color:#4a4a52}
@@ -1061,7 +1068,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <sc-for list="{{ items }}" as="item" hint-placeholder-count="6">
           <a class="vr-rail-card" href="#/producto/{{ item.slug }}" style="display:block;width:300px;flex-shrink:0;scroll-snap-align:start;color:#1C1C24;transition:transform .4s cubic-bezier(.22,1,.36,1)" style-hover="transform:translateY(-6px);color:#1C1C24">
             <div class="vr-rail-img" style="position:relative;height:360px;overflow:hidden;border:1px solid rgba(15,35,73,.1);background:#fff">
-              <image-slot id="card-{{ item.slug }}" shape="rect" src="{{ item.img }}" placeholder="foto de producto (cliente)"></image-slot>
+              <image-slot id="card-{{ item.slug }}" shape="rect" src="{{ item.cardImg }}" placeholder="foto de producto (cliente)"></image-slot>
               <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.95%22 numOctaves=%222%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22200%22 height=%22200%22 filter=%22url(%23n)%22/></svg>');background-size:200px 200px"></div>
               <div style="position:absolute;left:0;right:0;bottom:0;height:26%;pointer-events:none;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);mask-image:linear-gradient(transparent,#000);-webkit-mask-image:linear-gradient(transparent,#000)"></div>
               <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
@@ -1189,7 +1196,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <sc-for list="{{ shopItems }}" as="item" hint-placeholder-count="6">
         <div class="vr-shop-card" data-reveal style="background:#ffffff;border:1px solid rgba(15,35,73,.08);display:flex;flex-direction:column;transition:transform .35s ease,box-shadow .35s ease" style-hover="transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,35,73,.13)">
           <div class="vr-shop-cardimg" style="position:relative;height:250px;overflow:hidden">
-            <image-slot id="shop-{{ item.slug }}" shape="rect" src="{{ item.img }}" placeholder="foto de producto (cliente)"></image-slot>
+            <image-slot id="shop-{{ item.slug }}" shape="rect" src="{{ item.cardImg }}" placeholder="foto de producto (cliente)"></image-slot>
             <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
               <span style="position:absolute;top:12px;left:12px;background:#CF9D59;color:#0F2349;font-size:10px;font-weight:700;letter-spacing:.14em;padding:6px 11px;pointer-events:none">{{ item.badge }}</span>
             </sc-if>
@@ -1500,8 +1507,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <div class="vr-deco" style="position:absolute;bottom:-46px;left:-56px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(207,157,89,.45);pointer-events:none"></div>
       <div class="vr-deco" style="position:absolute;bottom:-26px;left:-36px;width:160px;height:160px;border-radius:50%;border:1px solid rgba(207,157,89,.25);pointer-events:none"></div>
       <div class="vr-p-frame" style="position:relative;padding:12px;border:1px solid rgba(15,35,73,.15);background:#fff">
-        <div class="vr-p-main" style="position:relative;height:min(80vw,470px)">
-          <image-slot id="pg-{{ cur.slug }}" shape="rect" src="{{ cur.img }}" placeholder="foto principal (cliente)"></image-slot>
+        <div class="vr-p-main" style="position:relative;height:min(88vw,540px)">
+          <image-slot id="pg-{{ cur.slug }}" shape="rect" fit="{{ cur.fit }}" src="{{ cur.img }}" placeholder="foto principal (cliente)"></image-slot>
         </div>
       </div>
       <sc-if value="{{ cur.hasThumbs }}" hint-placeholder-val="{{ false }}">
@@ -1531,6 +1538,14 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <span style="font-size:11px;letter-spacing:.14em;color:rgba(28,28,36,.45)">USD</span>
       </div>
       <p style="font-size:14.5px;line-height:1.75;color:#4a4a52;margin:0 0 26px">{{ cur.descLong }}</p>
+      <sc-if value="{{ cur.hasColors }}" hint-placeholder-val="{{ false }}">
+        <div class="vr-p-colors-h">{{ t.colores }}</div>
+        <div class="vr-p-colors">
+          <sc-for list="{{ cur.colors }}" as="c" hint-placeholder-count="2">
+            <span class="vr-p-color"><span class="vr-p-color-dot" style="background:{{ c.css }}"></span>{{ c.name }}</span>
+          </sc-for>
+        </div>
+      </sc-if>
       <sc-if value="{{ cur.hasSpecs }}" hint-placeholder-val="{{ false }}">
         <ul class="vr-p-specs">
           <sc-for list="{{ cur.specs }}" as="sp" hint-placeholder-count="4">
@@ -1921,7 +1936,7 @@ class Component extends DCLogic {
   products() {
     const L = this.state.lang;
     const D = Component.DATA;
-    return D.map((p) => Object.assign({}, p, { name: p.name[L], desc: p.desc[L], descLong: p.descLong[L], badge: p.badgeTxt ? p.badgeTxt[L] : '', specs: p.specs ? p.specs[L] : [] }));
+    return D.map((p) => Object.assign({}, p, { name: p.name[L], desc: p.desc[L], descLong: p.descLong[L], badge: p.badgeTxt ? p.badgeTxt[L] : '', specs: p.specs ? p.specs[L] : [], colors: p.colors ? p.colors.map((c) => ({ css: c.css, name: c.name[L] })) : [] }));
   }
   submitOrder() {
     const T = Component.T[this.state.lang];
@@ -1956,16 +1971,19 @@ class Component extends DCLogic {
     const mk = (p) => Object.assign({}, p, {
       priceFmt: (typeof p.price === 'number') ? fmt(p.price) : T.precio_pendiente,
       noPrice: typeof p.price !== 'number',
-      canBuy: p.stock > 0 && typeof p.price === 'number',
-      askPrice: p.stock > 0 && typeof p.price !== 'number',
+      canBuy: p.stock !== 0 && typeof p.price === 'number',
+      askPrice: p.stock !== 0 && typeof p.price !== 'number',
+      cardImg: p.cardImg || p.img,
+      fit: p.fit || 'cover',
       thumbs: (p.imgs || []).map((src, i) => ({ src, key: p.slug + '-' + i })),
       hasThumbs: !!(p.imgs && p.imgs.length),
       noThumbs: !(p.imgs && p.imgs.length),
       specs: p.specs || [], hasSpecs: !!(p.specs && p.specs.length),
+      colors: p.colors || [], hasColors: !!(p.colors && p.colors.length),
       hasOld: !!p.oldPrice, oldFmt: p.oldPrice ? fmt(p.oldPrice) : '',
       hasBadge: !!p.badge,
-      inStock: p.stock > 0, outStock: p.stock <= 0,
-      stockLabel: p.stock > 0 ? (L === 'es' ? p.stock + ' disponibles' : p.stock + ' in stock') : '',
+      inStock: p.stock !== 0, outStock: p.stock === 0,
+      stockLabel: (typeof p.stock === 'number' && p.stock > 0) ? (L === 'es' ? p.stock + ' disponibles' : p.stock + ' in stock') : '',
       img: p.img || '',
       buy: () => { this.addToCart(p.slug, 1); location.hash = '#/carrito'; }
     });
@@ -2086,15 +2104,18 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
-  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-anverso.webp',
-    imgs: ['assets/bendicion-cristal-anverso.webp', 'assets/bendicion-cristal-reverso.webp'],
+  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-full-1.webp', fit: 'contain',
+    cardImg: 'assets/bendicion-cristal-1.webp',
+    imgs: ['assets/bendicion-cristal-1.webp', 'assets/bendicion-cristal-2.webp'],
+    colors: [{ css: '#C9A46A', name: { es: 'Miel', en: 'Honey' } },
+             { css: 'linear-gradient(135deg,#0F2349 50%,#C9A46A 50%)', name: { es: 'Azul con miel', en: 'Blue with honey' } }],
     price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Cristal cortado', en: 'Saint Benedict Blessing · Cut crystal' },
     desc: { es: 'Bordada en cristal cortado, con medalla giratoria.', en: 'Embroidered in cut crystal, with a rotating medal.' },
     descLong: { es: 'Bendición de San Benito bordada en cristal cortado, para colgar de la manija de la entrada. La medalla es giratoria, así que pueden verse sus dos caras: la imagen del santo y la cruz con sus inscripciones.', en: 'Saint Benedict blessing embroidered in cut crystal, to hang from the handle of the entrance door. The medal rotates, so both of its faces can be seen: the image of the saint and the cross with its inscriptions.' },
     specs: {
-      es: ['Bendición de San Benito bordada en cristal cortado.', 'Disponible en color miel y en azul con miel.', 'La medalla es giratoria.', 'Medidas: 12 pulgadas de largo · 5,5 pulgadas de ancho de la medalla.'],
-      en: ['Saint Benedict blessing embroidered in cut crystal.', 'Available in honey, and in blue with honey.', 'The medal rotates.', 'Dimensions: 12 inches long · 5.5 inches wide at the medal.'] } },
+      es: ['Bendición de San Benito bordada en cristal cortado.', 'La medalla es giratoria.', 'Medidas: 12 pulgadas de largo · 5,5 pulgadas de ancho de la medalla.'],
+      en: ['Saint Benedict blessing embroidered in cut crystal.', 'The medal rotates.', 'Dimensions: 12 inches long · 5.5 inches wide at the medal.'] } },
   { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, cat: 'puerta', badgeTxt: { es: 'OFERTA', en: 'SALE' },
     name: { es: 'Colgante de puerta · Clásico', en: 'Door hanger · Classic' },
     desc: { es: 'Para la manija o la chapa de la entrada principal.', en: 'For the handle or plate of the main entrance.' },
@@ -2145,6 +2166,7 @@ Component.T = {
     ver_producto: 'Ver producto', sin_stock: 'Sin stock',
     sin_stock_largo: 'PRODUCTO SIN STOCK ACTUALMENTE',
     filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
+    colores: 'COLORES DISPONIBLES',
     precio_pendiente: 'Precio a confirmar',
     precio_pendiente_largo: 'El precio de esta pieza todavía no está definido.',
     solo_stock: 'Solo con stock', limpiar: 'Limpiar filtros ×', piezas: 'piezas', hasta: 'hasta',
@@ -2314,6 +2336,7 @@ Component.T = {
     ver_producto: 'View product', sin_stock: 'Out of stock',
     sin_stock_largo: 'CURRENTLY OUT OF STOCK',
     filtros: 'Filters', f_categorias: 'CATEGORIES', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
+    colores: 'AVAILABLE COLOURS',
     precio_pendiente: 'Price to be confirmed',
     precio_pendiente_largo: 'The price for this piece has not been set yet.',
     solo_stock: 'In stock only', limpiar: 'Clear filters ×', piezas: 'pieces', hasta: 'up to',
