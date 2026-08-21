@@ -304,6 +304,14 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-medalla-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
   color:rgba(249,240,237,.72);margin:0;max-width:58ch}
 
+/* Foto vertical: el marco toma la proporcion de la imagen y se centra, en
+   vez de quedar una caja ancha con la foto flotando entre bandas blancas.
+   La altura manda y el ancho sale del ratio. */
+.vr-p-media.is-contain .vr-p-frame{width:max-content;max-width:100%;margin:0 auto}
+.vr-p-media.is-contain .vr-p-main{height:min(78vw,600px);width:auto;
+  aspect-ratio:var(--vr-ratio)}
+.vr-p-media.is-contain .vr-p-thumbs{max-width:100%;margin-left:auto;margin-right:auto}
+
 .vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
 .vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
 .vr-p-color{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(15,35,73,.18);
@@ -1503,7 +1511,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   <a href="#/tienda" style="font-size:12px;font-weight:600;letter-spacing:.1em;color:rgba(15,35,73,.6)">‹ {{ t.volver_coleccion }}</a>
   <sc-if value="{{ hasCur }}" hint-placeholder-val="{{ true }}">
   <div class="vr-p-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:60px;margin-top:30px">
-    <div class="vr-p-media" style="position:relative">
+    <div class="vr-p-media {{ cur.mediaClass }}" style="position:relative;{{ cur.ratioStyle }}">
       <div class="vr-deco" style="position:absolute;bottom:-46px;left:-56px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(207,157,89,.45);pointer-events:none"></div>
       <div class="vr-deco" style="position:absolute;bottom:-26px;left:-36px;width:160px;height:160px;border-radius:50%;border:1px solid rgba(207,157,89,.25);pointer-events:none"></div>
       <div class="vr-p-frame" style="position:relative;padding:12px;border:1px solid rgba(15,35,73,.15);background:#fff">
@@ -1975,6 +1983,8 @@ class Component extends DCLogic {
       askPrice: p.stock !== 0 && typeof p.price !== 'number',
       cardImg: p.cardImg || p.img,
       fit: p.fit || 'cover',
+      mediaClass: (p.fit === 'contain' && p.ratio) ? 'is-contain' : '',
+      ratioStyle: p.ratio ? ('--vr-ratio:' + p.ratio) : '',
       thumbs: (p.imgs || []).map((src, i) => ({ src, key: p.slug + '-' + i })),
       hasThumbs: !!(p.imgs && p.imgs.length),
       noThumbs: !(p.imgs && p.imgs.length),
@@ -2104,7 +2114,7 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
-  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-full-1.webp', fit: 'contain',
+  { slug: 'bendicion-cristal', img: 'assets/bendicion-cristal-full-1.webp', fit: 'contain', ratio: '523 / 1000',
     cardImg: 'assets/bendicion-cristal-1.webp',
     imgs: ['assets/bendicion-cristal-1.webp', 'assets/bendicion-cristal-2.webp'],
     colors: [{ css: '#C9A46A', name: { es: 'Miel', en: 'Honey' } },
