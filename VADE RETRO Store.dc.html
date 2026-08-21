@@ -304,8 +304,18 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-medalla-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
   color:rgba(249,240,237,.72);margin:0;max-width:58ch}
 
+/* La lamina de la cliente. Va centrada y con ancho tope: es una imagen
+   vertical de 1024x1536, asi que a lo ancho de la seccion quedaria enorme y
+   su tipografia interna, ilegible. El borde dorado la despega del azul. */
+.vr-lamina{margin:clamp(40px,4.4vw,64px) auto 0;max-width:600px;text-align:center}
+.vr-lamina img{display:block;width:100%;height:auto;border-radius:3px;
+  border:1px solid rgba(207,157,89,.38);box-shadow:0 26px 64px rgba(0,0,0,.34)}
+.vr-lamina-cap{font-size:11px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(249,240,237,.48);margin:16px 0 0}
+
 .vr-caras{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));
-  gap:clamp(30px,3.6vw,62px);margin-top:clamp(40px,4.4vw,64px)}
+  gap:clamp(30px,3.6vw,62px);margin-top:clamp(44px,5vw,72px);
+  padding-top:clamp(44px,5vw,72px);border-top:1px solid rgba(207,157,89,.18)}
 .vr-cara{min-width:0}
 .vr-cara-h{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
   color:#CF9D59;margin:0 0 4px}
@@ -1228,6 +1238,11 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <h2 data-reveal="wipe" class="vr-medalla-h">{{ t.medalla_h }}</h2>
       <div data-reveal="line" class="vr-medalla-rule"></div>
       <p data-reveal class="vr-medalla-p">{{ t.medalla_p }}</p>
+      <figure data-reveal class="vr-lamina">
+        <img src="assets/inscripciones.webp" width="1024" height="1536" loading="lazy"
+             alt="{{ t.lamina_alt }}">
+        <figcaption class="vr-lamina-cap">{{ t.lamina_cap }}</figcaption>
+      </figure>
       <div class="vr-caras">
         <div class="vr-cara">
           <h3 data-reveal class="vr-cara-h">{{ t.cara_a_h }}</h3>
@@ -2091,6 +2106,8 @@ Component.T = {
     medalla_kicker: 'LAS INSCRIPCIONES',
     medalla_h: 'Lo que dice la medalla',
     medalla_p: 'Cada letra grabada es la abreviatura de una palabra en latín. Leídas en orden, las dos caras forman una sola oración de protección.',
+    lamina_alt: 'Lámina de la medalla de San Benito: anverso con la imagen del santo y reverso con la cruz, cada inscripción señalada con su texto en latín y su traducción.',
+    lamina_cap: 'Anverso y reverso, inscripción por inscripción',
     cara_a_h: 'ANVERSO',
     cara_a_sub: 'La imagen de San Benito',
     cara_a: [
@@ -2253,6 +2270,8 @@ Component.T = {
     medalla_kicker: 'THE INSCRIPTIONS',
     medalla_h: 'What the medal says',
     medalla_p: 'Every engraved letter stands for a Latin word. Read in order, the two faces form a single prayer of protection.',
+    lamina_alt: 'Plate of the Saint Benedict medal: obverse with the image of the saint and reverse with the cross, each inscription labelled with its Latin text and translation.',
+    lamina_cap: 'Obverse and reverse, inscription by inscription',
     cara_a_h: 'OBVERSE',
     cara_a_sub: 'The image of Saint Benedict',
     cara_a: [
