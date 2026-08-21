@@ -136,8 +136,6 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 /* Inscripciones. El bloque reutiliza .vr-pillars, pero el numeral pasa a ser la
    abreviatura grabada (CSSML, NDSMD...): son letras, no numeros, asi que van
    sin cursiva, mas chicas y espaciadas, como estan en el metal. */
-.vr-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59;
-  margin-bottom:18px}
 .vr-pillars > div > div:first-child{font-style:normal!important;
   font-size:clamp(15px,1.35vw,20px)!important;letter-spacing:.12em!important;
   font-weight:600!important;color:#CF9D59!important;line-height:1.25!important;
@@ -284,6 +282,45 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   line-height:1.5;color:#0F2349;margin:clamp(26px,3vw,40px) auto 0;max-width:30ch}
 .vr-cierre-2{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
   color:#CF9D59;margin:22px auto 0}
+
+/* ==========================================================================
+   LO QUE DICE LA MEDALLA
+   Las inscripciones son el corazon de la pieza, asi que se leen como una
+   lamina: fondo azul, siglas en dorado haciendo de ancla, el latin en
+   Cormorant y la traduccion debajo en cuerpo chico. Dos caras, dos columnas;
+   auto-fit las apila solo cuando dejan de entrar, sin media query propia.
+   ========================================================================== */
+.vr-medalla{position:relative;overflow:hidden;background:#0F2349;
+  padding:clamp(56px,6.5vw,100px) 24px}
+.vr-medalla::before{content:"";position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);width:min(78vw,720px);aspect-ratio:1;
+  pointer-events:none;opacity:.055;
+  background:url('assets/medalla-simbolo.png') center/contain no-repeat}
+.vr-medalla-box{position:relative;z-index:1;max-width:1000px;margin:0 auto}
+.vr-medalla-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
+.vr-medalla-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:#F9F0ED;margin:16px 0 0}
+.vr-medalla-rule{width:54px;height:2px;background:#CF9D59;margin:26px 0 22px}
+.vr-medalla-p{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
+  color:rgba(249,240,237,.72);margin:0;max-width:58ch}
+
+.vr-caras{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));
+  gap:clamp(30px,3.6vw,62px);margin-top:clamp(40px,4.4vw,64px)}
+.vr-cara{min-width:0}
+.vr-cara-h{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:#CF9D59;margin:0 0 4px}
+.vr-cara-sub{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(15px,1.2vw,17px);color:rgba(249,240,237,.55);margin:0}
+
+.vr-ins{border-top:1px solid rgba(207,157,89,.24);padding:18px 0}
+.vr-cara > .vr-ins:first-of-type{margin-top:20px}
+.vr-cara > .vr-ins:last-child{border-bottom:1px solid rgba(207,157,89,.24)}
+.vr-ins-sigla{font-size:11.5px;font-weight:700;letter-spacing:.28em;color:#CF9D59;
+  margin:0 0 8px;word-break:break-word}
+.vr-ins-lat{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(17px,1.5vw,22px);line-height:1.35;color:#F9F0ED;margin:0}
+.vr-ins-tr{font-size:clamp(13px,1vw,14.5px);line-height:1.7;
+  color:rgba(249,240,237,.62);margin:7px 0 0}
 
 /* ==========================================================================
    ORDEN DE LA TIENDA: menu propio en todos los anchos
@@ -1184,6 +1221,40 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     </div>
   </section>
 
+  <!-- Lamina de las inscripciones: lo que esta grabado en cada cara. -->
+  <section class="vr-medalla">
+    <div class="vr-medalla-box">
+      <div data-reveal class="vr-medalla-kicker">{{ t.medalla_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-medalla-h">{{ t.medalla_h }}</h2>
+      <div data-reveal="line" class="vr-medalla-rule"></div>
+      <p data-reveal class="vr-medalla-p">{{ t.medalla_p }}</p>
+      <div class="vr-caras">
+        <div class="vr-cara">
+          <h3 data-reveal class="vr-cara-h">{{ t.cara_a_h }}</h3>
+          <p data-reveal class="vr-cara-sub">{{ t.cara_a_sub }}</p>
+          <sc-for list="{{ caraA }}" as="i" hint-placeholder-count="3">
+            <div data-reveal class="vr-ins">
+              <div class="vr-ins-sigla">{{ i.sigla }}</div>
+              <p class="vr-ins-lat">{{ i.lat }}</p>
+              <p class="vr-ins-tr">{{ i.tr }}</p>
+            </div>
+          </sc-for>
+        </div>
+        <div class="vr-cara">
+          <h3 data-reveal class="vr-cara-h">{{ t.cara_b_h }}</h3>
+          <p data-reveal class="vr-cara-sub">{{ t.cara_b_sub }}</p>
+          <sc-for list="{{ caraB }}" as="i" hint-placeholder-count="6">
+            <div data-reveal class="vr-ins">
+              <div class="vr-ins-sigla">{{ i.sigla }}</div>
+              <p class="vr-ins-lat">{{ i.lat }}</p>
+              <p class="vr-ins-tr">{{ i.tr }}</p>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="vr-puerta">
     <div class="vr-escudo-box">
       <div data-reveal class="vr-escudo-kicker">{{ t.puerta_kicker }}</div>
@@ -1915,6 +1986,7 @@ class Component extends DCLogic {
       steps: T.steps.map((s, i) => Object.assign({ num: '0' + (i + 1), title: s }, Component.TICKET_PALETTE[i % Component.TICKET_PALETTE.length])),
       pillars: T.pillars.map((p, i) => ({ num: p.abbr || ('0' + (i + 1)), name: p.name, desc: p.desc })),
       elems: T.elems, props: T.props, colocs: T.colocs, oracionLineas: T.oracion_lineas,
+      caraA: T.cara_a, caraB: T.cara_b,
       trust: T.trust, heroList: T.hero_list,
       faqRow1: T.faqs.slice(0, 2), faqRow2: T.faqs.slice(2, 4), faqRow3: T.faqs.slice(4, 6),
       faqs: T.faqs.map((f, i) => ({
@@ -2016,6 +2088,26 @@ Component.T = {
     escudo_p1: 'La Medalla de San Benito es uno de los sacramentales más poderosos y antiguos de la Iglesia Católica. Es un símbolo sagrado de profundo significado espiritual contra el mal que ha acompañado durante siglos a quienes buscan caminar bajo la protección de Dios, encontrar fortaleza en los momentos difíciles y mantener su corazón lejos del mal.',
     escudo_p2: 'Cada cruz, cada letra y cada inscripción guardan una poderosa oración de fe: una declaración que rechaza la oscuridad y elige la luz.',
     escudo_p3: 'No promete una vida sin pruebas, pero sí representa la fuerza espiritual para enfrentarlas. Es una presencia silenciosa que inspira paz, esperanza y confianza; un recordatorio diario de que la fe puede ser más fuerte que cualquier adversidad.',
+    medalla_kicker: 'LAS INSCRIPCIONES',
+    medalla_h: 'Lo que dice la medalla',
+    medalla_p: 'Cada letra grabada es la abreviatura de una palabra en latín. Leídas en orden, las dos caras forman una sola oración de protección.',
+    cara_a_h: 'ANVERSO',
+    cara_a_sub: 'La imagen de San Benito',
+    cara_a: [
+      { sigla: 'C S P B', lat: 'Crux Sancti Patris Benedicti', tr: 'Cruz del Santo Padre Benito.' },
+      { sigla: 'CONTORNO', lat: 'Eius in obitu nostro praesentia muniamur', tr: 'Que seamos fortalecidos por su presencia en la hora de nuestra muerte.' },
+      { sigla: 'EX S M CASINO MDCCCLXXX', lat: 'Ex Sacro Monte Cassino, 1880', tr: 'Desde el santo Monte Cassino, 1880.' }
+    ],
+    cara_b_h: 'REVERSO',
+    cara_b_sub: 'La cruz y sus siglas',
+    cara_b: [
+      { sigla: 'P A X', lat: 'Pax', tr: 'Paz.' },
+      { sigla: 'C S S M L', lat: 'Crux sacra sit mihi lux!', tr: '¡Que la Santa Cruz sea mi luz!' },
+      { sigla: 'N D S M D', lat: 'Nunquam draco sit mihi dux!', tr: '¡Que el dragón nunca sea mi guía!' },
+      { sigla: 'V R S N S M V', lat: 'Vade retro Satana! Nunquam suade mihi vana!', tr: '¡Retrocede, Satanás! Nunca me aconsejes cosas vanas.' },
+      { sigla: 'S M Q L I V B', lat: 'Sunt mala quae libas. Ipse venena bibas!', tr: 'Es malo lo que ofreces. Bebe tú mismo tus venenos.' },
+      { sigla: 'C S P B', lat: 'Crux Sancti Patris Benedicti', tr: 'Cruz del Santo Padre Benito.' }
+    ],
     puerta_kicker: 'LA BENDICIÓN PARA LA PUERTA',
     puerta_h: 'Un escudo en el umbral',
     puerta_p1: 'La bendición de San Benito para la puerta es un sacramental católico utilizado como escudo de protección espiritual para el hogar, diseñado para colgarse en la manija o chapa de la entrada principal con el fin de invocar la protección divina, alejar las malas influencias provenientes del demonio y pedir paz para quienes entran y salen. Funciona como un escudo espiritual y un recordatorio de la fe, no como un amuleto de suerte.',
@@ -2158,6 +2250,26 @@ Component.T = {
     steps_note: 'Payment is made through a secure external link you receive after confirming your order.',
     leer_mas: 'Read more',
     escudo_kicker: 'THE SAINT BENEDICT MEDAL',
+    medalla_kicker: 'THE INSCRIPTIONS',
+    medalla_h: 'What the medal says',
+    medalla_p: 'Every engraved letter stands for a Latin word. Read in order, the two faces form a single prayer of protection.',
+    cara_a_h: 'OBVERSE',
+    cara_a_sub: 'The image of Saint Benedict',
+    cara_a: [
+      { sigla: 'C S P B', lat: 'Crux Sancti Patris Benedicti', tr: 'The Cross of our Holy Father Benedict.' },
+      { sigla: 'RIM', lat: 'Eius in obitu nostro praesentia muniamur', tr: 'May we be strengthened by his presence in the hour of our death.' },
+      { sigla: 'EX S M CASINO MDCCCLXXX', lat: 'Ex Sacro Monte Cassino, 1880', tr: 'From holy Monte Cassino, 1880.' }
+    ],
+    cara_b_h: 'REVERSE',
+    cara_b_sub: 'The cross and its initials',
+    cara_b: [
+      { sigla: 'P A X', lat: 'Pax', tr: 'Peace.' },
+      { sigla: 'C S S M L', lat: 'Crux sacra sit mihi lux!', tr: 'May the holy Cross be my light!' },
+      { sigla: 'N D S M D', lat: 'Nunquam draco sit mihi dux!', tr: 'May the dragon never be my guide!' },
+      { sigla: 'V R S N S M V', lat: 'Vade retro Satana! Nunquam suade mihi vana!', tr: 'Step back, Satan! Never tempt me with your vanities.' },
+      { sigla: 'S M Q L I V B', lat: 'Sunt mala quae libas. Ipse venena bibas!', tr: 'What you offer me is evil. Drink your own poison.' },
+      { sigla: 'C S P B', lat: 'Crux Sancti Patris Benedicti', tr: 'The Cross of our Holy Father Benedict.' }
+    ],
     escudo_h: 'More than a medal, a shield of faith',
     escudo_p1: 'The Saint Benedict Medal is one of the oldest and most powerful sacramentals of the Catholic Church. It is a sacred symbol of deep spiritual meaning against evil, one that for centuries has accompanied those who seek to walk under God\'s protection, to find strength in difficult moments and to keep their heart far from evil.',
     escudo_p2: 'Every cross, every letter and every inscription holds a powerful prayer of faith: a declaration that rejects darkness and chooses light.',
