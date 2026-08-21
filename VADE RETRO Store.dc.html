@@ -219,33 +219,71 @@ footer#contacto > div > div:nth-child(2) p:first-child{margin-bottom:8px!importa
 footer#contacto > div > div:last-child{margin-top:10px!important}
 
 /* ==========================================================================
-   NUESTRA HISTORIA: bloque de marca
+   NUESTRA HISTORIA
    Texto largo, asi que manda la lectura: una sola columna angosta, medida de
-   linea corta y jerarquia por tamano y color, no por cajas ni recuadros.
+   linea corta y jerarquia por tamano y color, sin cajas ni recuadros. Las
+   secciones alternan fondo para que se distingan sin necesidad de bordes.
    ========================================================================== */
+.vr-escudo,.vr-puerta,.vr-hogar,.vr-oracion,.vr-cierre{padding:clamp(56px,6.5vw,100px) 24px}
+.vr-escudo{position:relative;overflow:hidden;background:#ffffff}
+.vr-puerta{background:#F9F0ED}
+.vr-hogar{background:#ffffff}
+.vr-oracion{background:#0F2349}
+.vr-cierre{background:#F9F0ED;text-align:center}
+.vr-escudo-box{max-width:760px;margin:0 auto;position:relative;z-index:1}
+
 /* La medalla de fondo, muy tenue: es marca de agua, no ilustracion. Va en un
-   pseudo-elemento porque background-image no acepta opacidad propia. El fondo
-   pasa a blanco para separarse del bloque anterior, que quedo en marfil; el
-   manual admite marfil, blanco y azul como fondos. */
-.vr-escudo{position:relative;overflow:hidden;background:#ffffff!important}
+   pseudo-elemento porque background-image no acepta opacidad propia. */
 .vr-escudo::before{content:"";position:absolute;top:50%;right:-4%;transform:translateY(-50%);
   width:min(50vw,600px);aspect-ratio:1;pointer-events:none;opacity:.075;
   background:url('assets/medalla-simbolo.png') center/contain no-repeat}
-.vr-escudo-box{position:relative;z-index:1}
+
 .vr-escudo-kicker{font-size:11px;font-weight:600;letter-spacing:.34em;color:#CF9D59}
 .vr-escudo-h{font-family:'Cormorant Garamond',serif;font-weight:600;
   font-size:clamp(30px,3.6vw,50px);line-height:1.1;color:#0F2349;margin:16px 0 0}
 .vr-escudo-rule{width:54px;height:2px;background:#CF9D59;margin:26px 0 34px}
 .vr-escudo-p{font-size:clamp(15px,1.15vw,16.5px);line-height:1.85;color:#4a4a52;
   margin:0 0 22px;max-width:62ch}
-.vr-escudo-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
-  font-size:clamp(22px,2.3vw,31px);line-height:1.35;color:#0F2349;
-  margin:36px 0;padding-left:clamp(18px,2vw,28px);
-  border-left:2px solid #CF9D59}
-.vr-escudo-cierre{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,1.8vw,25px);
-  line-height:1.45;color:#0F2349;margin:34px 0 0}
-.vr-escudo-final{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
-  color:#CF9D59;margin:22px 0 0}
+
+/* Subtitulos de los bloques enumerados */
+.vr-sub-h{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(22px,2.2vw,30px);color:#0F2349;margin:clamp(34px,4vw,52px) 0 22px}
+.vr-sub-h--first{margin-top:0}
+
+/* Listas de definiciones: el termino en dorado versalita hace de ancla y la
+   descripcion corre debajo, sin vinetas ni cajas. */
+.vr-defs{margin:0}
+.vr-def{border-top:1px solid rgba(15,35,73,.14);padding:20px 0}
+.vr-defs > div:last-child{border-bottom:1px solid rgba(15,35,73,.14)}
+.vr-def-t{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:#CF9D59;margin:0 0 9px}
+.vr-def-d{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;color:#4a4a52;margin:0;
+  max-width:62ch}
+
+/* La oracion, sobre azul */
+.vr-oracion-kicker{font-family:'Cormorant Garamond',serif;font-weight:600;
+  font-size:clamp(24px,2.6vw,36px);color:#F9F0ED;margin:0 0 18px}
+.vr-oracion-intro{font-size:clamp(14.5px,1.1vw,16px);line-height:1.8;
+  color:rgba(249,240,237,.75);margin:0 0 clamp(28px,3vw,42px);max-width:62ch}
+.vr-rezo{border-left:2px solid #CF9D59;padding-left:clamp(20px,2.4vw,34px)}
+.vr-rezo-linea{margin-bottom:22px}
+.vr-rezo-lat{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(19px,2vw,27px);line-height:1.3;color:#F9F0ED}
+.vr-rezo-tr{font-size:clamp(13px,1vw,14.5px);line-height:1.7;
+  color:rgba(249,240,237,.7);margin-top:6px}
+.vr-rezo-amen{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.7vw,23px);
+  line-height:1.5;color:#CF9D59;margin:28px 0 0}
+.vr-oracion-nota{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(18px,1.9vw,25px);line-height:1.5;color:rgba(249,240,237,.9);
+  margin:clamp(34px,4vw,52px) 0 0;max-width:52ch}
+
+/* Cierre */
+.vr-cierre-deseo{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:clamp(22px,2.6vw,34px);line-height:1.4;color:#0F2349;margin:0 auto;max-width:26ch}
+.vr-cierre-1{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,1.9vw,26px);
+  line-height:1.5;color:#0F2349;margin:clamp(26px,3vw,40px) auto 0;max-width:30ch}
+.vr-cierre-2{font-size:11.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
+  color:#CF9D59;margin:22px auto 0}
 
 /* ==========================================================================
    ORDEN DE LA TIENDA: menu propio en todos los anchos
@@ -686,6 +724,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   .vr-pillars{grid-template-columns:minmax(0,1fr)!important;gap:30px!important}
   .vr-escudo::before{right:auto;left:50%;transform:translate(-50%,-50%);
     width:min(88vw,420px);opacity:.055}
+  .vr-rezo{padding-left:16px}
+  .vr-def{padding:16px 0}
   .vr-deco-pax{font-size:150px!important;bottom:-26px!important;right:-8px!important}
   .vr-hist-cta{padding:58px 22px!important}
 
@@ -1133,20 +1173,85 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div style="font-size:12px;font-weight:600;letter-spacing:.2em;color:rgba(28,28,36,.45);margin-top:26px">{{ t.personalidad }}</div>
   </section>
   <!-- Texto de marca provisto por la cliente. -->
-  <section class="vr-escudo" style="padding:clamp(60px,7vw,110px) 24px;background:#F9F0ED">
-    <div class="vr-escudo-box" style="max-width:760px;margin:0 auto">
+  <section class="vr-escudo">
+    <div class="vr-escudo-box">
       <div data-reveal class="vr-escudo-kicker">{{ t.escudo_kicker }}</div>
       <h2 data-reveal="wipe" class="vr-escudo-h">{{ t.escudo_h }}</h2>
       <div data-reveal="line" class="vr-escudo-rule"></div>
       <p data-reveal class="vr-escudo-p">{{ t.escudo_p1 }}</p>
       <p data-reveal class="vr-escudo-p">{{ t.escudo_p2 }}</p>
       <p data-reveal class="vr-escudo-p">{{ t.escudo_p3 }}</p>
-      <p data-reveal class="vr-escudo-p">{{ t.escudo_p4 }}</p>
-      <blockquote data-reveal="wipe" class="vr-escudo-quote">{{ t.escudo_quote }}</blockquote>
-      <p data-reveal class="vr-escudo-cierre">{{ t.escudo_cierre }}</p>
-      <p data-reveal class="vr-escudo-final">{{ t.escudo_final }}</p>
     </div>
   </section>
+
+  <section class="vr-puerta">
+    <div class="vr-escudo-box">
+      <div data-reveal class="vr-escudo-kicker">{{ t.puerta_kicker }}</div>
+      <h2 data-reveal="wipe" class="vr-escudo-h">{{ t.puerta_h }}</h2>
+      <div data-reveal="line" class="vr-escudo-rule"></div>
+      <p data-reveal class="vr-escudo-p">{{ t.puerta_p1 }}</p>
+      <p data-reveal class="vr-escudo-p">{{ t.puerta_p2 }}</p>
+      <h3 data-reveal class="vr-sub-h">{{ t.elem_h }}</h3>
+      <dl class="vr-defs">
+        <sc-for list="{{ elems }}" as="e" hint-placeholder-count="2">
+          <div data-reveal class="vr-def">
+            <dt class="vr-def-t">{{ e.t }}</dt>
+            <dd class="vr-def-d">{{ e.d }}</dd>
+          </div>
+        </sc-for>
+      </dl>
+    </div>
+  </section>
+
+  <section class="vr-hogar">
+    <div class="vr-escudo-box">
+      <h3 data-reveal class="vr-sub-h vr-sub-h--first">{{ t.prop_h }}</h3>
+      <dl class="vr-defs">
+        <sc-for list="{{ props }}" as="e" hint-placeholder-count="3">
+          <div data-reveal class="vr-def">
+            <dt class="vr-def-t">{{ e.t }}</dt>
+            <dd class="vr-def-d">{{ e.d }}</dd>
+          </div>
+        </sc-for>
+      </dl>
+      <h3 data-reveal class="vr-sub-h">{{ t.coloc_h }}</h3>
+      <p data-reveal class="vr-escudo-p">{{ t.coloc_intro }}</p>
+      <dl class="vr-defs">
+        <sc-for list="{{ colocs }}" as="e" hint-placeholder-count="3">
+          <div data-reveal class="vr-def">
+            <dt class="vr-def-t">{{ e.t }}</dt>
+            <dd class="vr-def-d">{{ e.d }}</dd>
+          </div>
+        </sc-for>
+      </dl>
+    </div>
+  </section>
+
+  <section class="vr-oracion">
+    <div class="vr-escudo-box">
+      <div data-reveal class="vr-oracion-kicker">{{ t.oracion_h }}</div>
+      <p data-reveal class="vr-oracion-intro">{{ t.oracion_intro }}</p>
+      <div class="vr-rezo">
+        <sc-for list="{{ oracionLineas }}" as="l" hint-placeholder-count="4">
+          <div data-reveal class="vr-rezo-linea">
+            <div class="vr-rezo-lat">{{ l.lat }}</div>
+            <div class="vr-rezo-tr">{{ l.tr }}</div>
+          </div>
+        </sc-for>
+        <p data-reveal class="vr-rezo-amen">{{ t.oracion_amen }}</p>
+      </div>
+      <p data-reveal="wipe" class="vr-oracion-nota">{{ t.oracion_nota }}</p>
+    </div>
+  </section>
+
+  <section class="vr-cierre">
+    <div class="vr-escudo-box">
+      <p data-reveal="wipe" class="vr-cierre-deseo">{{ t.cierre_deseo }}</p>
+      <p data-reveal class="vr-cierre-1">{{ t.cierre_1 }}</p>
+      <p data-reveal class="vr-cierre-2">{{ t.cierre_2 }}</p>
+    </div>
+  </section>
+
   <section class="vr-hist-cta" style="padding:84px 24px;background:#16305e;text-align:center">
     <a data-reveal href="#/tienda" style="display:inline-block;background:#CF9D59;color:#0F2349;font-size:12.5px;font-weight:700;letter-spacing:.1em;padding:15px 36px;border-radius:2px;transition:background .25s" style-hover="background:#1a3466;color:#F9F0ED">{{ t.hero_cta1 }}</a>
   </section>
@@ -1809,7 +1914,7 @@ class Component extends DCLogic {
       filterMark: S.filtersOpen ? '−' : '+',
       steps: T.steps.map((s, i) => Object.assign({ num: '0' + (i + 1), title: s }, Component.TICKET_PALETTE[i % Component.TICKET_PALETTE.length])),
       pillars: T.pillars.map((p, i) => ({ num: p.abbr || ('0' + (i + 1)), name: p.name, desc: p.desc })),
-      hitos: T.hitos,
+      elems: T.elems, props: T.props, colocs: T.colocs, oracionLineas: T.oracion_lineas,
       trust: T.trust, heroList: T.hero_list,
       faqRow1: T.faqs.slice(0, 2), faqRow2: T.faqs.slice(2, 4), faqRow3: T.faqs.slice(4, 6),
       faqs: T.faqs.map((f, i) => ({
@@ -1908,13 +2013,44 @@ Component.T = {
     leer_mas: 'Leer más',
     escudo_kicker: 'LA MEDALLA DE SAN BENITO',
     escudo_h: 'Más que una medalla, un escudo de fe',
-    escudo_p1: 'La Medalla de San Benito no es una joya cualquiera. Es un símbolo sagrado que ha acompañado durante siglos a quienes buscan caminar bajo la protección de Dios, encontrar fortaleza en los momentos difíciles y mantener su corazón lejos del mal.',
-    escudo_p2: 'Cada cruz, cada letra y cada inscripción guardan una poderosa oración de fe: una declaración que rechaza la oscuridad y elige la luz. Llevarla cerca del corazón es recordar que, incluso en los días de miedo, incertidumbre o dolor, nunca caminamos solos.',
+    escudo_p1: 'La Medalla de San Benito es uno de los sacramentales más poderosos y antiguos de la Iglesia Católica. Es un símbolo sagrado de profundo significado espiritual contra el mal que ha acompañado durante siglos a quienes buscan caminar bajo la protección de Dios, encontrar fortaleza en los momentos difíciles y mantener su corazón lejos del mal.',
+    escudo_p2: 'Cada cruz, cada letra y cada inscripción guardan una poderosa oración de fe: una declaración que rechaza la oscuridad y elige la luz.',
     escudo_p3: 'No promete una vida sin pruebas, pero sí representa la fuerza espiritual para enfrentarlas. Es una presencia silenciosa que inspira paz, esperanza y confianza; un recordatorio diario de que la fe puede ser más fuerte que cualquier adversidad.',
-    escudo_p4: 'Puedes llevarla contigo, colocarla en tu hogar o regalarla a alguien que amas como una profunda expresión de cuidado:',
-    escudo_quote: '«Deseo que Dios te acompañe, te fortalezca y proteja cada uno de tus pasos».',
-    escudo_cierre: 'Una medalla. Una oración. Un símbolo eterno de protección, amor y fe.',
-    escudo_final: 'Llévala cerca. Cree profundamente. Camina protegido.',
+    puerta_kicker: 'LA BENDICIÓN PARA LA PUERTA',
+    puerta_h: 'Un escudo en el umbral',
+    puerta_p1: 'La bendición de San Benito para la puerta es un sacramental católico utilizado como escudo de protección espiritual para el hogar, diseñado para colgarse en la manija o chapa de la entrada principal con el fin de invocar la protección divina, alejar las malas influencias provenientes del demonio y pedir paz para quienes entran y salen. Funciona como un escudo espiritual y un recordatorio de la fe, no como un amuleto de suerte.',
+    puerta_p2: 'Esta devoción se apoya en la poderosa Medalla de San Benito, considerada un fuerte recurso de exorcismo y resguardo.',
+    elem_h: 'Significado de los elementos',
+    elems: [
+      { t: 'La Medalla', d: 'Contiene la imagen de San Benito en un lado y la Cruz con letras latinas en el reverso, las cuales son abreviaturas de oraciones de exorcismo y renuncia al mal.' },
+      { t: 'La Puerta', d: 'Simboliza el límite entre el interior (el refugio de la familia) y el exterior (el mundo). Colocarla allí consagra el umbral a la protección de Dios.' }
+    ],
+    prop_h: 'Qué propósito tiene en el hogar',
+    props: [
+      { t: 'Protección espiritual', d: 'Aleja las tentaciones, la discordia y toda influencia negativa o maliciosa.' },
+      { t: 'Paz y armonía', d: 'Invoca la bendición sobre la familia y los invitados que cruzan el umbral.' },
+      { t: 'Recordatorio de fe', d: 'Anima a vivir de manera recta y cristiana dentro del hogar.' }
+    ],
+    coloc_h: 'Cómo colocarla correctamente',
+    coloc_intro: 'Para aprovechar su simbolismo de protección, sigue estas recomendaciones prácticas al instalarla:',
+    colocs: [
+      { t: 'Orientación de la medalla', d: 'Se aconseja colocar hacia el exterior de la casa el reverso de la medalla (el lado que tiene la cruz grande con las iniciales de la oración de exorcismo) para que actúe alejando todo lo malo que intente entrar.' },
+      { t: 'Ubicación', d: 'El lugar ideal es la manija de la puerta principal, aunque también se puede colgar de un clavo o gancho justo arriba o detrás de la puerta.' },
+      { t: 'Activación y bendición', d: 'Para la Iglesia Católica, los sacramentales adquieren su gracia a través de la bendición de un sacerdote. Se recomienda llevar el colgante a la iglesia para que sea bendecido formalmente con agua bendita.' }
+    ],
+    oracion_h: 'Oración de San Benito para la puerta',
+    oracion_intro: 'Al colocarla, o cada vez que salgas y entres de tu hogar, puedes recitar con fe la oración tradicional, cuyas siglas en latín están grabadas en la misma medalla:',
+    oracion_lineas: [
+      { lat: 'Crux Sancti Patris Benedicti', tr: 'La Santa Cruz del Santo Padre Benito.' },
+      { lat: 'Crux Sacra Sit Mihi Lux! Non Draco Sit Mihi Dux!', tr: '¡La Santa Cruz sea mi luz! ¡Que el demonio no sea mi guía!' },
+      { lat: 'Vade Retro Satana! Numquam Suade Mihi Vana!', tr: '¡Aléjate, Satanás! ¡No me aconsejes cosas vanas!' },
+      { lat: 'Sunt Mala Quae Libas. Ipse Venena Bibas!', tr: '¡Malo es lo que me ofreces! ¡Bebe tú mismo tu veneno!' }
+    ],
+    oracion_amen: 'Que la paz, la protección y las bendiciones de Dios acompañen siempre este hogar y a quienes habitan en él. Amén.',
+    oracion_nota: '«La medalla no es mágica, sino un llamado visible a confiar en el poder de Dios sobre el mal.»',
+    cierre_deseo: '«Deseo que Dios acompañe, fortalezca y proteja cada uno de tus pasos y de tu familia».',
+    cierre_1: 'Una medalla. Una oración. Un símbolo eterno de protección, amor y fe.',
+    cierre_2: 'Protege la entrada y salida de tu familia y tu hogar.',
     esencia_kicker: 'NUESTRA ESENCIA',
     esencia_intro: 'VADE RETRO transforma un símbolo de fe en una presencia protectora para la vida cotidiana. La medalla de San Benito representa resguardo espiritual; la cadena expresa continuidad, unión y cercanía con aquello que más importa: la familia y el hogar.',
     personalidad: 'FIRME · PROTECTORA · SERENA · ESPIRITUAL · CERCANA',
@@ -2023,13 +2159,44 @@ Component.T = {
     leer_mas: 'Read more',
     escudo_kicker: 'THE SAINT BENEDICT MEDAL',
     escudo_h: 'More than a medal, a shield of faith',
-    escudo_p1: 'The Saint Benedict Medal is not just another piece of jewellery. It is a sacred symbol that for centuries has accompanied those who seek to walk under God\'s protection, to find strength in difficult moments and to keep their heart far from evil.',
-    escudo_p2: 'Every cross, every letter and every inscription holds a powerful prayer of faith: a declaration that rejects darkness and chooses light. To carry it close to the heart is to remember that, even on days of fear, uncertainty or pain, we never walk alone.',
+    escudo_p1: 'The Saint Benedict Medal is one of the oldest and most powerful sacramentals of the Catholic Church. It is a sacred symbol of deep spiritual meaning against evil, one that for centuries has accompanied those who seek to walk under God\'s protection, to find strength in difficult moments and to keep their heart far from evil.',
+    escudo_p2: 'Every cross, every letter and every inscription holds a powerful prayer of faith: a declaration that rejects darkness and chooses light.',
     escudo_p3: 'It does not promise a life without trials, but it does stand for the spiritual strength to face them. It is a silent presence that inspires peace, hope and confidence; a daily reminder that faith can be stronger than any adversity.',
-    escudo_p4: 'You can carry it with you, place it in your home or give it to someone you love as a deep expression of care:',
-    escudo_quote: '“May God be with you, give you strength and protect every one of your steps.”',
-    escudo_cierre: 'One medal. One prayer. An eternal symbol of protection, love and faith.',
-    escudo_final: 'Keep it close. Believe deeply. Walk protected.',
+    puerta_kicker: 'THE BLESSING FOR THE DOOR',
+    puerta_h: 'A shield on the threshold',
+    puerta_p1: 'The Saint Benedict blessing for the door is a Catholic sacramental used as a shield of spiritual protection for the home, made to hang from the handle or lock plate of the main entrance in order to invoke divine protection, drive away the evil influences that come from the devil and ask for peace upon those who come and go. It works as a spiritual shield and a reminder of faith, not as a good-luck charm.',
+    puerta_p2: 'This devotion rests on the powerful Saint Benedict Medal, regarded as a strong means of exorcism and protection.',
+    elem_h: 'The meaning of each element',
+    elems: [
+      { t: 'The Medal', d: 'It bears the image of Saint Benedict on one side and the Cross with Latin letters on the reverse, which are abbreviations of prayers of exorcism and renunciation of evil.' },
+      { t: 'The Door', d: 'It stands for the boundary between the inside (the refuge of the family) and the outside (the world). Placing it there consecrates the threshold to the protection of God.' }
+    ],
+    prop_h: 'What it is for in the home',
+    props: [
+      { t: 'Spiritual protection', d: 'It drives away temptation, discord and every negative or malicious influence.' },
+      { t: 'Peace and harmony', d: 'It calls down blessing upon the family and upon the guests who cross the threshold.' },
+      { t: 'A reminder of faith', d: 'It encourages an upright, Christian life within the home.' }
+    ],
+    coloc_h: 'How to place it properly',
+    coloc_intro: 'To make the most of its protective symbolism, follow these practical recommendations when installing it:',
+    colocs: [
+      { t: 'Which way it faces', d: 'It is advised to turn the reverse of the medal (the side bearing the large cross with the initials of the exorcism prayer) towards the outside of the house, so that it works to keep away anything evil that tries to enter.' },
+      { t: 'Where to place it', d: 'The ideal spot is the handle of the main door, although it can also hang from a nail or hook just above or behind the door.' },
+      { t: 'Blessing', d: 'For the Catholic Church, sacramentals receive their grace through the blessing of a priest. It is recommended to take the pendant to church so that it may be formally blessed with holy water.' }
+    ],
+    oracion_h: 'The Saint Benedict prayer for the door',
+    oracion_intro: 'When you place it, or each time you leave and enter your home, you may recite in faith the traditional prayer whose Latin initials are engraved on the medal itself:',
+    oracion_lineas: [
+      { lat: 'Crux Sancti Patris Benedicti', tr: 'The Holy Cross of our Holy Father Benedict.' },
+      { lat: 'Crux Sacra Sit Mihi Lux! Non Draco Sit Mihi Dux!', tr: 'May the Holy Cross be my light! May the devil never be my guide!' },
+      { lat: 'Vade Retro Satana! Numquam Suade Mihi Vana!', tr: 'Begone, Satan! Never tempt me with your vanities!' },
+      { lat: 'Sunt Mala Quae Libas. Ipse Venena Bibas!', tr: 'What you offer me is evil! Drink the poison yourself!' }
+    ],
+    oracion_amen: 'May the peace, the protection and the blessings of God be always upon this home and upon those who dwell in it. Amen.',
+    oracion_nota: '“The medal is not magic; it is a visible call to trust in the power of God over evil.”',
+    cierre_deseo: '“May God be with you, give you strength and protect every one of your steps and those of your family.”',
+    cierre_1: 'One medal. One prayer. An eternal symbol of protection, love and faith.',
+    cierre_2: 'It protects the coming and going of your family and your home.',
     esencia_kicker: 'OUR ESSENCE',
     esencia_intro: 'VADE RETRO turns a symbol of faith into a protective presence for everyday life. The Saint Benedict medal represents spiritual shelter; the chain expresses continuity, union and closeness to what matters most: family and home.',
     personalidad: 'FIRM · PROTECTIVE · SERENE · SPIRITUAL · CLOSE',
