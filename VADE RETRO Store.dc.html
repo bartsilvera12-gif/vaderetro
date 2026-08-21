@@ -462,6 +462,15 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    marca. Estaba resuelto solo en telefono; ahora rige tambien en escritorio.
    ========================================================================== */
 .vr-shop-bar select{display:none!important}
+
+/* Sin panel de filtros, la barra de la tienda es una sola linea: el recuento
+   a la izquierda en versalita y el orden a la derecha, separados del catalogo
+   por un filete. Con siete piezas y una sola categoria, filtrar no aportaba
+   nada y el panel solo restaba. */
+.vr-shop-bar{border-bottom:1px solid rgba(15,35,73,.12);padding-bottom:15px;
+  margin-bottom:34px!important}
+.vr-shop-count{font-size:11px!important;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(28,28,36,.5)!important}
 .vr-m-sort{display:block!important;position:relative}
 .vr-m-sort-btn{display:inline-flex;align-items:center;gap:8px;background:none;border:none;
   cursor:pointer;padding:6px 0;white-space:nowrap;font-size:11px;font-weight:700;
@@ -1229,52 +1238,10 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   </section>
   <section class="vr-shop-body" style="padding:56px 24px 100px;background:#F9F0ED">
   <div style="max-width:1180px;margin:0 auto">
-    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
-      <button class="vr-shop-filtbtn" onClick="{{ toggleFilters }}" style="margin-bottom:24px;background:none;border:1px solid rgba(15,35,73,.3);color:#0F2349;cursor:pointer;font-size:12px;font-weight:600;letter-spacing:.1em;padding:11px 22px">{{ t.filtros }} {{ filterMark }}</button>
-    </sc-if>
-    <div class="vr-shop-wrap" style="display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap">
-      <sc-if value="{{ showFilters }}" hint-placeholder-val="{{ true }}">
-      <aside class="vr-shop-aside" style="width:245px;flex-shrink:0;display:flex;flex-direction:column;gap:32px;background:#ffffff;border:1px solid rgba(15,35,73,.1);border-top:3px solid #CF9D59;padding:26px 22px 30px">
-        <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#0F2349;border-bottom:1px solid rgba(207,157,89,.5);padding-bottom:10px;margin-bottom:12px">{{ t.f_categorias }}</div>
-          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="3">
-            <button onClick="{{ c.toggle }}" style="display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:6px 0;font-size:13px;color:#1C1C24;width:100%;text-align:left;transition:color .25s" style-hover="color:#b9873f">
-              <sc-if value="{{ c.active }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;background:#CF9D59;flex-shrink:0"></span></sc-if>
-              <sc-if value="{{ c.inactive }}" hint-placeholder-val="{{ true }}"><span style="width:14px;height:14px;border:1px solid rgba(15,35,73,.35);box-sizing:border-box;flex-shrink:0"></span></sc-if>
-              <span style="flex:1">{{ c.label }}</span>
-              <span style="font-size:11px;color:rgba(28,28,36,.4)">{{ c.count }}</span>
-            </button>
-          </sc-for>
-        </div>
-        <sc-if value="{{ anyPrice }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#0F2349;border-bottom:1px solid rgba(207,157,89,.5);padding-bottom:10px;margin-bottom:16px">{{ t.f_precio }}</div>
-          <input type="range" min="0" max="100" step="5" value="{{ fMax }}" onChange="{{ onPrice }}" style="width:100%;accent-color:#CF9D59;cursor:pointer">
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:#5c5c63;margin-top:8px"><span>$0</span><span style="font-weight:600;color:#0F2349">{{ t.hasta }} {{ fMaxFmt }}</span></div>
-        </div>
-        </sc-if>
-        <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#0F2349;border-bottom:1px solid rgba(207,157,89,.5);padding-bottom:10px;margin-bottom:12px">{{ t.f_disp }}</div>
-          <button onClick="{{ toggleStock }}" style="display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:6px 0;font-size:13px;color:#1C1C24;width:100%;text-align:left;transition:color .25s" style-hover="color:#b9873f">
-            <sc-if value="{{ stockOn }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;background:#CF9D59;flex-shrink:0"></span></sc-if>
-            <sc-if value="{{ stockOff }}" hint-placeholder-val="{{ true }}"><span style="width:14px;height:14px;border:1px solid rgba(15,35,73,.35);box-sizing:border-box;flex-shrink:0"></span></sc-if>
-            <span>{{ t.solo_stock }}</span>
-          </button>
-        </div>
-        <button onClick="{{ clearFilters }}" style="align-self:flex-start;background:none;border:none;border-bottom:1px solid rgba(28,28,36,.4);cursor:pointer;font-size:11.5px;font-weight:600;letter-spacing:.1em;color:#1C1C24;padding:0 0 3px">{{ t.limpiar }}</button>
-      </aside>
-      </sc-if>
+    <div class="vr-shop-wrap" style="display:block">
       <div class="vr-shop-col" style="flex:1;min-width:min(100%,300px)">
         <div class="vr-shop-bar" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:26px">
-          <!-- Disparador de filtros propio de teléfono. Va acá adentro, y no
-               arriba como el de escritorio, para quedar en la misma línea que
-               el orden. Comparte el mismo toggleFilters, así que no hay dos
-               estados que puedan discrepar. Nace apagado; solo el @media lo enciende. -->
-          <button class="vr-m-filtbtn" onClick="{{ toggleFilters }}">{{ t.filtros }} {{ filterMark }}</button>
           <span class="vr-shop-count" style="font-size:12.5px;color:#5c5c63">{{ resultCount }} {{ piezasLabel }}</span>
-          <select value="{{ sort }}" onChange="{{ onSort }}" style="border:1px solid rgba(15,35,73,.25);background:#fff;color:#0F2349;font-size:12.5px;padding:9px 12px;border-radius:2px;cursor:pointer">
-            <sc-for list="{{ sortOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.key }}">{{ o.label }}</option></sc-for>
-          </select>
           <!-- Menú de orden de teléfono. Reemplaza al <select> porque su
                desplegable lo dibuja el sistema operativo y no acepta CSS.
                Nace apagado; solo el @media de smartphone lo enciende. -->
@@ -1289,7 +1256,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
             </sc-if>
           </div>
         </div>
-        <div class="vr-shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:26px">
+        <div class="vr-shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px">
       <sc-for list="{{ shopItems }}" as="item" hint-placeholder-count="6">
         <div class="vr-shop-card" data-reveal style="background:#ffffff;border:1px solid rgba(15,35,73,.08);display:flex;flex-direction:column;transition:transform .35s ease,box-shadow .35s ease" style-hover="transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,35,73,.13)">
           <div class="vr-shop-cardimg" style="position:relative;height:250px;overflow:hidden">
@@ -2341,7 +2308,7 @@ Component.T = {
     conocer_historia: 'CONOCÉ NUESTRA HISTORIA',
     como_link: 'Ver el proceso completo',
     shop_kicker: 'TIENDA', shop_title: 'Medallas de San Benito',
-    shop_note: 'Piezas en dorado, plata, esmaltado y personalizadas.',
+    shop_note: 'Piezas artesanales para colgar en la puerta de entrada.',
     ver_producto: 'Ver producto', sin_stock: 'Sin stock',
     sin_stock_largo: 'PRODUCTO SIN STOCK ACTUALMENTE',
     filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
@@ -2511,7 +2478,7 @@ Component.T = {
     conocer_historia: 'DISCOVER OUR STORY',
     como_link: 'See the full process',
     shop_kicker: 'SHOP', shop_title: 'Saint Benedict Medals',
-    shop_note: 'Pieces in gold, silver, enamel and custom finishes.',
+    shop_note: 'Handmade pieces to hang on the entrance door.',
     ver_producto: 'View product', sin_stock: 'Out of stock',
     sin_stock_largo: 'CURRENTLY OUT OF STOCK',
     filtros: 'Filters', f_categorias: 'CATEGORIES', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
