@@ -1068,7 +1068,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
               <image-slot id="card-{{ item.slug }}" shape="rect" src="{{ item.img }}" placeholder="foto de producto (cliente)"></image-slot>
               <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.95%22 numOctaves=%222%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22200%22 height=%22200%22 filter=%22url(%23n)%22/></svg>');background-size:200px 200px"></div>
               <div style="position:absolute;left:0;right:0;bottom:0;height:26%;pointer-events:none;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);mask-image:linear-gradient(transparent,#000);-webkit-mask-image:linear-gradient(transparent,#000)"></div>
-              <span style="position:absolute;right:12px;top:12px;writing-mode:vertical-rl;font-size:9.5px;font-weight:600;letter-spacing:.3em;color:rgba(15,35,73,.55);text-transform:uppercase;pointer-events:none">{{ item.matLabel }}</span>
               <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
                 <span style="position:absolute;top:14px;left:14px;background:#CF9D59;color:#0F2349;font-size:10px;font-weight:700;letter-spacing:.14em;padding:6px 11px;pointer-events:none">{{ item.badge }}</span>
               </sc-if>
@@ -1150,18 +1149,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           </sc-for>
         </div>
         <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#0F2349;border-bottom:1px solid rgba(207,157,89,.5);padding-bottom:10px;margin-bottom:12px">{{ t.f_material }}</div>
-          <sc-for list="{{ mats }}" as="c" hint-placeholder-count="4">
-            <button onClick="{{ c.toggle }}" style="display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:6px 0;font-size:13px;color:#1C1C24;width:100%;text-align:left;transition:color .25s" style-hover="color:#b9873f">
-              <sc-if value="{{ c.active }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;background:#CF9D59;flex-shrink:0"></span></sc-if>
-              <sc-if value="{{ c.inactive }}" hint-placeholder-val="{{ true }}"><span style="width:14px;height:14px;border:1px solid rgba(15,35,73,.35);box-sizing:border-box;flex-shrink:0"></span></sc-if>
-              <span style="width:10px;height:10px;border-radius:50%;background:{{ c.dot }};flex-shrink:0"></span>
-              <span style="flex:1">{{ c.label }}</span>
-              <span style="font-size:11px;color:rgba(28,28,36,.4)">{{ c.count }}</span>
-            </button>
-          </sc-for>
-        </div>
-        <div>
           <div style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#0F2349;border-bottom:1px solid rgba(207,157,89,.5);padding-bottom:10px;margin-bottom:16px">{{ t.f_precio }}</div>
           <input type="range" min="0" max="100" step="5" value="{{ fMax }}" onChange="{{ onPrice }}" style="width:100%;accent-color:#CF9D59;cursor:pointer">
           <div style="display:flex;justify-content:space-between;font-size:12px;color:#5c5c63;margin-top:8px"><span>$0</span><span style="font-weight:600;color:#0F2349">{{ t.hasta }} {{ fMaxFmt }}</span></div>
@@ -1213,7 +1200,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           </div>
           <div class="vr-shop-cardbody" style="padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1">
             <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#0F2349;margin:0;line-height:1.2">{{ item.name }}</h3>
-            <div style="font-size:10px;font-weight:600;letter-spacing:.18em;color:#b9873f">{{ item.matLabel }}</div>
             <p style="font-size:12.5px;line-height:1.55;color:#5c5c63;margin:0;flex:1">{{ item.desc }}</p>
             <div style="display:flex;align-items:baseline;gap:10px">
               <span style="font-size:20px;font-weight:700;color:#0F2349">{{ item.priceFmt }}</span>
@@ -1776,7 +1762,7 @@ class Component extends DCLogic {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
       scrolled: false, openFaq: -1, err: '',
-      fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
+      fCats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
     };
@@ -1960,17 +1946,14 @@ class Component extends DCLogic {
       hasBadge: !!p.badge,
       inStock: p.stock > 0, outStock: p.stock <= 0,
       stockLabel: p.stock > 0 ? (L === 'es' ? p.stock + ' disponibles' : p.stock + ' in stock') : '',
-      matLabel: T.mat_labels[p.material] || '',
       img: p.img || '',
       buy: () => { this.addToCart(p.slug, 1); location.hash = '#/carrito'; }
     });
     const items = prods.map(mk);
     const featured = ['medalla-dorada', 'medalla-con-cadena', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
-    const cats = ['medallas', 'con-cadena', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
-    const MAT_DOTS = { dorado: '#CF9D59', plata: '#9aa2ad', esmaltado: '#0F2349', personalizado: '#1C1C24' };
-    const mats = ['dorado', 'plata', 'esmaltado', 'personalizado'].map((k) => ({ key: k, label: T.mat_labels[k], dot: MAT_DOTS[k], count: items.filter((p) => p.material === k).length, active: S.fMats.includes(k), inactive: !S.fMats.includes(k), toggle: togA('fMats', k) }));
-    let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (S.fMats.length === 0 || S.fMats.includes(p.material)) && p.price <= S.fMax && (!S.fStock || p.stock > 0));
+    const cats = ['puerta', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
+    let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && p.price <= S.fMax && (!S.fStock || p.stock > 0));
     if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => a.price - b.price);
     else if (S.sort === 'desc') shopItems = shopItems.slice().sort((a, b) => b.price - a.price);
     const cur = S.slug ? items.find((p) => p.slug === S.slug) : null;
@@ -2013,7 +1996,7 @@ class Component extends DCLogic {
       goHome: (e) => { if (e && this.state.route === 'home') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); } this.closeMenu(); },
       goContacto: this.goSection('contacto'),
       heroAzul, heroMarfil: !heroAzul,
-      items, featured, shopItems, cats, mats,
+      items, featured, shopItems, cats,
       galleryRef: (el) => { this.attachDrag(el); if (el) this.countUp(items.length); },
       counter: String(S.counter).padStart(2, '0'),
       clockDate: new Intl.DateTimeFormat(L === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(S.now),
@@ -2024,7 +2007,7 @@ class Component extends DCLogic {
       onPrice: (e) => this.setState({ fMax: parseInt(e.target.value, 10) }),
       stockOn: S.fStock, stockOff: !S.fStock,
       toggleStock: () => this.setState({ fStock: !S.fStock }),
-      clearFilters: () => this.setState({ fCats: [], fMats: [], fMax: 100, fStock: false, sort: 'featured' }),
+      clearFilters: () => this.setState({ fCats: [], fMax: 100, fStock: false, sort: 'featured' }),
       sort: S.sort,
       sortOpts: [{ key: 'featured', label: T.sort_featured }, { key: 'asc', label: T.sort_asc }, { key: 'desc', label: T.sort_desc }]
         .map(o => Object.assign({}, o, {
@@ -2082,31 +2065,32 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
-  { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, material: 'dorado', cat: 'medallas', badgeTxt: { es: 'OFERTA', en: 'SALE' },
-    name: { es: 'Medalla de San Benito · Dorada', en: 'Saint Benedict Medal · Gold finish' },
-    desc: { es: 'Medalla clásica en acabado dorado.', en: 'Classic medal in a gold finish.' },
-    descLong: { es: 'Medalla de San Benito en acabado dorado, con la imagen del santo en un lado y la cruz con sus inscripciones latinas en el reverso.', en: 'Saint Benedict medal in a gold finish, with the image of the saint on one side and the cross with its Latin inscriptions on the reverse.' } },
-  { slug: 'esmalte-azul', img: 'assets/medalla-mini.webp', price: 34.99, oldPrice: null, stock: 8, material: 'esmaltado', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla de San Benito · Esmalte azul', en: 'Saint Benedict Medal · Blue enamel' },
-    desc: { es: 'Medalla con esmalte azul profundo.', en: 'Medal with deep blue enamel.' },
-    descLong: { es: 'Medalla de San Benito con esmalte azul profundo sobre el relieve, que realza la cruz y las letras grabadas.', en: 'Saint Benedict medal with deep blue enamel over the relief, bringing out the cross and the engraved letters.' } },
-  { slug: 'medalla-con-cadena', img: 'assets/medalla-plata.webp', price: 49.99, oldPrice: null, stock: 5, material: 'dorado', cat: 'con-cadena', badgeTxt: null,
-    name: { es: 'Medalla de San Benito · Con cadena', en: 'Saint Benedict Medal · With chain' },
-    desc: { es: 'Medalla con cadena incluida.', en: 'Medal with chain included.' },
-    descLong: { es: 'Medalla de San Benito con su cadena incluida, lista para llevar. La argolla mantiene unida la medalla a la cadena.', en: 'Saint Benedict medal with its chain included, ready to wear. The ring keeps the medal joined to the chain.' } },
-  { slug: 'medalla-mini', img: 'assets/medalla-mini.webp', price: 19.99, oldPrice: null, stock: 0, material: 'plata', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla de San Benito · Mini', en: 'Saint Benedict Medal · Mini' },
-    desc: { es: 'Medalla en formato mini.', en: 'Medal in a mini format.' },
-    descLong: { es: 'Medalla de San Benito en formato mini, pensada para llevar a diario con discreción.', en: 'Saint Benedict medal in a mini format, made to be worn discreetly every day.' } },
-  { slug: 'medalla-plata', img: 'assets/medalla-plata.webp', price: 27.99, oldPrice: null, stock: 15, material: 'plata', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla de San Benito · Plata', en: 'Saint Benedict Medal · Silver' },
-    desc: { es: 'Medalla en acabado plata.', en: 'Medal in a silver finish.' },
-    descLong: { es: 'Medalla de San Benito en acabado plata, de trazo sobrio y contorno definido.', en: 'Saint Benedict medal in a silver finish, sober in line and clearly defined in outline.' } },
-  { slug: 'edicion-especial', img: 'assets/medalla-dorada.webp', price: 89.99, oldPrice: null, stock: 3, material: 'personalizado', cat: 'edicion-especial', badgeTxt: { es: 'EDICIÓN ESPECIAL', en: 'SPECIAL EDITION' },
-    name: { es: 'Producto personalizado / Edición especial', en: 'Custom piece / Special edition' },
+  { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, cat: 'puerta', badgeTxt: { es: 'OFERTA', en: 'SALE' },
+    name: { es: 'Colgante de puerta · Clásico', en: 'Door hanger · Classic' },
+    desc: { es: 'Para la manija o la chapa de la entrada principal.', en: 'For the handle or plate of the main entrance.' },
+    descLong: { es: 'Colgante con la medalla de San Benito para la puerta de entrada. Se cuelga de la manija o de la chapa, con el reverso hacia afuera, para que actúe alejando todo lo malo que intente entrar.', en: 'Door hanger with the Saint Benedict medal for the main entrance. It hangs from the handle or the plate, with the reverse facing outwards, so that it wards off whatever evil tries to come in.' } },
+  { slug: 'esmalte-azul', img: 'assets/medalla-mini.webp', price: 34.99, oldPrice: null, stock: 8, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Colgante de puerta · Esmalte azul', en: 'Door hanger · Blue enamel' },
+    desc: { es: 'Con esmalte azul sobre el relieve.', en: 'With blue enamel over the relief.' },
+    descLong: { es: 'Colgante de puerta con esmalte azul profundo sobre el relieve, que realza la cruz y las letras grabadas.', en: 'Door hanger with deep blue enamel over the relief, bringing out the cross and the engraved letters.' } },
+  { slug: 'medalla-con-cadena', img: 'assets/medalla-plata.webp', price: 49.99, oldPrice: null, stock: 5, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Colgante de puerta · Grande', en: 'Door hanger · Large' },
+    desc: { es: 'Formato grande, para puertas de entrada amplias.', en: 'Large format, for wide entrance doors.' },
+    descLong: { es: 'Colgante de puerta en formato grande, pensado para entradas amplias donde la pieza se ve desde lejos.', en: 'Door hanger in a large format, made for wide entrances where the piece is seen from a distance.' } },
+  { slug: 'medalla-mini', img: 'assets/medalla-mini.webp', price: 19.99, oldPrice: null, stock: 0, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Colgante de puerta · Pequeño', en: 'Door hanger · Small' },
+    desc: { es: 'Formato pequeño, discreto en la manija.', en: 'Small format, discreet on the handle.' },
+    descLong: { es: 'Colgante de puerta en formato pequeño, discreto en la manija y adecuado para puertas interiores.', en: 'Door hanger in a small format, discreet on the handle and suited to interior doors.' } },
+  { slug: 'medalla-plata', img: 'assets/medalla-plata.webp', price: 27.99, oldPrice: null, stock: 15, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Colgante de puerta · Relieve', en: 'Door hanger · Relief' },
+    desc: { es: 'Relieve marcado y contorno definido.', en: 'Marked relief and a defined outline.' },
+    descLong: { es: 'Colgante de puerta con el relieve bien marcado y el contorno definido, de trazo sobrio.', en: 'Door hanger with a well marked relief and a defined outline, sober in line.' } },
+  { slug: 'edicion-especial', img: 'assets/medalla-dorada.webp', price: 89.99, oldPrice: null, stock: 3, cat: 'edicion-especial', badgeTxt: { es: 'EDICIÓN ESPECIAL', en: 'SPECIAL EDITION' },
+    name: { es: 'Pieza personalizada / Edición especial', en: 'Custom piece / Special edition' },
     desc: { es: 'Pieza personalizada bajo pedido.', en: 'Custom piece made to order.' },
-    descLong: { es: 'Pieza personalizada, realizada bajo pedido según los materiales, medidas y grabado que se acuerden.', en: 'A custom piece, made to order according to the materials, dimensions and engraving agreed upon.' } }
+    descLong: { es: 'Pieza personalizada, realizada bajo pedido según las medidas y el grabado que se acuerden.', en: 'A custom piece, made to order according to the dimensions and engraving agreed upon.' } }
 ];
+
 Component.T = {
   es: {
     nav_inicio: 'Inicio', nav_tienda: 'Tienda', nav_historia: 'Nuestra historia', nav_como: 'Cómo comprar', nav_faq: 'FAQ', nav_contacto: 'Contacto',
@@ -2130,13 +2114,12 @@ Component.T = {
     shop_note: 'Piezas en dorado, plata, esmaltado y personalizadas.',
     ver_producto: 'Ver producto', sin_stock: 'Sin stock',
     sin_stock_largo: 'PRODUCTO SIN STOCK ACTUALMENTE',
-    filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_material: 'MATERIAL', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
+    filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
     solo_stock: 'Solo con stock', limpiar: 'Limpiar filtros ×', piezas: 'piezas', hasta: 'hasta',
     paso: 'Paso', ticket_label: 'VADE RETRO PRESENTA', ticket_event: 'PROCESO DE COMPRA', ticket_footer: 'MEDALLAS DE SAN BENITO · USD',
     sin_resultados: 'No hay piezas que coincidan con los filtros seleccionados.',
     sort_featured: 'Destacados', sort_asc: 'Precio: menor a mayor', sort_desc: 'Precio: mayor a menor',
-    mat_labels: { dorado: 'Dorado', plata: 'Plata', esmaltado: 'Esmaltado', personalizado: 'Personalizado' },
-    cat_labels: { medallas: 'Medallas', 'con-cadena': 'Con cadena', 'edicion-especial': 'Edición especial' },
+    cat_labels: { puerta: 'Para la puerta', 'edicion-especial': 'Edición especial' },
     steps_kicker: 'PROCESO DE COMPRA', steps_title: 'Cómo comprar',
     steps: ['Elegí tu medalla.', 'Agregala al carrito.', 'Completá tus datos.', 'Confirmá tu pedido.', 'Accedé al link de pago.'],
     steps_note: 'El pago se realiza a través de un link externo seguro que recibirás al confirmar tu pedido.',
@@ -2299,13 +2282,12 @@ Component.T = {
     shop_note: 'Pieces in gold, silver, enamel and custom finishes.',
     ver_producto: 'View product', sin_stock: 'Out of stock',
     sin_stock_largo: 'CURRENTLY OUT OF STOCK',
-    filtros: 'Filters', f_categorias: 'CATEGORIES', f_material: 'MATERIAL', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
+    filtros: 'Filters', f_categorias: 'CATEGORIES', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
     solo_stock: 'In stock only', limpiar: 'Clear filters ×', piezas: 'pieces', hasta: 'up to',
     paso: 'Step', ticket_label: 'VADE RETRO PRESENTS', ticket_event: 'HOW TO BUY', ticket_footer: 'SAINT BENEDICT MEDALS · USD',
     sin_resultados: 'No pieces match the selected filters.',
     sort_featured: 'Featured', sort_asc: 'Price: low to high', sort_desc: 'Price: high to low',
-    mat_labels: { dorado: 'Gold', plata: 'Silver', esmaltado: 'Enameled', personalizado: 'Custom' },
-    cat_labels: { medallas: 'Medals', 'con-cadena': 'With chain', 'edicion-especial': 'Special edition' },
+    cat_labels: { puerta: 'For the door', 'edicion-especial': 'Special edition' },
     steps_kicker: 'HOW IT WORKS', steps_title: 'How to buy',
     steps: ['Choose your medal.', 'Add it to the cart.', 'Fill in your details.', 'Confirm your order.', 'Access the payment link.'],
     steps_note: 'Payment is made through a secure external link you receive after confirming your order.',
