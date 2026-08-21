@@ -307,7 +307,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 /* La lamina de la cliente. Va centrada y con ancho tope: es una imagen
    vertical de 1024x1536, asi que a lo ancho de la seccion quedaria enorme y
    su tipografia interna, ilegible. El borde dorado la despega del azul. */
-.vr-lamina{margin:clamp(40px,4.4vw,64px) auto 0;max-width:600px;text-align:center}
+.vr-lamina{margin:clamp(40px,4.4vw,64px) auto 0;max-width:600px;text-align:center;
+  opacity:1!important;transform:none!important;clip-path:none!important;animation:none!important}
 .vr-lamina img{display:block;width:100%;height:auto;border-radius:3px;
   border:1px solid rgba(207,157,89,.38);box-shadow:0 26px 64px rgba(0,0,0,.34)}
 .vr-lamina-cap{font-size:11px;font-weight:600;letter-spacing:.2em;
@@ -1238,8 +1239,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <h2 data-reveal="wipe" class="vr-medalla-h">{{ t.medalla_h }}</h2>
       <div data-reveal="line" class="vr-medalla-rule"></div>
       <p data-reveal class="vr-medalla-p">{{ t.medalla_p }}</p>
-      <figure data-reveal class="vr-lamina">
-        <img src="assets/inscripciones.webp" width="1024" height="1536" loading="lazy"
+      <figure class="vr-lamina">
+        <img src="assets/inscripciones.webp?v=2" width="1024" height="1536"
              alt="{{ t.lamina_alt }}">
         <figcaption class="vr-lamina-cap">{{ t.lamina_cap }}</figcaption>
       </figure>
