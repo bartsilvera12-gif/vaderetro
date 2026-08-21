@@ -85,7 +85,7 @@ select,option,svg text{font-family:Montserrat,sans-serif}
 }
 /* Piezas exclusivas de teléfono: nacen apagadas y solo el @media las enciende,
    así el escritorio no las ve nunca. */
-.vr-m-hero,.vr-m-filtbtn,.vr-panel-head,.vr-panel-foot,.vr-readmore{display:none}
+.vr-m-hero,.vr-panel-head,.vr-panel-foot,.vr-readmore{display:none}
 
 /* ==========================================================================
    NUESTRA HISTORIA: pilares como filas editoriales
@@ -853,29 +853,12 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   /* ---------- Tienda ---------- */
   .vr-shop-hero{padding:52px 18px 40px!important}
   .vr-shop-body{padding:34px 18px 70px!important}
-  /* Barra de controles: FILTRAR a la izquierda y el orden a la derecha, en una
-     sola línea. El disparador de escritorio, que va suelto arriba del panel, se
-     apaga; en su lugar actúa .vr-m-filtbtn, que vive dentro de esa misma línea.
-     El conteo de piezas sale: a 375px no entra sin partir la línea en dos. */
-  .vr-shop-filtbtn{display:none!important}
-  .vr-shop-count{display:none!important}
-  .vr-shop-bar{margin-bottom:18px!important;gap:10px!important;flex-wrap:nowrap!important;
+  /* Barra de controles: el recuento a la izquierda y el orden a la derecha.
+     Antes el recuento se ocultaba porque no entraba junto al boton FILTRAR;
+     sin ese boton entra de sobra. */
+  .vr-shop-bar{margin-bottom:22px!important;gap:10px!important;flex-wrap:nowrap!important;
     border-bottom:1px solid rgba(15,35,73,.16);padding-bottom:12px}
-  .vr-m-filtbtn{display:inline-flex!important;align-items:center;gap:7px;
-    background:none;border:none;cursor:pointer;padding:6px 0;white-space:nowrap;
-    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#0F2349}
   .vr-m-sort-btn{font-size:11px}
-  /* Cuando se abren, los filtros van a dos columnas para no empujar el catálogo
-     media pantalla hacia abajo: categorías junto a material, precio junto a
-     disponibilidad, y limpiar cruzando el ancho. */
-  .vr-shop-aside{width:100%!important;box-sizing:border-box;
-    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:18px 16px!important;padding:20px 16px 20px!important}
-  .vr-shop-aside > *{min-width:0}
-  .vr-shop-aside > button{grid-column:1 / -1;justify-self:start}
-  .vr-shop-aside button{font-size:12.5px!important}
-  .vr-shop-aside > div > div:first-child{font-size:10px!important;
-    padding-bottom:8px!important;margin-bottom:8px!important}
   .vr-shop-col{min-width:0!important;width:100%}
   /* Dos productos por fila, como en escritorio: a una sola columna entraba
      una pieza por pantalla y el catálogo se volvía interminable. Al angostarse
