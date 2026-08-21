@@ -326,8 +326,20 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-p-media.is-contain .vr-p-frame{width:max-content;max-width:100%;margin:0 auto}
 .vr-p-media.is-contain .vr-p-main{height:var(--vr-h)!important;
   width:calc(var(--vr-h) * var(--vr-num))!important;max-width:100%}
-.vr-p-media.is-contain .vr-p-thumbs{width:calc(var(--vr-h) * var(--vr-num) + 24px);
-  max-width:100%;margin-left:auto;margin-right:auto}
+.vr-p-media.is-contain .vr-p-thumbs{width:auto!important;max-width:100%;
+  justify-content:center;gap:10px!important;margin:14px auto 0}
+/* Miniaturas chicas y parejas. El alto y el flex vienen en estilo inline en el
+   markup, asi que van con !important o no se aplican. */
+.vr-p-media.is-contain .vr-p-thumbs > div{flex:0 0 86px!important;height:86px!important}
+
+/* Mini zoom al pasar el mouse por la foto principal. El recorte lo hace el
+   contenedor; el que escala es el propio image-slot. Se desactiva donde no
+   hay puntero, que en tactil el hover se queda pegado. */
+.vr-p-main{overflow:hidden}
+.vr-p-main > image-slot{transition:transform .5s cubic-bezier(.22,1,.36,1)}
+@media (hover:hover){
+  .vr-p-main:hover > image-slot{transform:scale(1.14)}
+}
 
 .vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
 .vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
