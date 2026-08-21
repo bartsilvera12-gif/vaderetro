@@ -1836,7 +1836,7 @@ class Component extends DCLogic {
       buy: () => { this.addToCart(p.slug, 1); location.hash = '#/carrito'; }
     });
     const items = prods.map(mk);
-    const featured = ['demo-01', 'demo-03', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
+    const featured = ['medalla-dorada', 'medalla-con-cadena', 'edicion-especial'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
     const cats = ['medallas', 'con-cadena', 'edicion-especial'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
     const MAT_DOTS = { dorado: '#CF9D59', plata: '#9aa2ad', esmaltado: '#0F2349', personalizado: '#1C1C24' };
@@ -1952,30 +1952,30 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
-  { slug: 'demo-01', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, material: 'dorado', cat: 'medallas', badgeTxt: { es: 'OFERTA', en: 'SALE' },
-    name: { es: 'Medalla San Benito Demo 01', en: 'Saint Benedict Medal Demo 01' },
-    desc: { es: 'Medalla clásica en acabado dorado. Contenido demo.', en: 'Classic medal in gold finish. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } },
-  { slug: 'demo-02', img: 'assets/medalla-mini.webp', price: 34.99, oldPrice: null, stock: 8, material: 'esmaltado', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla San Benito Demo 02', en: 'Saint Benedict Medal Demo 02' },
-    desc: { es: 'Medalla con esmalte azul profundo. Contenido demo.', en: 'Medal with deep blue enamel. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } },
-  { slug: 'demo-03', img: 'assets/medalla-plata.webp', price: 49.99, oldPrice: null, stock: 5, material: 'dorado', cat: 'con-cadena', badgeTxt: null,
-    name: { es: 'Medalla San Benito Demo 03', en: 'Saint Benedict Medal Demo 03' },
-    desc: { es: 'Medalla con cadena incluida. Contenido demo.', en: 'Medal with chain included. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } },
-  { slug: 'demo-04', img: 'assets/medalla-mini.webp', price: 19.99, oldPrice: null, stock: 0, material: 'plata', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla San Benito Demo 04', en: 'Saint Benedict Medal Demo 04' },
-    desc: { es: 'Medalla formato mini. Contenido demo.', en: 'Mini format medal. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } },
-  { slug: 'demo-05', img: 'assets/medalla-plata.webp', price: 27.99, oldPrice: null, stock: 15, material: 'plata', cat: 'medallas', badgeTxt: null,
-    name: { es: 'Medalla San Benito Demo 05', en: 'Saint Benedict Medal Demo 05' },
-    desc: { es: 'Medalla en tono bordó devocional. Contenido demo.', en: 'Medal in devotional burgundy tone. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } },
+  { slug: 'medalla-dorada', img: 'assets/medalla-dorada.webp', price: 29.99, oldPrice: 39.99, stock: 12, material: 'dorado', cat: 'medallas', badgeTxt: { es: 'OFERTA', en: 'SALE' },
+    name: { es: 'Medalla de San Benito · Dorada', en: 'Saint Benedict Medal · Gold finish' },
+    desc: { es: 'Medalla clásica en acabado dorado.', en: 'Classic medal in a gold finish.' },
+    descLong: { es: 'Medalla de San Benito en acabado dorado, con la imagen del santo en un lado y la cruz con sus inscripciones latinas en el reverso.', en: 'Saint Benedict medal in a gold finish, with the image of the saint on one side and the cross with its Latin inscriptions on the reverse.' } },
+  { slug: 'esmalte-azul', img: 'assets/medalla-mini.webp', price: 34.99, oldPrice: null, stock: 8, material: 'esmaltado', cat: 'medallas', badgeTxt: null,
+    name: { es: 'Medalla de San Benito · Esmalte azul', en: 'Saint Benedict Medal · Blue enamel' },
+    desc: { es: 'Medalla con esmalte azul profundo.', en: 'Medal with deep blue enamel.' },
+    descLong: { es: 'Medalla de San Benito con esmalte azul profundo sobre el relieve, que realza la cruz y las letras grabadas.', en: 'Saint Benedict medal with deep blue enamel over the relief, bringing out the cross and the engraved letters.' } },
+  { slug: 'medalla-con-cadena', img: 'assets/medalla-plata.webp', price: 49.99, oldPrice: null, stock: 5, material: 'dorado', cat: 'con-cadena', badgeTxt: null,
+    name: { es: 'Medalla de San Benito · Con cadena', en: 'Saint Benedict Medal · With chain' },
+    desc: { es: 'Medalla con cadena incluida.', en: 'Medal with chain included.' },
+    descLong: { es: 'Medalla de San Benito con su cadena incluida, lista para llevar. La argolla mantiene unida la medalla a la cadena.', en: 'Saint Benedict medal with its chain included, ready to wear. The ring keeps the medal joined to the chain.' } },
+  { slug: 'medalla-mini', img: 'assets/medalla-mini.webp', price: 19.99, oldPrice: null, stock: 0, material: 'plata', cat: 'medallas', badgeTxt: null,
+    name: { es: 'Medalla de San Benito · Mini', en: 'Saint Benedict Medal · Mini' },
+    desc: { es: 'Medalla en formato mini.', en: 'Medal in a mini format.' },
+    descLong: { es: 'Medalla de San Benito en formato mini, pensada para llevar a diario con discreción.', en: 'Saint Benedict medal in a mini format, made to be worn discreetly every day.' } },
+  { slug: 'medalla-plata', img: 'assets/medalla-plata.webp', price: 27.99, oldPrice: null, stock: 15, material: 'plata', cat: 'medallas', badgeTxt: null,
+    name: { es: 'Medalla de San Benito · Plata', en: 'Saint Benedict Medal · Silver' },
+    desc: { es: 'Medalla en acabado plata.', en: 'Medal in a silver finish.' },
+    descLong: { es: 'Medalla de San Benito en acabado plata, de trazo sobrio y contorno definido.', en: 'Saint Benedict medal in a silver finish, sober in line and clearly defined in outline.' } },
   { slug: 'edicion-especial', img: 'assets/medalla-dorada.webp', price: 89.99, oldPrice: null, stock: 3, material: 'personalizado', cat: 'edicion-especial', badgeTxt: { es: 'EDICIÓN ESPECIAL', en: 'SPECIAL EDITION' },
     name: { es: 'Producto personalizado / Edición especial', en: 'Custom piece / Special edition' },
-    desc: { es: 'Pieza personalizada bajo pedido. Contenido demo.', en: 'Custom piece made to order. Demo content.' },
-    descLong: { es: 'Producto demo. La descripción definitiva será proporcionada por la cliente junto con el catálogo final, fotografías y precios.', en: 'Demo product. The final description will be provided by the client together with the final catalog, photos and pricing.' } }
+    desc: { es: 'Pieza personalizada bajo pedido.', en: 'Custom piece made to order.' },
+    descLong: { es: 'Pieza personalizada, realizada bajo pedido según los materiales, medidas y grabado que se acuerden.', en: 'A custom piece, made to order according to the materials, dimensions and engraving agreed upon.' } }
 ];
 Component.T = {
   es: {
@@ -1990,14 +1990,14 @@ Component.T = {
     menu_sub: 'TIENDA DE MEDALLAS DE SAN BENITO', menu_envios: 'ENVÍOS',
     bienvenido: 'BIENVENIDO A VADE RETRO',
     giant1: 'PROTECCIÓN', giant2: 'QUE ACOMPAÑA',
-    hero_frame_label: 'CATÁLOGO DEMO', hero_frame_foot: 'ESTADOS UNIDOS',
+    hero_frame_label: 'MEDALLAS DE SAN BENITO', hero_frame_foot: 'ESTADOS UNIDOS',
     hero_list: ['Medallas', 'Con cadena', 'Edición especial', 'Envíos a Estados Unidos'],
     explorar: 'EXPLORAR LA COLECCIÓN',
     ver_toda: 'Ver toda la colección', arrastrar: 'Arrastrá para explorar',
     conocer_historia: 'CONOCÉ NUESTRA HISTORIA',
     como_link: 'Ver el proceso completo',
     shop_kicker: 'TIENDA', shop_title: 'Medallas de San Benito',
-    shop_note: 'Catálogo demo — los productos definitivos serán cargados al recibir la información de la cliente.',
+    shop_note: 'Piezas en dorado, plata, esmaltado y personalizadas.',
     ver_producto: 'Ver producto', sin_stock: 'Sin stock',
     sin_stock_largo: 'PRODUCTO SIN STOCK ACTUALMENTE',
     filtros: 'Filtros', f_categorias: 'CATEGORÍAS', f_material: 'MATERIAL', f_precio: 'PRECIO', f_disp: 'DISPONIBILIDAD',
@@ -2136,14 +2136,14 @@ Component.T = {
     menu_sub: 'SAINT BENEDICT MEDAL STORE', menu_envios: 'SHIPPING',
     bienvenido: 'WELCOME TO VADE RETRO',
     giant1: 'PROTECTION', giant2: 'THAT GOES WITH YOU',
-    hero_frame_label: 'DEMO CATALOG', hero_frame_foot: 'UNITED STATES',
+    hero_frame_label: 'SAINT BENEDICT MEDALS', hero_frame_foot: 'UNITED STATES',
     hero_list: ['Medals', 'With chain', 'Special edition', 'Shipping within the US'],
     explorar: 'EXPLORE THE COLLECTION',
     ver_toda: 'View the full collection', arrastrar: 'Drag to explore',
     conocer_historia: 'DISCOVER OUR STORY',
     como_link: 'See the full process',
     shop_kicker: 'SHOP', shop_title: 'Saint Benedict Medals',
-    shop_note: 'Demo catalog — final products will be loaded once the client provides the information.',
+    shop_note: 'Pieces in gold, silver, enamel and custom finishes.',
     ver_producto: 'View product', sin_stock: 'Out of stock',
     sin_stock_largo: 'CURRENTLY OUT OF STOCK',
     filtros: 'Filters', f_categorias: 'CATEGORIES', f_material: 'MATERIAL', f_precio: 'PRICE', f_disp: 'AVAILABILITY',
