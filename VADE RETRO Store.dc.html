@@ -1025,7 +1025,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:#CF9D59;margin-bottom:14px">[ {{ t.nav_contacto }} ]</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:rgba(28,28,36,.75)">
             <span>Email · {{ t.pendiente }}</span>
-            <span>WhatsApp · {{ t.pendiente }}</span>
+            <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
           </div>
         </div>
         <div>
@@ -1567,6 +1567,9 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           <sc-if value="{{ cur.hasOld }}" hint-placeholder-val="{{ false }}"><span style="font-size:17px;color:#9a9aa0;text-decoration:line-through">{{ cur.oldFmt }}</span></sc-if>
           <span style="font-size:11px;letter-spacing:.14em;color:rgba(28,28,36,.45)">USD</span>
         </div>
+        <sc-if value="{{ cur.hasShip }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px;color:rgba(28,28,36,.55);margin:-12px 0 22px">+ {{ cur.shipFmt }} {{ t.envio_suf }}</div>
+        </sc-if>
       </sc-if>
       <p style="font-size:14.5px;line-height:1.75;color:#4a4a52;margin:0 0 26px">{{ cur.descLong }}</p>
       <sc-if value="{{ cur.hasColors }}" hint-placeholder-val="{{ false }}">
@@ -1671,7 +1674,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       </div>
       <div class="vr-cart-panel" style="background:#0F2349;padding:34px clamp(24px,3vw,36px) 34px;border-top:3px solid #CF9D59">
         <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(249,240,237,.65);padding:10px 0;text-transform:uppercase"><span>{{ t.subtotal }}</span><span style="letter-spacing:0">{{ subtotalFmt }}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(249,240,237,.65);padding:10px 0;border-bottom:1px solid rgba(249,240,237,.18);text-transform:uppercase"><span>{{ t.envio }}</span><span style="font-style:italic;letter-spacing:0;text-transform:none">{{ t.envio_valor }}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.12em;color:rgba(249,240,237,.65);padding:10px 0;border-bottom:1px solid rgba(249,240,237,.18);text-transform:uppercase"><span>{{ t.envio }}</span><span style="letter-spacing:0">{{ envioFmt }}</span></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;padding:22px 0 26px">
           <span style="font-size:12px;font-weight:700;letter-spacing:.16em;color:#CF9D59">{{ t.total }}</span>
           <span style="font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4vw,46px);font-weight:700;color:#F9F0ED;line-height:1">{{ totalFmt }}</span>
@@ -1724,6 +1727,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         </sc-for>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5c5c63;padding:8px 0"><span>{{ t.subtotal }}</span><span>{{ subtotalFmt }}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5c5c63;padding:8px 0;border-bottom:1px solid rgba(15,35,73,.12)"><span>{{ t.envio }}</span><span>{{ envioFmt }}</span></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0 22px"><span style="font-size:13px;font-weight:700;letter-spacing:.1em;color:#0F2349">{{ t.total }}</span><span style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#0F2349">{{ totalFmt }}</span></div>
       <button onClick="{{ submitOrder }}" style="width:100%;background:#CF9D59;color:#0F2349;border:none;cursor:pointer;font-size:12.5px;font-weight:700;letter-spacing:.1em;padding:16px 0;transition:background .25s" style-hover="background:#b9873f">{{ t.confirmar_pedido }}</button>
       <p style="font-size:11px;color:rgba(28,28,36,.45);margin:14px 0 0;text-align:center">{{ t.pago_note }}</p>
@@ -1786,7 +1790,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <div data-reveal style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#CF9D59;margin-bottom:18px">{{ t.nav_contacto }}</div>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
           <span>Email · {{ t.pendiente }}</span>
-          <span>WhatsApp · {{ t.pendiente }}</span>
+          <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
           <span>Instagram · {{ t.pendiente }}</span>
           <span>Facebook · {{ t.pendiente }}</span>
         </div>
@@ -2001,10 +2005,11 @@ class Component extends DCLogic {
     const prods = this.products();
     const items = Object.entries(this.state.cart).map(([slug, q]) => {
       const p = prods.find((x) => x.slug === slug);
-      return { product_name: p ? p.name : slug, quantity: q, unit_price: p ? p.price : 0, subtotal: p ? p.price * q : 0 };
+      return { product_name: p ? p.name : slug, quantity: q, unit_price: p ? p.price : 0, shipping: p ? (p.ship || 0) * q : 0, subtotal: p ? p.price * q : 0 };
     });
     const subtotal = items.reduce((a, i) => a + i.subtotal, 0);
-    const order = { order_number: num, status: 'pending', payment_status: 'pending', customer: f, items, subtotal, discount: 0, total: subtotal, created_at: new Date().toISOString() };
+    const shipping = items.reduce((a, i) => a + i.shipping, 0);
+    const order = { order_number: num, status: 'pending', payment_status: 'pending', customer: f, items, subtotal, shipping, discount: 0, total: subtotal + shipping, created_at: new Date().toISOString() };
     try {
       const orders = JSON.parse(localStorage.getItem('vaderetro_orders') || '[]');
       orders.push(order);
@@ -2023,6 +2028,7 @@ class Component extends DCLogic {
       priceFmt: (typeof p.price === 'number') ? fmt(p.price) : T.precio_pendiente,
       noPrice: typeof p.price !== 'number',
       hasPrice: typeof p.price === 'number',
+      ship: p.ship || 0, shipFmt: fmt(p.ship || 0), hasShip: !!p.ship,
       canBuy: p.stock !== 0 && typeof p.price === 'number',
       askPrice: p.stock !== 0 && typeof p.price !== 'number',
       cardImg: p.cardImg || p.img,
@@ -2057,10 +2063,12 @@ class Component extends DCLogic {
         slug, name: p.name, img: p.img, qtyN: q, unitFmt: fmt(p.price), lineFmt: fmt(p.price * q),
         inc: () => this.setQty(slug, q + 1),
         dec: () => this.setQty(slug, q - 1),
-        remove: () => this.setQty(slug, 0)
+        remove: () => this.setQty(slug, 0),
+        ship: (p.ship || 0) * q
       };
     }).filter(Boolean);
     const subtotal = lines.reduce((a, l) => a + parseFloat(l.lineFmt.slice(1)), 0);
+    const envio = lines.reduce((a, l) => a + l.ship, 0);
     const cartCount = Object.values(S.cart).reduce((a, b) => a + b, 0);
     const on = {};
     Object.keys(S.form).forEach((k) => { on[k] = (e) => this.setState({ form: Object.assign({}, S.form, { [k]: e.target.value }) }); });
@@ -2149,7 +2157,7 @@ class Component extends DCLogic {
       addedMsg: S.added,
       cartLines: lines, cartEmpty: lines.length === 0, cartHasItems: lines.length > 0,
       resultCountCart: cartCount + ' ' + (cartCount === 1 ? (L === 'es' ? 'pieza' : 'piece') : T.piezas),
-      subtotalFmt: fmt(subtotal), totalFmt: fmt(subtotal),
+      subtotalFmt: fmt(subtotal), envioFmt: fmt(envio), totalFmt: fmt(subtotal + envio),
       form: S.form, on,
       errMsg: S.err, hasErr: !!S.err,
       submitOrder: () => this.submitOrder(),
@@ -2170,7 +2178,7 @@ Component.DATA = [
   { slug: 'bendicion-cristal', img: 'assets/cristal-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/cristal-card.webp',
     imgs: ['assets/cristal-1.webp', 'assets/cristal-2.webp', 'assets/cristal-3.webp', 'assets/cristal-4.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 70.00, ship: 14.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Cristal cortado', en: 'Saint Benedict Blessing · Cut crystal' },
     desc: { es: 'Bordada en cristal cortado, con medalla giratoria.', en: 'Embroidered in cut crystal, with a rotating medal.' },
     descLong: { es: 'Bendición de San Benito bordada en cristal cortado, para colgar de la manija de la entrada. La medalla es giratoria, así que pueden verse sus dos caras: la imagen del santo y la cruz con sus inscripciones.', en: 'Saint Benedict blessing embroidered in cut crystal, to hang from the handle of the entrance door. The medal rotates, so both of its faces can be seen: the image of the saint and the cross with its inscriptions.' },
@@ -2182,7 +2190,7 @@ Component.DATA = [
   { slug: 'bendicion-doble', img: 'assets/doble-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/doble-card.webp',
     imgs: ['assets/doble-1.webp', 'assets/doble-2.webp', 'assets/doble-3.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 55.00, ship: 11.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Doble medalla', en: 'Saint Benedict Blessing · Double medal' },
     desc: { es: 'Bordada en cristal cortado, con dos medallas.', en: 'Embroidered in cut crystal, with two medals.' },
     descLong: { es: 'Bendición de San Benito bordada en cristal cortado, con dos medallas: una grande arriba y otra menor debajo, rematadas en borla.', en: 'Saint Benedict blessing embroidered in cut crystal, with two medals: a large one above and a smaller one below, finished with a tassel.' },
@@ -2194,7 +2202,7 @@ Component.DATA = [
   { slug: 'bendicion-laminada', img: 'assets/laminada-1.webp', fit: 'contain', ratioNum: '0.571',
     cardImg: 'assets/laminada-card.webp',
     imgs: ['assets/laminada-1.webp', 'assets/laminada-2.webp', 'assets/laminada-3.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 40.00, ship: 11.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Imagen laminada', en: 'Saint Benedict Blessing · Laminated image' },
     desc: { es: 'Bordada en cristal cortado, con imagen a color laminada.', en: 'Embroidered in cut crystal, with a laminated colour image.' },
     descLong: { es: 'Bendición de San Benito bordada en cristal cortado, con la imagen del santo a color laminada de un lado y la cruz esmaltada del otro.', en: 'Saint Benedict blessing embroidered in cut crystal, with the laminated colour image of the saint on one side and the enamelled cross on the other.' },
@@ -2204,7 +2212,7 @@ Component.DATA = [
   { slug: 'medallon-giratorio', img: 'assets/giratorio-1.webp', fit: 'contain', ratioNum: '0.546',
     cardImg: 'assets/giratorio-card.webp',
     imgs: ['assets/giratorio-1.webp', 'assets/giratorio-2.webp', 'assets/giratorio-3.webp', 'assets/giratorio-4.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 50.00, ship: 14.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Medallón giratorio', en: 'Saint Benedict Blessing · Rotating medallion' },
     desc: { es: 'Medallón de metal giratorio.', en: 'Rotating metal medallion.' },
     descLong: { es: 'Bendición de San Benito con medallón de metal giratorio, para colgar de la manija de la entrada. Al girar deja ver sus dos caras.', en: 'Saint Benedict blessing with a rotating metal medallion, to hang from the handle of the entrance door. Turning it reveals both of its faces.' },
@@ -2214,7 +2222,7 @@ Component.DATA = [
   { slug: 'bendicion-tejida', img: 'assets/tejida-1.webp', fit: 'contain', ratioNum: '0.571',
     cardImg: 'assets/tejida-card.webp',
     imgs: ['assets/tejida-1.webp', 'assets/tejida-2.webp', 'assets/tejida-3.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 30.00, ship: 11.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Tejida', en: 'Saint Benedict Blessing · Woven' },
     desc: { es: 'Tejida en marrón y ámbar, con cinco medallas.', en: 'Woven in brown and amber, with five medals.' },
     descLong: { es: 'Bendición de San Benito tejida, en marrón y ámbar, con cinco medallas que cuelgan de cordones de distinto largo.', en: 'Woven Saint Benedict blessing, in brown and amber, with five medals hanging from cords of different lengths.' },
@@ -2224,7 +2232,7 @@ Component.DATA = [
   { slug: 'decenario-madera', img: 'assets/decenario-1.webp', fit: 'contain', ratioNum: '0.667',
     cardImg: 'assets/decenario-card.webp',
     imgs: ['assets/decenario-1.webp', 'assets/decenario-2.webp', 'assets/decenario-3.webp', 'assets/decenario-4.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 25.00, ship: 11.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Decenario en madera', en: 'Saint Benedict Blessing · Wooden decade' },
     desc: { es: 'Decenario con cuentas de madera y medalla en metal.', en: 'Wooden-bead decade with a metal medal.' },
     descLong: { es: 'Bendición de San Benito en formato decenario, con cuentas de madera y medalla en metal. Se ajusta de dos maneras en la entrada: colgando a lo largo de la manija, o en redondo alrededor de ella.', en: 'Saint Benedict blessing in decade format, with wooden beads and a metal medal. It fits the entrance two ways: hanging long from the handle, or wrapped round it.' },
@@ -2234,7 +2242,7 @@ Component.DATA = [
   { slug: 'cordon-largo', img: 'assets/cordon-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/cordon-card.webp',
     imgs: ['assets/cordon-1.webp', 'assets/cordon-2.webp', 'assets/cordon-3.webp', 'assets/cordon-4.webp'],
-    price: null, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    price: 30.00, ship: 11.00, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
     name: { es: 'Bendición de San Benito · Cordón largo', en: 'Saint Benedict Blessing · Long cord' },
     desc: { es: 'Medalla en metal sobre cordón con cuentas.', en: 'Metal medal on a beaded cord.' },
     descLong: { es: 'Bendición de San Benito para colgar de la manija de la entrada, con la medalla en metal sobre cordón con cuentas. Es la pieza más larga del catálogo, pensada para puertas altas donde se ve de cuerpo entero.', en: 'Saint Benedict blessing to hang from the handle of the entrance door, with a metal medal on a beaded cord. It is the longest piece in the catalogue, made for tall doors where it is seen full length.' },
@@ -2388,7 +2396,7 @@ Component.T = {
       { q: '¿Cuáles son los métodos de pago?', a: 'El pago se realiza a través de un link externo seguro que recibís al confirmar tu pedido. (Texto provisorio.)' },
       { q: '¿Realizan envíos?', a: 'Sí, realizamos envíos dentro de Estados Unidos. Los detalles de cobertura y costos serán confirmados. (Texto provisorio.)' },
       { q: '¿Cuánto tarda mi pedido?', a: 'Los plazos de entrega serán confirmados según destino. (Texto provisorio.)' },
-      { q: '¿Cómo puedo comunicarme con VADE RETRO?', a: 'Los canales de contacto (email, WhatsApp y redes) serán publicados próximamente. (Texto provisorio.)' }
+      { q: '¿Cómo puedo comunicarme con VADE RETRO?', a: 'Podés llamarnos al 833-500-LUPE (5873). El email y las redes se publicarán próximamente.' }
     ],
     cta_line: 'Fe para tu familia. Resguardo para tu hogar.',
     footer_tagline: 'Un símbolo de protección, cerca de quienes amás.',
@@ -2402,7 +2410,8 @@ Component.T = {
     cart_title: 'Carrito', cart_empty: 'Tu carrito está vacío.',
     cada_uno: 'c/u', continuar: 'Continuar comprando', quitar: 'Quitar',
     resumen: 'Resumen', subtotal: 'Subtotal', total: 'TOTAL',
-    envio: 'Envío', envio_valor: 'a coordinar',
+    envio: 'Envío', envio_valor: 'a coordinar', envio_suf: 'de envío',
+    telefono: '833-500-LUPE (5873)',
     confirmar_compra: 'Confirmar compra', precios_usd: 'Todos los precios en USD',
     checkout_title: 'Finalizar pedido', datos_title: 'Tus datos',
     f_nombre: 'NOMBRE', f_apellido: 'APELLIDO', f_email: 'EMAIL', f_telefono: 'TELÉFONO',
@@ -2558,7 +2567,7 @@ Component.T = {
       { q: 'What are the payment methods?', a: 'Payment is made through a secure external link you receive after confirming your order. (Provisional copy.)' },
       { q: 'Do you ship?', a: 'Yes, we ship within the United States. Coverage and cost details will be confirmed. (Provisional copy.)' },
       { q: 'How long does my order take?', a: 'Delivery times will be confirmed depending on destination. (Provisional copy.)' },
-      { q: 'How can I contact VADE RETRO?', a: 'Contact channels (email, WhatsApp and social media) will be published soon. (Provisional copy.)' }
+      { q: 'How can I contact VADE RETRO?', a: 'You can call us at 833-500-LUPE (5873). Email and social media will be published soon.' }
     ],
     cta_line: 'Faith for your family. Shelter for your home.',
     footer_tagline: 'A symbol of protection, close to the ones you love.',
@@ -2572,7 +2581,8 @@ Component.T = {
     cart_title: 'Cart', cart_empty: 'Your cart is empty.',
     cada_uno: 'each', continuar: 'Continue shopping', quitar: 'Remove',
     resumen: 'Summary', subtotal: 'Subtotal', total: 'TOTAL',
-    envio: 'Shipping', envio_valor: 'to be arranged',
+    envio: 'Shipping', envio_valor: 'to be arranged', envio_suf: 'shipping',
+    telefono: '833-500-LUPE (5873)',
     confirmar_compra: 'Checkout', precios_usd: 'All prices in USD',
     checkout_title: 'Checkout', datos_title: 'Your details',
     f_nombre: 'FIRST NAME', f_apellido: 'LAST NAME', f_email: 'EMAIL', f_telefono: 'PHONE',
