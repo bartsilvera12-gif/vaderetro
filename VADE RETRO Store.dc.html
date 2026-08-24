@@ -1961,18 +1961,23 @@ class Component extends DCLogic {
     });
   }
   saveCart(cart) { try { localStorage.setItem('vaderetro_cart', JSON.stringify(cart)); } catch (e) {} }
+  // stock null significa "sin dato", no cero: con `p.stock <= 0` la funcion
+  // salia sin agregar nada, y con Math.min(1, null) la cantidad quedaba en 0.
+  // Sin numero de stock no hay tope.
   addToCart(slug, qty) {
     const p = this.products().find((x) => x.slug === slug);
-    if (!p || p.stock <= 0) return;
+    if (!p || p.stock === 0) return;
+    const tope = typeof p.stock === 'number' ? p.stock : Infinity;
     const cart = Object.assign({}, this.state.cart);
-    cart[slug] = Math.min((cart[slug] || 0) + qty, p.stock);
+    cart[slug] = Math.min((cart[slug] || 0) + qty, tope);
     this.saveCart(cart);
     this.setState({ cart, added: true });
   }
   setQty(slug, q) {
     const p = this.products().find((x) => x.slug === slug);
     const cart = Object.assign({}, this.state.cart);
-    if (q <= 0) delete cart[slug]; else cart[slug] = Math.min(q, p ? p.stock : q);
+    const tope = (p && typeof p.stock === 'number') ? p.stock : Infinity;
+    if (q <= 0) delete cart[slug]; else cart[slug] = Math.min(q, tope);
     this.saveCart(cart);
     this.setState({ cart });
   }
