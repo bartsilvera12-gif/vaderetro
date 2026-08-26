@@ -10,8 +10,10 @@
 // actualizamos la base con lo que diga. Mismo resultado, sin depender de
 // permisos que no tenemos.
 //
-// Square marca DRAFT mientras el enlace de pago existe pero nadie pagó. En
-// cuanto se cobra pasa a OPEN o COMPLETED.
+// NO alcanza con mirar el estado de la orden: Square puede dejarla en OPEN
+// aunque el pago haya sido rechazado. Lo que prueba que entró plata es que la
+// orden tenga un cobro asociado (tenders) por el total. Marcar como pagado
+// algo que no lo está haría que la vendedora despache mercadería regalada.
 // ============================================================================
 
 define('VADE', 1);
@@ -63,8 +65,11 @@ foreach (($sq['orders'] ?? []) as $o) {
   $ref = $o['reference_id'] ?? '';
   if (!preg_match('/^VADE-(\d{6})$/', $ref, $m)) continue;   // los de respaldo no se tocan
   $id = (int) $m[1];
-  $estado = $o['state'] ?? 'DRAFT';
-  if ($estado === 'DRAFT') $caidos[] = $id; else $pagados[] = $id;
+  // Un cobro real deja tenders con plata. Sin eso, no se pagó.
+  $cobrado = 0;
+  foreach (($o['tenders'] ?? []) as $t) $cobrado += $t['amount_money']['amount'] ?? 0;
+  $total = $o['total_money']['amount'] ?? 0;
+  if ($cobrado > 0 && $cobrado >= $total) $pagados[] = $id; else $caidos[] = $id;
 }
 
 // --- 3. actualizar la base --------------------------------------------------
