@@ -39,3 +39,16 @@ const URL_GRACIAS = 'https://vaderetro.org/#/gracias';
 //    línea por la fecha que indique el panel de desarrolladores.
 // ---------------------------------------------------------------------------
 const SQUARE_VERSION = '2024-10-17';
+
+// ---------------------------------------------------------------------------
+// 6. SUPABASE — para que el numero de pedido sea unico
+//    El numero salia de un contador en el navegador de cada comprador, asi que
+//    todos empezaban en VADE-000001. Ahora lo da la base, que lleva una sola
+//    cuenta para todos.
+//
+//    La clave va acá y en ningún otro lado: es la de servicio, saltea las
+//    restricciones de la base. Nunca en el sitio, nunca por chat ni por mail.
+// ---------------------------------------------------------------------------
+const SUPABASE_URL    = 'https://api.neura.com.py';
+const SUPABASE_SCHEMA = 'vaderetro';
+const SUPABASE_KEY    = '';   // ← pegar acá la service_role (rotada)

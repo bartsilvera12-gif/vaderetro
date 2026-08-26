@@ -55,6 +55,10 @@ foreach ($body['items'] as $slug => $cant) {
 }
 if (!$lineas) salir(400, ['ok' => false, 'error' => 'No hay piezas válidas en el pedido.']);
 
+$subtotal = 0;
+foreach ($lineas as $l) $subtotal += $l['base_price_money']['amount'] * (int) $l['quantity'];
+$subtotal += $envio;
+
 // --- datos del comprador, para que la clienta sepa a dónde mandar ----------
 $c = is_array($body['cliente'] ?? null) ? $body['cliente'] : [];
 $campo = function ($k) use ($c) { return trim(substr((string) ($c[$k] ?? ''), 0, 120)); };
@@ -67,7 +71,41 @@ $nota = trim(sprintf(
 ));
 if (strlen($nota) > 480) $nota = substr($nota, 0, 480);
 
-$referencia = preg_replace('/[^A-Za-z0-9\-]/', '', (string) ($body['pedido'] ?? '')) ?: ('VADE-' . date('ymdHis'));
+// --- numero de pedido: lo da la base, no el navegador ----------------------
+// Si Supabase no responde, el cobro NO se cae: se usa un numero con fecha y
+// azar. Preferible un numero feo a una venta perdida.
+$referencia = 'VADE-' . date('ymdHis') . '-' . strtoupper(bin2hex(random_bytes(2)));
+
+if (SUPABASE_KEY !== '') {
+  $fila = [
+    'estado'  => 'pendiente',
+    'total'   => round(($subtotal ?? 0) / 100, 2),
+    'envio'   => round($envio / 100, 2),
+    'items'   => $lineas,
+    'cliente' => $c,
+  ];
+  $sb = curl_init(rtrim(SUPABASE_URL, '/') . '/rest/v1/pedidos');
+  curl_setopt_array($sb, [
+    CURLOPT_POST           => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT        => 8,
+    CURLOPT_HTTPHEADER     => [
+      'apikey: ' . SUPABASE_KEY,
+      'Authorization: Bearer ' . SUPABASE_KEY,
+      'Content-Type: application/json',
+      'Content-Profile: ' . SUPABASE_SCHEMA,
+      'Prefer: return=representation',
+    ],
+    CURLOPT_POSTFIELDS => json_encode($fila, JSON_UNESCAPED_UNICODE),
+  ]);
+  $sbr = curl_exec($sb);
+  $sbc = curl_getinfo($sb, CURLINFO_HTTP_CODE);
+  curl_close($sb);
+  $sbj = json_decode((string) $sbr, true);
+  if ($sbc >= 200 && $sbc < 300 && !empty($sbj[0]['id'])) {
+    $referencia = 'VADE-' . str_pad((string) $sbj[0]['id'], 6, '0', STR_PAD_LEFT);
+  }
+}
 
 // La direccion se manda por tres vias distintas porque la nota del pedido
 // Square la descarta sin avisar. La nota del ITEM si aparece en el detalle
