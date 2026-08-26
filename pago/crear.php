@@ -88,7 +88,11 @@ $payload = [
   'order'           => $orden,
   'checkout_options' => [
     'redirect_url'             => URL_GRACIAS,
-    'ask_for_shipping_address' => false,   // la dirección ya la tomó el sitio
+    // Square tiene que pedir la direccion el mismo: probamos mandarla en la
+    // nota del pedido y la descarta en silencio, asi que la vendedora se
+    // quedaba sin saber a donde enviar. Pidiendola aca queda guardada como
+    // dato de envio de verdad, visible en su panel.
+    'ask_for_shipping_address' => true,
   ],
 ];
 // Lo que ya nos dio el comprador va precargado en la pagina de Square, para

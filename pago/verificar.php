@@ -64,6 +64,13 @@ foreach (($j['orders'] ?? []) as $o) {
         return ($l['quantity'] ?? '?') . ' x ' . ($l['name'] ?? '?');
     }, $o['line_items'] ?? []),
     'NOTA'       => $o['note'] ?? '(vacia)',
+    'ENVIO_A'    => array_map(function ($f) {
+        $d = $f['shipment_details']['recipient'] ?? [];
+        $a = $d['address'] ?? [];
+        return trim(($d['display_name'] ?? '') . ' — '
+          . ($a['address_line_1'] ?? '') . ', ' . ($a['locality'] ?? '') . ', '
+          . ($a['administrative_district_level_1'] ?? '') . ' ' . ($a['postal_code'] ?? ''));
+    }, $o['fulfillments'] ?? []) ?: '(sin datos de envio)',
   ];
 }
 echo json_encode(['ambiente' => AMBIENTE, 'pedidos' => $salida], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
