@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>VADE RETRO · Pedidos</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   Panel de pedidos. Lee la tabla vaderetro.pedidos de Supabase.
+   La clave que va acá abajo es la ANÓNIMA: es pública por diseño y no da
+   acceso a nada por sí sola. Quien decide qué se puede ver son las reglas
+   de la base, atadas al UUID del administrador (ver PERMISOS.sql).
+   ========================================================================== */
+:root{--azul:#0F2349;--oro:#CF9D59;--marfil:#F9F0ED;--carbon:#1C1C24}
+*{box-sizing:border-box}
+body{margin:0;background:var(--marfil);color:var(--carbon);
+  font-family:Montserrat,system-ui,sans-serif;font-size:14px}
+h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;
+  color:var(--azul);margin:0}
+header{background:var(--azul);color:var(--marfil);padding:18px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header h1{color:var(--marfil);font-size:24px}
+header .sub{font-size:11px;letter-spacing:.24em;color:var(--oro);text-transform:uppercase}
+button{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;
+  cursor:pointer;border:none;padding:9px 16px;border-radius:2px;transition:opacity .2s}
+button:hover{opacity:.85}
+.b-oro{background:var(--oro);color:var(--azul)}
+.b-linea{background:none;border:1px solid rgba(249,240,237,.4);color:var(--marfil)}
+main{max-width:1100px;margin:0 auto;padding:24px}
+
+/* Login */
+#login{max-width:340px;margin:14vh auto;background:#fff;padding:32px;
+  border-top:3px solid var(--oro);box-shadow:0 18px 44px rgba(15,35,73,.12)}
+#login label{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
+  color:var(--azul);margin:16px 0 6px;text-transform:uppercase}
+#login input{width:100%;padding:11px;border:1px solid rgba(15,35,73,.25);
+  font-family:inherit;font-size:14px}
+#login button{width:100%;margin-top:22px;padding:13px}
+
+/* Barra */
+.barra{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.barra input{flex:1;min-width:200px;padding:10px 12px;
+  border:1px solid rgba(15,35,73,.25);font-family:inherit;font-size:13px}
+.cuenta{font-size:11px;font-weight:600;letter-spacing:.18em;
+  color:rgba(28,28,36,.5);text-transform:uppercase}
+
+/* Pedido */
+.pedido{background:#fff;border:1px solid rgba(15,35,73,.1);
+  border-left:3px solid var(--oro);padding:18px 20px;margin-bottom:12px}
+.pedido.despachado{border-left-color:#8a9a7b;opacity:.72}
+.fila1{display:flex;justify-content:space-between;align-items:baseline;
+  gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.num{font-size:15px;font-weight:700;color:var(--azul);letter-spacing:.04em}
+.fecha{font-size:11.5px;color:rgba(28,28,36,.5)}
+.tot{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--azul)}
+.env{font-size:11px;color:rgba(28,28,36,.5)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.bloque h4{font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--oro);
+  text-transform:uppercase;margin:0 0 7px}
+.bloque p{margin:0 0 3px;line-height:1.55;font-size:13px}
+.piezas li{margin-bottom:3px;font-size:13px}
+.piezas{margin:0;padding-left:18px}
+.pie{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-top:14px;padding-top:12px;border-top:1px solid rgba(15,35,73,.1);flex-wrap:wrap}
+.estado{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  padding:5px 11px;border-radius:2px}
+.e-pendiente{background:rgba(207,157,89,.18);color:#7a6a4f}
+.e-despachado{background:rgba(138,154,123,.2);color:#5a6b4d}
+.aviso{background:#fff;border-left:3px solid var(--oro);padding:16px 20px;
+  font-size:13px;line-height:1.6}
+.err{color:#8a2b1e;font-size:12.5px;margin-top:12px;line-height:1.5}
+.oculto{display:none}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h1>Pedidos</h1>
+  <div style="font-size:11px;letter-spacing:.22em;color:var(--oro);text-transform:uppercase;margin-top:6px">Vade Retro</div>
+  <label for="mail">Email</label>
+  <input id="mail" type="email" autocomplete="username">
+  <label for="pass">Contraseña</label>
+  <input id="pass" type="password" autocomplete="current-password">
+  <button class="b-oro" id="btn-entrar">Entrar</button>
+  <div class="err" id="err-login"></div>
+</div>
+
+<div id="app" class="oculto">
+  <header>
+    <div>
+      <div class="sub">Vade Retro</div>
+      <h1>Pedidos</h1>
+    </div>
+    <button class="b-linea" id="btn-salir">Salir</button>
+  </header>
+  <main>
+    <div class="barra">
+      <input id="buscar" placeholder="Buscar por número, nombre, ciudad o email…">
+      <button class="b-oro" id="btn-recargar">Recargar</button>
+      <span class="cuenta" id="cuenta"></span>
+    </div>
+    <div id="lista"></div>
+  </main>
+</div>
+
+<script>
+// --- configuración ---------------------------------------------------------
+// La clave anónima es pública por diseño: sin una sesión válida no devuelve
+// nada, porque las reglas de la base están atadas al UUID del administrador.
+const URL_SB = 'https://api.neura.com.py';
+const ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzc0MTAxNDYxLCJleHAiOjE5MzE3ODE0NjF9.7_wAph8IolPMXtgfpezSwS5XR62IdD__qhqCywLDp3Q';
+const SCHEMA = 'vaderetro';
+
+const $ = (id) => document.getElementById(id);
+let token = null, pedidos = [];
+
+try { token = localStorage.getItem('vr_admin_token'); } catch (e) {}
+
+// --- sesión ----------------------------------------------------------------
+async function entrar() {
+  $('err-login').textContent = '';
+  const email = $('mail').value.trim(), password = $('pass').value;
+  if (!email || !password) { $('err-login').textContent = 'Completá los dos campos.'; return; }
+  $('btn-entrar').textContent = 'Entrando…';
+  try {
+    const r = await fetch(URL_SB + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { apikey: ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.access_token) throw new Error(d.error_description || d.msg || 'No se pudo entrar.');
+    token = d.access_token;
+    try { localStorage.setItem('vr_admin_token', token); } catch (e) {}
+    mostrarApp();
+  } catch (e) {
+    $('err-login').textContent = e.message;
+  } finally {
+    $('btn-entrar').textContent = 'Entrar';
+  }
+}
+
+function salir() {
+  token = null;
+  try { localStorage.removeItem('vr_admin_token'); } catch (e) {}
+  $('app').classList.add('oculto');
+  $('login').classList.remove('oculto');
+}
+
+function mostrarApp() {
+  $('login').classList.add('oculto');
+  $('app').classList.remove('oculto');
+  cargar();
+}
+
+// --- datos -----------------------------------------------------------------
+async function cargar() {
+  $('lista').innerHTML = '<div class="aviso">Cargando…</div>';
+  try {
+    const r = await fetch(URL_SB + '/rest/v1/pedidos?select=*&order=id.desc', {
+      headers: { apikey: ANON, Authorization: 'Bearer ' + token, 'Accept-Profile': SCHEMA }
+    });
+    if (r.status === 401) { salir(); return; }
+    if (!r.ok) throw new Error('La base respondió ' + r.status + '. Puede faltar correr PERMISOS.sql.');
+    pedidos = await r.json();
+    pintar();
+  } catch (e) {
+    $('lista').innerHTML = '<div class="aviso">' + esc(e.message) + '</div>';
+  }
+}
+
+async function marcar(id, estado) {
+  try {
+    const r = await fetch(URL_SB + '/rest/v1/pedidos?id=eq.' + id, {
+      method: 'PATCH',
+      headers: {
+        apikey: ANON, Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json', 'Content-Profile': SCHEMA,
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify({ estado })
+    });
+    if (!r.ok) throw new Error('No se pudo actualizar (' + r.status + ').');
+    const p = pedidos.find((x) => x.id === id);
+    if (p) p.estado = estado;
+    pintar();
+  } catch (e) { alert(e.message); }
+}
+
+// --- pintado ---------------------------------------------------------------
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g,
+  (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function num(p) { return 'VADE-' + String(p.id).padStart(6, '0'); }
+
+function pintar() {
+  const q = $('buscar').value.trim().toLowerCase();
+  const vis = pedidos.filter((p) => {
+    if (!q) return true;
+    const c = p.cliente || {};
+    return (num(p) + ' ' + (c.nombre || '') + ' ' + (c.apellido || '') + ' ' +
+            (c.ciudad || '') + ' ' + (c.email || '')).toLowerCase().includes(q);
+  });
+  $('cuenta').textContent = vis.length + (vis.length === 1 ? ' pedido' : ' pedidos');
+
+  if (!vis.length) {
+    $('lista').innerHTML = '<div class="aviso">' +
+      (pedidos.length ? 'Ningún pedido coincide con la búsqueda.'
+                      : 'Todavía no hay pedidos.') + '</div>';
+    return;
+  }
+
+  $('lista').innerHTML = vis.map((p) => {
+    const c = p.cliente || {};
+    const desp = p.estado === 'despachado';
+    const dir = [c.direccion, c.ciudad, [c.estado, c.zip].filter(Boolean).join(' ')]
+      .filter(Boolean).map(esc).join(', ');
+    const items = (p.items || []).map((i) => {
+      const precio = i.base_price_money ? (i.base_price_money.amount / 100).toFixed(2) : '?';
+      return '<li>' + esc(i.quantity) + ' × ' + esc(i.name) + ' — $' + precio + '</li>';
+    }).join('');
+    return '<div class="pedido' + (desp ? ' despachado' : '') + '">' +
+      '<div class="fila1">' +
+        '<div><div class="num">' + num(p) + '</div>' +
+        '<div class="fecha">' + esc(new Date(p.creado).toLocaleString('es')) + '</div></div>' +
+        '<div style="text-align:right"><div class="tot">$' + esc(p.total) + '</div>' +
+        '<div class="env">incluye $' + esc(p.envio) + ' de envío</div></div>' +
+      '</div>' +
+      '<div class="grid">' +
+        '<div class="bloque"><h4>Enviar a</h4>' +
+          '<p><strong>' + esc([c.nombre, c.apellido].filter(Boolean).join(' ')) + '</strong></p>' +
+          '<p>' + dir + '</p>' +
+          '<p>' + esc(c.telefono) + '</p>' +
+          '<p>' + esc(c.email) + '</p>' +
+          (c.obs ? '<p style="font-style:italic;color:#7a6a4f">' + esc(c.obs) + '</p>' : '') +
+        '</div>' +
+        '<div class="bloque"><h4>Piezas</h4><ul class="piezas">' + items + '</ul></div>' +
+      '</div>' +
+      '<div class="pie">' +
+        '<span class="estado ' + (desp ? 'e-despachado' : 'e-pendiente') + '">' + esc(p.estado) + '</span>' +
+        '<button class="b-oro" data-id="' + p.id + '" data-a="' + (desp ? 'pendiente' : 'despachado') + '">' +
+          (desp ? 'Marcar pendiente' : 'Marcar despachado') + '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  $('lista').querySelectorAll('button[data-id]').forEach((b) => {
+    b.onclick = () => marcar(Number(b.dataset.id), b.dataset.a);
+  });
+}
+
+// --- arranque --------------------------------------------------------------
+$('btn-entrar').onclick = entrar;
+$('pass').onkeydown = (e) => { if (e.key === 'Enter') entrar(); };
+$('btn-salir').onclick = salir;
+$('btn-recargar').onclick = cargar;
+$('buscar').oninput = pintar;
+if (token) mostrarApp();
+</script>
+</body>
+</html>
