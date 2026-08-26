@@ -69,11 +69,17 @@ if (strlen($nota) > 480) $nota = substr($nota, 0, 480);
 
 $referencia = preg_replace('/[^A-Za-z0-9\-]/', '', (string) ($body['pedido'] ?? '')) ?: ('VADE-' . date('ymdHis'));
 
+// La direccion se manda por tres vias distintas porque la nota del pedido
+// Square la descarta sin avisar. La nota del ITEM si aparece en el detalle
+// del pedido, y metadata queda como respaldo consultable.
+$lineas[0]['note'] = substr($nota, 0, 500);
+
 $orden = [
   'location_id'  => LOCATION_ID,
   'reference_id' => substr($referencia, 0, 40),
   'line_items'   => $lineas,
-  'note'         => $nota,
+  'note'         => substr($nota, 0, 500),
+  'metadata'     => ['envio_a' => substr($nota, 0, 255)],
 ];
 if ($envio > 0) {
   $orden['service_charges'] = [[
@@ -88,11 +94,10 @@ $payload = [
   'order'           => $orden,
   'checkout_options' => [
     'redirect_url'             => URL_GRACIAS,
-    // Square tiene que pedir la direccion el mismo: probamos mandarla en la
-    // nota del pedido y la descarta en silencio, asi que la vendedora se
-    // quedaba sin saber a donde enviar. Pidiendola aca queda guardada como
-    // dato de envio de verdad, visible en su panel.
-    'ask_for_shipping_address' => true,
+    // Square no maneja el envio: lo cobramos nosotros como cargo aparte y la
+    // direccion la toma nuestro formulario. Si se prende, Square agrega su
+    // propia seccion de tarifas y el comprador podria pagar el envio dos veces.
+    'ask_for_shipping_address' => false,
   ],
 ];
 // Lo que ya nos dio el comprador va precargado en la pagina de Square, para

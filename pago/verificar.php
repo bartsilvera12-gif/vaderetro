@@ -63,6 +63,8 @@ foreach (($j['orders'] ?? []) as $o) {
     'piezas'     => array_map(function ($l) {
         return ($l['quantity'] ?? '?') . ' x ' . ($l['name'] ?? '?');
     }, $o['line_items'] ?? []),
+    'NOTA_ITEM'  => $o['line_items'][0]['note'] ?? '(vacia)',
+    'METADATA'   => $o['metadata']['envio_a'] ?? '(vacia)',
     'NOTA'       => $o['note'] ?? '(vacia)',
     'ENVIO_A'    => array_map(function ($f) {
         $d = $f['shipment_details']['recipient'] ?? [];
