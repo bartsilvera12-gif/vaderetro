@@ -145,9 +145,19 @@ $payload = [
 $pre = [];
 $email = filter_var($campo('email'), FILTER_VALIDATE_EMAIL);
 if ($email) $pre['buyer_email'] = $email;
-$tel = preg_replace('/\D/', '', $campo('telefono'));
-if (strlen($tel) === 10) $pre['buyer_phone_number'] = '+1' . $tel;          // EE.UU. sin prefijo
-elseif (strlen($tel) === 11 && $tel[0] === '1') $pre['buyer_phone_number'] = '+' . $tel;
+// El telefono es una comodidad, no un requisito: solo se manda cuando se
+// puede afirmar que es un numero valido. Asumir que diez digitos era EE.UU.
+// convertia un numero paraguayo en +10982487844, y Square rechazaba el
+// pedido ENTERO. Un dato de contacto no puede tumbar una venta.
+$crudo = trim($campo('telefono'));
+$tel   = preg_replace('/\D/', '', $crudo);
+if (strpos($crudo, '+') === 0 && strlen($tel) >= 8) {
+  $pre['buyer_phone_number'] = '+' . $tel;                       // ya viene con pais
+} elseif (strlen($tel) === 11 && $tel[0] === '1') {
+  $pre['buyer_phone_number'] = '+' . $tel;                       // EE.UU. con el 1
+} elseif (strlen($tel) === 10 && $tel[0] >= '2') {
+  $pre['buyer_phone_number'] = '+1' . $tel;                      // EE.UU.: nunca empieza en 0 ni 1
+}
 if ($pre) $payload['pre_populated_data'] = $pre;
 
 // --- llamar a Square -------------------------------------------------------
@@ -171,6 +181,27 @@ $respuesta = curl_exec($ch);
 $http      = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $fallo     = curl_error($ch);
 curl_close($ch);
+
+// Red de seguridad: si Square rechaza por algo de los datos precargados, se
+// reintenta sin ellos. El comprador escribe su email a mano y la venta se
+// concreta igual. Nunca perder una venta por una comodidad.
+if (!$fallo && $http >= 400 && isset($payload['pre_populated_data'])) {
+  unset($payload['pre_populated_data']);
+  $ch = curl_init($base . '/v2/online-checkout/payment-links');
+  curl_setopt_array($ch, [
+    CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20,
+    CURLOPT_HTTPHEADER => [
+      'Authorization: Bearer ' . TOKEN,
+      'Square-Version: ' . SQUARE_VERSION,
+      'Content-Type: application/json',
+    ],
+    CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
+  ]);
+  $respuesta = curl_exec($ch);
+  $http      = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  $fallo     = curl_error($ch);
+  curl_close($ch);
+}
 
 if ($fallo) salir(502, ['ok' => false, 'error' => 'No se pudo contactar a Square.', 'detalle' => $fallo]);
 
