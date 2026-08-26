@@ -1835,6 +1835,12 @@ class Component extends DCLogic {
     window.addEventListener('scroll', this._onScroll, { passive: true });
     window.addEventListener('resize', this._onResize);
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
+    // Al volver desde Square con la flecha atras, el navegador restaura la
+    // pagina tal como estaba: con pagando en true. El bloqueo anti-doble-clic
+    // entonces impide reintentar y el boton queda trabado en "Preparando el
+    // pago". pageshow avisa de esa restauracion, asi que ahi se libera.
+    this._onShow = () => { if (this.state.pagando) this.setState({ pagando: false }); };
+    window.addEventListener('pageshow', this._onShow);
     this.parseRoute();
     this.initGalRatio();
     requestAnimationFrame(() => this.initReveal());
@@ -1842,6 +1848,7 @@ class Component extends DCLogic {
   }
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
+    window.removeEventListener('pageshow', this._onShow);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
