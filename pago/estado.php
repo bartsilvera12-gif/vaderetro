@@ -100,4 +100,13 @@ function patch($ids, $estado) {
 $n1 = patch($pagados, 'pagado');
 $n2 = patch($caidos,  'sin pagar');
 
-fin(200, ['ok' => true, 'pagados' => count($pagados), 'sin_pagar' => count($caidos), 'actualizados' => $n1 + $n2]);
+// La version permite comprobar desde afuera que subio el archivo correcto.
+// Sin esto no habia forma de distinguir una version vieja de una nueva cuando
+// los numeros que devuelven coinciden por casualidad.
+fin(200, [
+  'ok'           => true,
+  'version'      => 'v2-tenders',
+  'pagados'      => count($pagados),
+  'sin_pagar'    => count($caidos),
+  'actualizados' => $n1 + $n2,
+]);
