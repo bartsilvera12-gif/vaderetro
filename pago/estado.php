@@ -71,9 +71,17 @@ foreach (($sq['orders'] ?? []) as $o) {
   // es plata efectivamente tomada de la tarjeta.
   $cobrado = 0;
   $estados = [];
+  $motivos = [];
   foreach (($o['tenders'] ?? []) as $t) {
-    $st = $t['card_details']['status'] ?? ($t['type'] ?? 'DESCONOCIDO');
+    $cd = $t['card_details'] ?? [];
+    $st = $cd['status'] ?? ($t['type'] ?? 'DESCONOCIDO');
     $estados[] = $st;
+    // El motivo del rechazo lo informa Square. Sin esto solo se ve FAILED, que
+    // no dice si fue saldo, la tarjeta o el pais del emisor.
+    foreach (($cd['errors'] ?? []) as $e) {
+      $motivos[] = ($e['code'] ?? '?') . (isset($e['detail']) ? ' — ' . $e['detail'] : '');
+    }
+    if (isset($cd['card']['card_brand'])) $motivos[] = 'tarjeta: ' . $cd['card']['card_brand'];
     if ($st === 'CAPTURED') $cobrado += $t['amount_money']['amount'] ?? 0;
   }
   $total = $o['total_money']['amount'] ?? 0;
@@ -84,6 +92,7 @@ foreach (($sq['orders'] ?? []) as $o) {
     'orden'   => $o['state'] ?? null,
     'total'   => number_format($total / 100, 2),
     'cobros'  => $estados ?: ['(ninguno)'],
+    'motivo'  => $motivos ?: ['-'],
     'pagado'  => $ok,
   ];
 }
@@ -121,7 +130,7 @@ $n2 = patch($caidos,  'sin pagar');
 // los numeros que devuelven coinciden por casualidad.
 fin(200, [
   'ok'           => true,
-  'version'      => 'v3-capturados',
+  'version'      => 'v4-motivos',
   'detalle'      => $detalle,
   'pagados'      => count($pagados),
   'sin_pagar'    => count($caidos),
