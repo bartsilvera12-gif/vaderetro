@@ -72,6 +72,9 @@ main{max-width:1100px;margin:0 auto;padding:24px}
   padding:5px 11px;border-radius:2px}
 .e-pendiente{background:rgba(207,157,89,.18);color:#7a6a4f}
 .e-despachado{background:rgba(138,154,123,.2);color:#5a6b4d}
+.e-pagado{background:rgba(15,35,73,.12);color:#0F2349}
+.e-sinpagar{background:rgba(28,28,36,.08);color:rgba(28,28,36,.45)}
+.pedido.sinpagar{border-left-color:rgba(28,28,36,.2);opacity:.6}
 .aviso{background:#fff;border-left:3px solid var(--oro);padding:16px 20px;
   font-size:13px;line-height:1.6}
 .err{color:#8a2b1e;font-size:12.5px;margin-top:12px;line-height:1.5}
@@ -162,6 +165,9 @@ function mostrarApp() {
 // --- datos -----------------------------------------------------------------
 async function cargar() {
   $('lista').innerHTML = '<div class="aviso">Cargando…</div>';
+  // Primero se le pregunta a Square quien pago. Si falla, se sigue igual: es
+  // mejor mostrar los pedidos con el estado viejo que no mostrar nada.
+  try { await fetch('../pago/estado.php', { cache: 'no-store' }); } catch (e) {}
   try {
     const r = await fetch(URL_SB + '/rest/v1/pedidos?select=*&order=id.desc', {
       headers: { apikey: ANON, Authorization: 'Bearer ' + token, 'Accept-Profile': SCHEMA }
@@ -218,14 +224,16 @@ function pintar() {
 
   $('lista').innerHTML = vis.map((p) => {
     const c = p.cliente || {};
-    const desp = p.estado === 'despachado';
+    const desp   = p.estado === 'despachado';
+    const impago = p.estado === 'sin pagar';
+    const clase  = desp ? 'e-despachado' : (impago ? 'e-sinpagar' : (p.estado === 'pagado' ? 'e-pagado' : 'e-pendiente'));
     const dir = [c.direccion, c.ciudad, [c.estado, c.zip].filter(Boolean).join(' ')]
       .filter(Boolean).map(esc).join(', ');
     const items = (p.items || []).map((i) => {
       const precio = i.base_price_money ? (i.base_price_money.amount / 100).toFixed(2) : '?';
       return '<li>' + esc(i.quantity) + ' × ' + esc(i.name) + ' — $' + precio + '</li>';
     }).join('');
-    return '<div class="pedido' + (desp ? ' despachado' : '') + '">' +
+    return '<div class="pedido' + (desp ? ' despachado' : '') + (impago ? ' sinpagar' : '') + '">' +
       '<div class="fila1">' +
         '<div><div class="num">' + num(p) + '</div>' +
         '<div class="fecha">' + esc(new Date(p.creado).toLocaleString('es')) + '</div></div>' +
@@ -243,7 +251,7 @@ function pintar() {
         '<div class="bloque"><h4>Piezas</h4><ul class="piezas">' + items + '</ul></div>' +
       '</div>' +
       '<div class="pie">' +
-        '<span class="estado ' + (desp ? 'e-despachado' : 'e-pendiente') + '">' + esc(p.estado) + '</span>' +
+        '<span class="estado ' + clase + '">' + esc(p.estado) + '</span>' +
         '<button class="b-oro" data-id="' + p.id + '" data-a="' + (desp ? 'pendiente' : 'despachado') + '">' +
           (desp ? 'Marcar pendiente' : 'Marcar despachado') + '</button>' +
       '</div>' +
