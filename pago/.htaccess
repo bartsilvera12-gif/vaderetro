@@ -1,0 +1,16 @@
+# Doble candado sobre config.php, que es donde vive el token.
+#
+# Normalmente el servidor ejecuta los .php y nunca muestra su contenido. Pero
+# si PHP llegara a quedar apagado —un cambio de plan, una migracion— el
+# servidor los serviria como texto plano y el token quedaria a la vista.
+# Esta regla lo impide en cualquier caso.
+
+<Files "config.php">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>

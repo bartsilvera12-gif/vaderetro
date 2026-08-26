@@ -1729,7 +1729,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5c5c63;padding:8px 0"><span>{{ t.subtotal }}</span><span>{{ subtotalFmt }}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5c5c63;padding:8px 0;border-bottom:1px solid rgba(15,35,73,.12)"><span>{{ t.envio }}</span><span>{{ envioFmt }}</span></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0 22px"><span style="font-size:13px;font-weight:700;letter-spacing:.1em;color:#0F2349">{{ t.total }}</span><span style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#0F2349">{{ totalFmt }}</span></div>
-      <button onClick="{{ submitOrder }}" style="width:100%;background:#CF9D59;color:#0F2349;border:none;cursor:pointer;font-size:12.5px;font-weight:700;letter-spacing:.1em;padding:16px 0;transition:background .25s" style-hover="background:#b9873f">{{ t.confirmar_pedido }}</button>
+      <button onClick="{{ submitOrder }}" style="width:100%;background:#CF9D59;color:#0F2349;border:none;cursor:pointer;font-size:12.5px;font-weight:700;letter-spacing:.1em;padding:16px 0;transition:background .25s" style-hover="background:#b9873f">{{ botonPagar }}</button>
       <p style="font-size:11px;color:rgba(28,28,36,.45);margin:14px 0 0;text-align:center">{{ t.pago_note }}</p>
     </div>
   </div>
@@ -1821,7 +1821,7 @@ class Component extends DCLogic {
     this.state = {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false, galSrc: null,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
-      scrolled: false, openFaq: -1, err: '',
+      scrolled: false, openFaq: -1, err: '', pagando: false,
       fCats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
@@ -1956,7 +1956,8 @@ class Component extends DCLogic {
     else if (parts[0] === 'checkout') route = 'checkout';
     else if (parts[0] === 'gracias') route = 'thanks';
     const changed = route !== this.state.route || slug !== this.state.slug;
-    this.setState({ route, slug, menuOpen: false, added: false, qty: 1, err: '', galSrc: null }, () => {
+    if (route === 'thanks' && Object.keys(this.state.cart).length) this.saveCart({});
+    this.setState(Object.assign({ route, slug, menuOpen: false, added: false, qty: 1, err: '', galSrc: null, pagando: false }, route === 'thanks' ? { cart: {} } : {}), () => {
       if (changed) window.scrollTo(0, 0);
     });
   }
@@ -1998,15 +1999,20 @@ class Component extends DCLogic {
     const D = Component.DATA;
     return D.map((p) => Object.assign({}, p, { name: p.name[L], desc: p.desc[L], descLong: p.descLong[L], badge: p.badgeTxt ? p.badgeTxt[L] : '', specs: p.specs ? p.specs[L] : [], colors: p.colors ? p.colors.map((c) => ({ css: c.css, name: c.name[L] })) : [] }));
   }
+  // El navegador manda que se lleva y a donde; los precios los recalcula el
+  // servidor. Si mandaramos el total desde aca, cualquiera podria editarlo.
   submitOrder() {
     const T = Component.T[this.state.lang];
     const f = this.state.form;
+    if (this.state.pagando) return;
     const req = ['nombre', 'apellido', 'email', 'telefono', 'direccion', 'ciudad', 'estado', 'zip'];
     if (req.some((k) => !String(f[k]).trim())) { this.setState({ err: T.error_required }); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim())) { this.setState({ err: T.error_email }); return; }
+
     let seq = 1;
     try { seq = parseInt(localStorage.getItem('vaderetro_order_seq') || '0', 10) + 1; localStorage.setItem('vaderetro_order_seq', String(seq)); } catch (e) {}
     const num = 'VADE-' + String(seq).padStart(6, '0');
+
     const prods = this.products();
     const items = Object.entries(this.state.cart).map(([slug, q]) => {
       const p = prods.find((x) => x.slug === slug);
@@ -2015,13 +2021,27 @@ class Component extends DCLogic {
     const subtotal = items.reduce((a, i) => a + i.subtotal, 0);
     const shipping = items.reduce((a, i) => a + i.shipping, 0);
     const order = { order_number: num, status: 'pending', payment_status: 'pending', customer: f, items, subtotal, shipping, discount: 0, total: subtotal + shipping, created_at: new Date().toISOString() };
-    try {
-      const orders = JSON.parse(localStorage.getItem('vaderetro_orders') || '[]');
-      orders.push(order);
-      localStorage.setItem('vaderetro_orders', JSON.stringify(orders));
-    } catch (e) {}
-    this.saveCart({});
-    this.setState({ cart: {}, lastOrder: order, err: '', form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' } }, () => { location.hash = '#/gracias'; });
+
+    this.setState({ pagando: true, err: '' });
+    fetch('pago/crear.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: this.state.cart, cliente: f, pedido: num })
+    })
+      .then((r) => r.json().catch(() => { throw new Error(T.error_pago_servidor); }))
+      .then((d) => {
+        if (!d || !d.ok || !d.url) throw new Error((d && (d.detalle || d.error)) || T.error_pago);
+        // El carrito se vacia recien al volver de pagar, no ahora: si el
+        // comprador abandona en Square, encuentra su pedido donde lo dejo.
+        try {
+          const os = JSON.parse(localStorage.getItem('vaderetro_orders') || '[]');
+          os.push(order);
+          localStorage.setItem('vaderetro_orders', JSON.stringify(os));
+        } catch (e) {}
+        this.setState({ lastOrder: order });
+        location.href = d.url;
+      })
+      .catch((e) => this.setState({ pagando: false, err: String((e && e.message) || e) }));
   }
   renderVals() {
     const S = this.state;
@@ -2165,6 +2185,7 @@ class Component extends DCLogic {
       subtotalFmt: fmt(subtotal), envioFmt: fmt(envio), totalFmt: fmt(subtotal + envio),
       form: S.form, on,
       errMsg: S.err, hasErr: !!S.err,
+      botonPagar: S.pagando ? T.pagando : T.confirmar_pedido,
       submitOrder: () => this.submitOrder(),
       orderNumber: orderNumber || 'VADE-000001',
       paymentReady: paymentEnabled, paymentPending: !paymentEnabled,
@@ -2422,6 +2443,9 @@ Component.T = {
     f_nombre: 'NOMBRE', f_apellido: 'APELLIDO', f_email: 'EMAIL', f_telefono: 'TELÉFONO',
     f_direccion: 'DIRECCIÓN', f_ciudad: 'CIUDAD', f_estado: 'ESTADO', f_obs: 'OBSERVACIONES',
     error_required: 'Completá todos los campos obligatorios (*).', error_email: 'Ingresá un email válido.',
+    pagando: 'Preparando el pago…',
+    error_pago: 'No se pudo iniciar el pago. Intentá de nuevo en un momento.',
+    error_pago_servidor: 'El cobro no está disponible en esta dirección. Probá desde vaderetro.org.',
     confirmar_pedido: 'Confirmar pedido',
     gracias_kicker: 'PEDIDO CONFIRMADO',
     gracias_msg: 'Recibimos tu pedido correctamente. Te contactaremos por email con los detalles y el estado del mismo.',
@@ -2593,6 +2617,9 @@ Component.T = {
     f_nombre: 'FIRST NAME', f_apellido: 'LAST NAME', f_email: 'EMAIL', f_telefono: 'PHONE',
     f_direccion: 'ADDRESS', f_ciudad: 'CITY', f_estado: 'STATE', f_obs: 'NOTES',
     error_required: 'Please fill in all required fields (*).', error_email: 'Please enter a valid email.',
+    pagando: 'Preparing payment…',
+    error_pago: 'Payment could not be started. Please try again in a moment.',
+    error_pago_servidor: 'Checkout is not available at this address. Please use vaderetro.org.',
     confirmar_pedido: 'Confirm order',
     gracias_kicker: 'ORDER CONFIRMED',
     gracias_msg: 'We received your order. We will contact you by email with the details and status.',
