@@ -75,6 +75,21 @@ main{max-width:1100px;margin:0 auto;padding:24px}
 .e-pagado{background:rgba(15,35,73,.12);color:#0F2349}
 .e-sinpagar{background:rgba(28,28,36,.08);color:rgba(28,28,36,.45)}
 .pedido.sinpagar{border-left-color:rgba(28,28,36,.2);opacity:.6}
+/* Resumen */
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;margin-bottom:22px}
+.tarj{background:#fff;border:1px solid rgba(15,35,73,.1);border-top:2px solid var(--oro);
+  padding:16px 18px}
+.tarj .n{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;
+  color:var(--azul);line-height:1}
+.tarj .t{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(28,28,36,.5);margin-top:6px}
+/* Filtros */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{background:#fff;border:1px solid rgba(15,35,73,.18);color:rgba(28,28,36,.65);
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 14px;cursor:pointer;border-radius:2px}
+.chip.on{background:var(--azul);border-color:var(--azul);color:var(--marfil)}
 .aviso{background:#fff;border-left:3px solid var(--oro);padding:16px 20px;
   font-size:13px;line-height:1.6}
 .err{color:#8a2b1e;font-size:12.5px;margin-top:12px;line-height:1.5}
@@ -108,6 +123,8 @@ main{max-width:1100px;margin:0 auto;padding:24px}
       <button class="b-oro" id="btn-recargar">Recargar</button>
       <span class="cuenta" id="cuenta"></span>
     </div>
+    <div class="resumen" id="resumen"></div>
+    <div class="filtros" id="filtros"></div>
     <div id="lista"></div>
   </main>
 </div>
@@ -121,7 +138,7 @@ const ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI
 const SCHEMA = 'vaderetro';
 
 const $ = (id) => document.getElementById(id);
-let token = null, pedidos = [];
+let token = null, pedidos = [], filtro = 'todos';
 
 try { token = localStorage.getItem('vr_admin_token'); } catch (e) {}
 
@@ -204,10 +221,39 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g,
   (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function num(p) { return 'VADE-' + String(p.id).padStart(6, '0'); }
+function tarjeta(n, t) { return '<div class="tarj"><div class="n">' + n + '</div><div class="t">' + t + '</div></div>'; }
 
 function pintar() {
   const q = $('buscar').value.trim().toLowerCase();
+
+  // Resumen: solo cuenta lo cobrado. Un pedido sin pagar no es una venta.
+  const cobrados = pedidos.filter((p) => p.estado === 'pagado' || p.estado === 'despachado');
+  const facturado = cobrados.reduce((a, p) => a + parseFloat(p.total || 0), 0);
+  const porDespachar = pedidos.filter((p) => p.estado === 'pagado').length;
+  $('resumen').innerHTML =
+    tarjeta('$' + facturado.toFixed(2), 'Cobrado') +
+    tarjeta(cobrados.length, cobrados.length === 1 ? 'Venta' : 'Ventas') +
+    tarjeta(porDespachar, 'Por despachar') +
+    tarjeta(pedidos.length, 'Pedidos en total');
+
+  // Filtros con su cuenta al lado
+  const cuentas = {
+    todos: pedidos.length,
+    pagado: pedidos.filter((p) => p.estado === 'pagado').length,
+    despachado: pedidos.filter((p) => p.estado === 'despachado').length,
+    'sin pagar': pedidos.filter((p) => p.estado === 'sin pagar').length
+  };
+  $('filtros').innerHTML = [
+    ['todos', 'Todos'], ['pagado', 'Por despachar'],
+    ['despachado', 'Despachados'], ['sin pagar', 'Sin pagar']
+  ].map(([k, t]) => '<button class="chip' + (filtro === k ? ' on' : '') +
+      '" data-f="' + k + '">' + t + ' · ' + (cuentas[k] || 0) + '</button>').join('');
+  $('filtros').querySelectorAll('button[data-f]').forEach((b) => {
+    b.onclick = () => { filtro = b.dataset.f; pintar(); };
+  });
+
   const vis = pedidos.filter((p) => {
+    if (filtro !== 'todos' && p.estado !== filtro) return false;
     if (!q) return true;
     const c = p.cliente || {};
     return (num(p) + ' ' + (c.nombre || '') + ' ' + (c.apellido || '') + ' ' +
@@ -217,8 +263,10 @@ function pintar() {
 
   if (!vis.length) {
     $('lista').innerHTML = '<div class="aviso">' +
-      (pedidos.length ? 'Ningún pedido coincide con la búsqueda.'
-                      : 'Todavía no hay pedidos.') + '</div>';
+      (pedidos.length ? 'Ningún pedido coincide con este filtro o búsqueda.'
+        : 'No se ve ningún pedido.<br><br>Si ya hubo compras, probablemente falte correr ' +
+          '<strong>PERMISOS.sql</strong> en Supabase: sin esas reglas la base devuelve ' +
+          'una lista vacía en vez de un error.') + '</div>';
     return;
   }
 
