@@ -22,6 +22,8 @@ function salir($codigo, $datos) { http_response_code($codigo); echo json_encode(
 // allá, cambialo acá también o el cobro no va a dar lo que muestra la página.
 // ---------------------------------------------------------------------------
 $CATALOGO = [
+  // TEMPORAL — pieza de prueba. Borrar junto con la del index.html.
+  'prueba-tecnica'     => ['n' => 'Prueba técnica',                              'p' => 100,  'e' => 0],
   'bendicion-cristal'  => ['n' => 'Bendición de San Benito · Cristal cortado',    'p' => 7000, 'e' => 1400],
   'bendicion-doble'    => ['n' => 'Bendición de San Benito · Doble medalla',      'p' => 5500, 'e' => 1100],
   'bendicion-laminada' => ['n' => 'Bendición de San Benito · Imagen laminada',    'p' => 4000, 'e' => 1100],

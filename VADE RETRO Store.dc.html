@@ -2076,7 +2076,7 @@ class Component extends DCLogic {
     const featured = ['bendicion-cristal', 'bendicion-doble', 'medallon-giratorio'].map((s) => items.find((p) => p.slug === s));
     const togA = (key, val) => () => { const a = this.state[key].slice(); const i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); this.setState({ [key]: a }); };
     const cats = ['puerta'].map((k) => ({ key: k, label: T.cat_labels[k], count: items.filter((p) => p.cat === k).length, active: S.fCats.includes(k), inactive: !S.fCats.includes(k), toggle: togA('fCats', k) }));
-    let shopItems = items.filter((p) => (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (typeof p.price !== 'number' || p.price <= S.fMax) && (!S.fStock || p.stock > 0));
+    let shopItems = items.filter((p) => !p.oculto && (S.fCats.length === 0 || S.fCats.includes(p.cat)) && (typeof p.price !== 'number' || p.price <= S.fMax) && (!S.fStock || p.stock > 0));
     const pv = (x) => (typeof x.price === 'number' ? x.price : Infinity);
     if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => pv(a) - pv(b));
     else if (S.sort === 'desc') shopItems = shopItems.slice().sort((a, b) => pv(b) - pv(a));
@@ -2204,6 +2204,18 @@ Component.TICKET_PALETTE = [
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
 Component.DATA = [
+  // TEMPORAL — pieza de prueba para confirmar que el cobro real funciona.
+  // Va oculta: no aparece en la tienda ni en destacados, solo entrando a
+  // /#/producto/prueba-tecnica. BORRAR de aca y de pago/crear.php cuando
+  // termine la prueba.
+  { slug: 'prueba-tecnica', img: 'assets/cristal-card.webp', oculto: true,
+    cardImg: 'assets/cristal-card.webp',
+    price: 1.00, ship: 0, oldPrice: null, stock: null, cat: 'puerta', badgeTxt: null,
+    name: { es: 'Prueba técnica', en: 'Technical test' },
+    desc: { es: 'Pieza de prueba. No es un producto.', en: 'Test item. Not a product.' },
+    descLong: { es: 'Pieza usada para verificar que el cobro funciona. No corresponde a ningún artículo real y no se envía nada.', en: 'Item used to verify that payments work. It is not a real article and nothing is shipped.' },
+    specs: { es: ['Sin envío.', 'Se elimina apenas termine la verificación.'],
+             en: ['No shipping.', 'Removed as soon as the check is done.'] } },
   { slug: 'bendicion-cristal', img: 'assets/cristal-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/cristal-card.webp',
     imgs: ['assets/cristal-1.webp', 'assets/cristal-2.webp', 'assets/cristal-3.webp', 'assets/cristal-4.webp'],
