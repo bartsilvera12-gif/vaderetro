@@ -40,7 +40,6 @@ if (!is_array($body) || empty($body['items'])) salir(400, ['ok' => false, 'error
 // --- armar las líneas con los precios de acá, no los del navegador ---------
 $lineas = [];
 $envio  = 0;
-$mayor  = -1;
 foreach ($body['items'] as $slug => $cant) {
   if (!isset($CATALOGO[$slug])) continue;               // slug desconocido: se ignora
   $cant = (int) $cant;
@@ -51,8 +50,8 @@ foreach ($body['items'] as $slug => $cant) {
     'quantity'         => (string) $cant,
     'base_price_money' => ['amount' => $art['p'], 'currency' => 'USD'],
   ];
-  // Un solo envio por pedido: el de la pieza mas cara. Va todo en un paquete.
-  if ($art['p'] > $mayor) { $mayor = $art['p']; $envio = $art['e']; }
+  // Un solo envio por pedido: el mas caro del carrito. Va todo en un paquete.
+  if ($art['e'] > $envio) $envio = $art['e'];
 }
 if (!$lineas) salir(400, ['ok' => false, 'error' => 'No hay piezas válidas en el pedido.']);
 

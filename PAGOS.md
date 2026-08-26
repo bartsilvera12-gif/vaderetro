@@ -84,7 +84,7 @@ El sitio muestra el mensaje de error tal como lo devuelve Square, así que suele
 
 ## Importante para el mantenimiento
 
-**El envío se cobra una sola vez por pedido**: el de la pieza más cara del carrito. Va todo en un paquete, así que se cobra un envío, no uno por unidad.
+**El envío se cobra una sola vez por pedido**: el más caro de las piezas del carrito. Va todo en un paquete, así que se cobra un envío, no uno por unidad.
 
 **Los precios y esa regla están en dos lugares** y tienen que coincidir:
 

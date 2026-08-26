@@ -2094,9 +2094,9 @@ class Component extends DCLogic {
       };
     }).filter(Boolean);
     const subtotal = lines.reduce((a, l) => a + parseFloat(l.lineFmt.slice(1)), 0);
-    // Un solo envio por pedido, el de la pieza mas cara del carrito: se manda
-    // todo en un paquete, y lo que manda el costo es la pieza mayor.
-    const envio = lines.length ? lines.reduce((mej, l) => (l.unit > mej.unit ? l : mej), lines[0]).shipUnit : 0;
+    // Un solo envio por pedido: el mas caro del carrito. Va todo en un mismo
+    // paquete, asi que manda la pieza que mas cuesta despachar.
+    const envio = lines.length ? Math.max.apply(null, lines.map((l) => l.shipUnit)) : 0;
     const cartCount = Object.values(S.cart).reduce((a, b) => a + b, 0);
     const on = {};
     Object.keys(S.form).forEach((k) => { on[k] = (e) => this.setState({ form: Object.assign({}, S.form, { [k]: e.target.value }) }); });
