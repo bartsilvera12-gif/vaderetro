@@ -1568,7 +1568,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           <span style="font-size:11px;letter-spacing:.14em;color:rgba(28,28,36,.45)">USD</span>
         </div>
         <sc-if value="{{ cur.hasShip }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:12.5px;color:rgba(28,28,36,.55);margin:-12px 0 22px">+ {{ cur.shipFmt }} {{ t.envio_suf }}</div>
+          <div style="font-size:12.5px;color:rgba(28,28,36,.55);margin:-12px 0 22px">+ {{ cur.shipFmt }} {{ t.envio_suf }} · {{ t.envio_unico }}</div>
         </sc-if>
       </sc-if>
       <p style="font-size:14.5px;line-height:1.75;color:#4a4a52;margin:0 0 26px">{{ cur.descLong }}</p>
@@ -2086,6 +2086,7 @@ class Component extends DCLogic {
       if (!p) return null;
       return {
         slug, name: p.name, img: p.img, qtyN: q, unitFmt: fmt(p.price), lineFmt: fmt(p.price * q),
+        unit: p.price, shipUnit: p.ship || 0,
         inc: () => this.setQty(slug, q + 1),
         dec: () => this.setQty(slug, q - 1),
         remove: () => this.setQty(slug, 0),
@@ -2093,7 +2094,9 @@ class Component extends DCLogic {
       };
     }).filter(Boolean);
     const subtotal = lines.reduce((a, l) => a + parseFloat(l.lineFmt.slice(1)), 0);
-    const envio = lines.reduce((a, l) => a + l.ship, 0);
+    // Un solo envio por pedido, el de la pieza mas cara del carrito: se manda
+    // todo en un paquete, y lo que manda el costo es la pieza mayor.
+    const envio = lines.length ? lines.reduce((mej, l) => (l.unit > mej.unit ? l : mej), lines[0]).shipUnit : 0;
     const cartCount = Object.values(S.cart).reduce((a, b) => a + b, 0);
     const on = {};
     Object.keys(S.form).forEach((k) => { on[k] = (e) => this.setState({ form: Object.assign({}, S.form, { [k]: e.target.value }) }); });
@@ -2436,7 +2439,7 @@ Component.T = {
     cart_title: 'Carrito', cart_empty: 'Tu carrito está vacío.',
     cada_uno: 'c/u', continuar: 'Continuar comprando', quitar: 'Quitar',
     resumen: 'Resumen', subtotal: 'Subtotal', total: 'TOTAL',
-    envio: 'Envío', envio_valor: 'a coordinar', envio_suf: 'de envío',
+    envio: 'Envío', envio_valor: 'a coordinar', envio_suf: 'de envío', envio_unico: 'un solo envío por pedido',
     telefono: '833-500-LUPE (5873)',
     confirmar_compra: 'Confirmar compra', precios_usd: 'Todos los precios en USD',
     checkout_title: 'Finalizar pedido', datos_title: 'Tus datos',
@@ -2610,7 +2613,7 @@ Component.T = {
     cart_title: 'Cart', cart_empty: 'Your cart is empty.',
     cada_uno: 'each', continuar: 'Continue shopping', quitar: 'Remove',
     resumen: 'Summary', subtotal: 'Subtotal', total: 'TOTAL',
-    envio: 'Shipping', envio_valor: 'to be arranged', envio_suf: 'shipping',
+    envio: 'Shipping', envio_valor: 'to be arranged', envio_suf: 'shipping', envio_unico: 'one shipping charge per order',
     telefono: '833-500-LUPE (5873)',
     confirmar_compra: 'Checkout', precios_usd: 'All prices in USD',
     checkout_title: 'Checkout', datos_title: 'Your details',
