@@ -91,8 +91,15 @@ $payload = [
     'ask_for_shipping_address' => false,   // la dirección ya la tomó el sitio
   ],
 ];
+// Lo que ya nos dio el comprador va precargado en la pagina de Square, para
+// que no tenga que escribirlo dos veces.
+$pre = [];
 $email = filter_var($campo('email'), FILTER_VALIDATE_EMAIL);
-if ($email) $payload['pre_populated_data'] = ['buyer_email' => $email];
+if ($email) $pre['buyer_email'] = $email;
+$tel = preg_replace('/\D/', '', $campo('telefono'));
+if (strlen($tel) === 10) $pre['buyer_phone_number'] = '+1' . $tel;          // EE.UU. sin prefijo
+elseif (strlen($tel) === 11 && $tel[0] === '1') $pre['buyer_phone_number'] = '+' . $tel;
+if ($pre) $payload['pre_populated_data'] = $pre;
 
 // --- llamar a Square -------------------------------------------------------
 $base = AMBIENTE === 'produccion'
