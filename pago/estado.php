@@ -61,15 +61,31 @@ $sq = json_decode((string) $r, true);
 // --- 2. quién pagó y quién no ----------------------------------------------
 $pagados = [];
 $caidos  = [];
+$detalle = [];
 foreach (($sq['orders'] ?? []) as $o) {
   $ref = $o['reference_id'] ?? '';
   if (!preg_match('/^VADE-(\d{6})$/', $ref, $m)) continue;   // los de respaldo no se tocan
   $id = (int) $m[1];
-  // Un cobro real deja tenders con plata. Sin eso, no se pagó.
+  // No alcanza con que exista un cobro: un intento rechazado tambien queda
+  // registrado, con su monto. Solo cuenta el que Square marca CAPTURED, que
+  // es plata efectivamente tomada de la tarjeta.
   $cobrado = 0;
-  foreach (($o['tenders'] ?? []) as $t) $cobrado += $t['amount_money']['amount'] ?? 0;
+  $estados = [];
+  foreach (($o['tenders'] ?? []) as $t) {
+    $st = $t['card_details']['status'] ?? ($t['type'] ?? 'DESCONOCIDO');
+    $estados[] = $st;
+    if ($st === 'CAPTURED') $cobrado += $t['amount_money']['amount'] ?? 0;
+  }
   $total = $o['total_money']['amount'] ?? 0;
-  if ($cobrado > 0 && $cobrado >= $total) $pagados[] = $id; else $caidos[] = $id;
+  $ok = ($cobrado > 0 && $cobrado >= $total);
+  if ($ok) $pagados[] = $id; else $caidos[] = $id;
+  $detalle[] = [
+    'ref'     => $ref,
+    'orden'   => $o['state'] ?? null,
+    'total'   => number_format($total / 100, 2),
+    'cobros'  => $estados ?: ['(ninguno)'],
+    'pagado'  => $ok,
+  ];
 }
 
 // --- 3. actualizar la base --------------------------------------------------
@@ -105,7 +121,8 @@ $n2 = patch($caidos,  'sin pagar');
 // los numeros que devuelven coinciden por casualidad.
 fin(200, [
   'ok'           => true,
-  'version'      => 'v2-tenders',
+  'version'      => 'v3-capturados',
+  'detalle'      => $detalle,
   'pagados'      => count($pagados),
   'sin_pagar'    => count($caidos),
   'actualizados' => $n1 + $n2,
