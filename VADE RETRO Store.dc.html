@@ -386,8 +386,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 @media (min-width:760px) and (prefers-reduced-motion:no-preference){
   @supports (animation-timeline:scroll()){
     @keyframes vr-hero-zoom{from{transform:scale(1.01)}to{transform:scale(1.15)}}
-    .vr-hero-a > div:first-child image-slot{animation:vr-hero-zoom linear both!important}
-    .vr-hero-a > div:first-child image-slot{
+    .vr-hero-a > div:first-child .vr-hero-img{animation:vr-hero-zoom linear both!important}
+    .vr-hero-a > div:first-child .vr-hero-img{
       animation-timeline:scroll(root)!important;
       animation-range:0 92vh!important}
 
@@ -404,6 +404,11 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    foto. Ahora la que sale queda ENCIMA y se desvanece revelando a la que ya
    esta debajo, asi que en ningun momento se ve lo que hay detras. */
 .vr-hero-capa{position:absolute;inset:0}
+/* La foto del hero va como <img> plano y no como slot editable: el slot centra
+   el recorte siempre y no deja decir en que punto de la foto hay que fijarse.
+   object-position si, y es por foto (ver Component.HERO). */
+.vr-hero-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;background:#F9F0ED}
 .vr-capa-sale{opacity:0;transition:opacity 1.15s cubic-bezier(.4,0,.2,1);pointer-events:none}
 .vr-capa-sale.vr-cruzando{opacity:1;transition:none}
 
@@ -586,7 +591,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    ========================================================================== */
 @media (prefers-reduced-motion:no-preference){
   @keyframes vr-kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
-  .vr-hero-a > div:first-child image-slot{animation:vr-kenburns 26s ease-out both}
+  .vr-hero-a > div:first-child .vr-hero-img{animation:vr-kenburns 26s ease-out both}
   @keyframes vr-sheen{from{transform:translateX(-120%)}to{transform:translateX(220%)}}
   .vr-hero-b > a:nth-of-type(1){position:relative;overflow:hidden}
   .vr-hero-b > a:nth-of-type(1)::after{content:"";position:absolute;top:0;bottom:0;width:38%;
@@ -1092,8 +1097,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-hero-grid" style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:start">
       <div class="vr-hero-a">
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
-          <div class="vr-hero-capa"><image-slot id="hero-inset" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot></div>
-          <div class="vr-hero-capa vr-capa-sale {{ heroCruceCls }}"><image-slot id="hero-sale" shape="rect" src="{{ heroPrevFoto }}" placeholder=" "></image-slot></div>
+          <div class="vr-hero-capa"><img class="vr-hero-img" src="{{ heroFoto }}" alt="Bendición de San Benito colgada en una puerta" style="object-position:{{ heroPos }}"></div>
+          <div class="vr-hero-capa vr-capa-sale {{ heroCruceCls }}"><img class="vr-hero-img" src="{{ heroPrevFoto }}" alt="" aria-hidden="true" style="object-position:{{ heroPrevPos }}"></div>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
           <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
                mismas variables que la sección de bienvenida, que en mobile se oculta,
@@ -1868,7 +1873,7 @@ class Component extends DCLogic {
 
     // El hero rota entre varias fotos. Primero se desvanece la actual y recien
     // despues se cambia el archivo, para que no haya un salto seco.
-    Component.HERO.forEach((u) => { const i = new Image(); i.src = u; });
+    Component.HERO.forEach((h) => { const i = new Image(); i.src = h.src; });
     this._hero = setInterval(() => {
       if (this.state.route !== 'home' || Component.HERO.length < 2) return;
       // La capa de arriba toma la foto que se va, sin transicion, y la de abajo
@@ -2288,8 +2293,10 @@ class Component extends DCLogic {
       form: S.form, on,
       errMsg: S.err, hasErr: !!S.err,
       botonPagar: S.pagando ? T.pagando : T.confirmar_pedido,
-      heroFoto: Component.HERO[S.heroIdx % Component.HERO.length],
-      heroPrevFoto: Component.HERO[S.heroPrev % Component.HERO.length],
+      heroFoto: Component.HERO[S.heroIdx % Component.HERO.length].src,
+      heroPos: Component.HERO[S.heroIdx % Component.HERO.length].pos,
+      heroPrevFoto: Component.HERO[S.heroPrev % Component.HERO.length].src,
+      heroPrevPos: Component.HERO[S.heroPrev % Component.HERO.length].pos,
       heroCruceCls: S.heroCruce ? 'vr-cruzando' : '',
       carrIzq: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: -340, behavior: 'smooth' }); } },
       carrDer: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: 340, behavior: 'smooth' }); } },
@@ -2309,15 +2316,22 @@ Component.TICKET_PALETTE = [
 ];
 // Fotos que rota el hero. Se precargan al arrancar para que el cambio no
 // muestre un hueco mientras baja la siguiente.
-// Encuadres propios para el hero, centrados en la medalla. Las fotos de
-// producto son verticales y el hueco del hero es casi cuadrado: al recortarlas
-// solas se veia el cordon arriba y la medalla quedaba abajo del todo.
+//
+// Cada una lleva SU punto de encuadre, no un recorte propio. El hueco del hero
+// cambia de forma con la ventana: es apaisado en un monitor y vertical en un
+// telefono, asi que ningun recorte fijo sirve para los dos. Lo que no cambia es
+// donde esta la medalla DENTRO de la foto, y eso es lo que dice `pos`.
+//
+// El numero es el porcentaje de la foto que queda alineado con el mismo
+// porcentaje del hueco (object-position). Centrado al 50% las medallas caian
+// abajo, porque en estas tomas la pieza cuelga y la medalla vive cerca del 57%
+// del alto, no del medio. Medido foto por foto sobre una grilla de decimos.
 Component.HERO = [
-  'assets/hero-medalla.webp',
-  'assets/hero-2.webp',
-  'assets/hero-3.webp',
-  'assets/hero-4.webp',
-  'assets/hero-5.webp'
+  { src: 'assets/hero-medalla.webp', pos: '36% 57%' },  // medalla grande, corrida a la izquierda
+  { src: 'assets/hero-2.webp',       pos: '47% 65%' },  // el mono ocupa el tercio de arriba
+  { src: 'assets/hero-3.webp',       pos: '49% 57%' },
+  { src: 'assets/hero-4.webp',       pos: '51% 55%' },  // el camafeo, que es la pieza; la borla queda abajo
+  { src: 'assets/hero-5.webp',       pos: '55% 47%' }   // dos medallas: entran las dos, la grande arriba
 ];
 
 Component.DATA = [
