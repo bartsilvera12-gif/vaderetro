@@ -56,9 +56,35 @@ create policy "admin edita productos" on vaderetro.productos for update to authe
 create policy "admin borra productos" on vaderetro.productos for delete to authenticated
   using ( auth.uid() = 'c25d3efd-6061-4d0c-91fe-2d3dc08e6894' );
 
-grant usage on schema vaderetro to authenticated;
-grant select, insert, update, delete on vaderetro.productos to authenticated;
-grant usage, select on sequence vaderetro.productos_id_seq to authenticated;
+-- Las reglas de arriba dicen QUIEN puede ver que fila. Estos grant dicen si el
+-- rol llega siquiera a la tabla, que es una puerta anterior: sin ellos Postgres
+-- corta con "permission denied for table productos" y no llega a mirar ninguna
+-- regla.
+--
+-- service_role es el que usa el servidor (pago/catalogo.php) para armar la
+-- vitrina. Saltea las reglas de fila por diseno, pero igual necesita el permiso
+-- de tabla. Sin esta linea la tienda se queda mostrando las siete de siempre
+-- aunque la clienta agregue una pieza nueva.
+--
+-- anon NO entra a proposito: el navegador nunca lee esta tabla, la lee el
+-- servidor. Una puerta que no se usa es mejor cerrarla.
+--
+-- El DO es por si en esta instalacion no existiera alguno de los dos roles: un
+-- grant a un rol inexistente corta el script entero y dejaria la tabla a medio
+-- permisar.
+do $$
+begin
+  if exists (select 1 from pg_roles where rolname = 'authenticated') then
+    grant usage on schema vaderetro to authenticated;
+    grant select, insert, update, delete on vaderetro.productos to authenticated;
+    grant usage, select on sequence vaderetro.productos_id_seq to authenticated;
+  end if;
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    grant usage on schema vaderetro to service_role;
+    grant select, insert, update, delete on vaderetro.productos to service_role;
+    grant usage, select on sequence vaderetro.productos_id_seq to service_role;
+  end if;
+end $$;
 
 -- ----------------------------------------------------------------------------
 -- Las siete piezas que ya estaban en el sitio, tal cual, con sus precios.
