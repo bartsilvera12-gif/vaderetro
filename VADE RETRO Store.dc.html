@@ -388,11 +388,19 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   }
 }
 
-/* Cruce de fotos del hero */
-.vr-hero-a > div:first-child image-slot{transition:opacity .48s ease}
-.vr-hero-a > div:first-child image-slot.vr-hero-fade{opacity:0}
+/* Cruce de fotos del hero. La opacidad va en una capa propia y no sobre el
+   image-slot: ese elemento maneja sus propios atributos y puede pisar la
+   clase. Un segundo entero de cruce, que a medio segundo se sentia un corte. */
+.vr-hero-capa{position:absolute;inset:0;transition:opacity 1s cubic-bezier(.4,0,.2,1)}
+.vr-hero-capa.vr-hero-fade{opacity:0}
 
 /* Flechas de la coleccion */
+/* El riel trae scroll-snap y eso revierte cada empujon de un pixel: el
+   desplazamiento automatico quedaba clavado. Con el avance continuo el snap
+   ya no aporta nada, asi que se apaga. */
+.vr-rail{scroll-snap-type:none!important}
+.vr-rail > *{scroll-snap-align:none!important}
+
 .vr-flechas{display:flex;gap:8px}
 .vr-flechas button{width:38px;height:38px;border:1px solid rgba(15,35,73,.25);
   background:none;color:#0F2349;font-size:20px;line-height:1;cursor:pointer;
@@ -1072,7 +1080,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-hero-grid" style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:start">
       <div class="vr-hero-a">
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
-          <image-slot id="hero-inset" class="{{ heroFadeCls }}" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot>
+          <div class="vr-hero-capa {{ heroFadeCls }}"><image-slot id="hero-inset" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot></div>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
           <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
                mismas variables que la sección de bienvenida, que en mobile se oculta,
@@ -1853,8 +1861,8 @@ class Component extends DCLogic {
       this.setState({ heroFade: true });
       setTimeout(() => this.setState({
         heroIdx: (this.state.heroIdx + 1) % Component.HERO.length, heroFade: false
-      }), 480);
-    }, 5200);
+      }), 1000);
+    }, 6500);
 
     this.initCarrusel();
     // Al volver desde Square con la flecha atras, el navegador restaura la
