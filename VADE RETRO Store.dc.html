@@ -1097,8 +1097,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-hero-grid" style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:start">
       <div class="vr-hero-a">
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
-          <div class="vr-hero-capa"><img class="vr-hero-img" src="{{ heroFoto }}" alt="Bendición de San Benito colgada en una puerta" style="object-position:{{ heroPos }}"></div>
-          <div class="vr-hero-capa vr-capa-sale {{ heroCruceCls }}"><img class="vr-hero-img" src="{{ heroPrevFoto }}" alt="" aria-hidden="true" style="object-position:{{ heroPrevPos }}"></div>
+          <div class="vr-hero-capa"><img class="vr-hero-img" src="{{ heroFoto }}" alt="Bendición de San Benito colgada en una puerta"></div>
+          <div class="vr-hero-capa vr-capa-sale {{ heroCruceCls }}"><img class="vr-hero-img" src="{{ heroPrevFoto }}" alt="" aria-hidden="true"></div>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
           <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
                mismas variables que la sección de bienvenida, que en mobile se oculta,
@@ -1863,7 +1863,9 @@ class Component extends DCLogic {
     };
   }
   componentDidMount() {
-    this._onHash = () => { this.parseRoute(); };
+    // Al volver a inicio el hueco de la foto reaparece: si la ventana cambio de
+    // tamano mientras se estaba en otra pantalla, el encuadre quedo viejo.
+    this._onHash = () => { this.parseRoute(); requestAnimationFrame(() => this.observarHero()); };
     this._onScroll = () => { const s = window.scrollY > 8; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
     this._onResize = () => { const m = window.innerWidth < 760; if (m !== this.state.isMobile) this.setState({ isMobile: m }); else this.forceUpdate(); };
     window.addEventListener('hashchange', this._onHash);
@@ -1891,6 +1893,10 @@ class Component extends DCLogic {
     }, 6500);
 
     this.initCarrusel();
+    this.observarHero();
+    // Las medidas de la tabla son las de los archivos, pero si alguna difiere
+    // manda la real: al terminar de cargar ya se puede leer naturalWidth.
+    window.addEventListener('load', () => this.encuadrarHero());
     // Al volver desde Square con la flecha atras, el navegador restaura la
     // pagina tal como estaba: con pagando en true. El bloqueo anti-doble-clic
     // entonces impide reintentar y el boton queda trabado en "Preparando el
@@ -1976,6 +1982,74 @@ class Component extends DCLogic {
   // Solo frena ante una interaccion real: arrastre, toque o rueda. Con el
   // simple hover no, porque apoyar el cursor para mirar una pieza detenia todo
   // y parecia que nunca se movia.
+  // ===========================================================================
+  // ENCUADRE DEL HERO
+  //
+  // El hueco de la foto recorta arriba y abajo por igual. En estas tomas la
+  // pieza cuelga, asi que la medalla vive cerca del 57% del alto y el recorte
+  // parejo la empujaba contra el borde de abajo.
+  //
+  // object-position NO alcanza por si solo: object-position:57% alinea el 57%
+  // de la foto con el 57% del HUECO, o sea que deja la medalla igual de abajo.
+  // Se cancela solo. Lo que hay que despejar es cuanto correr la foto para que
+  // el foco caiga en el medio del hueco:
+  //
+  //   escala = max(anchoHueco/anchoFoto, altoHueco/altoFoto)   // cover
+  //   sobra  = altoFoto*escala - altoHueco                     // lo que se corta
+  //   p      = (foco*altoFoto*escala - altoHueco/2) / sobra
+  //
+  // p depende de la forma del hueco, que cambia con la ventana, asi que se
+  // recalcula al arrancar y en cada resize. Va a una hoja propia y no al estilo
+  // de cada img: el marcado se vuelve a pintar en cada cambio de foto y se
+  // llevaria puesto cualquier estilo puesto a mano.
+  // ===========================================================================
+  // Vigila el hueco de la foto. No alcanza con calcular el encuadre al arrancar:
+  // en ese momento el hueco todavia tiene la proporcion 4/5 del estilo base y
+  // recien despues entra el @media de escritorio, que lo estira a lo alto de la
+  // ventana. Calculado antes de eso, salian numeros de otra caja. Un
+  // ResizeObserver avisa cada vez que el hueco cambia de forma, incluido ese
+  // primer acomodo, sin tener que adivinar cuando termino el navegador.
+  observarHero() {
+    const marco = document.querySelector('.vr-hero-a > div:first-child');
+    if (!marco) return;
+    if (this._ro) this._ro.disconnect();   // al cambiar de pantalla el hueco es otro nodo
+    if (typeof ResizeObserver === 'function') {
+      this._ro = new ResizeObserver(() => this.encuadrarHero());
+      this._ro.observe(marco);
+    }
+    this.encuadrarHero();
+  }
+
+  encuadrarHero() {
+    const marco = document.querySelector('.vr-hero-a > div:first-child');
+    if (!marco) return;
+    const fw = marco.clientWidth, fh = marco.clientHeight;
+    if (!fw || !fh) return;
+    const pin = (v) => Math.max(0, Math.min(1, v));
+    const reglas = Component.HERO.map((foto) => {
+      // Si la imagen ya cargo, mandan sus medidas reales por sobre la tabla.
+      const viva = document.querySelector('.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]');
+      const iw = (viva && viva.naturalWidth) || foto.w;
+      const ih = (viva && viva.naturalHeight) || foto.h;
+      if (!iw || !ih) return '';
+      const k = Math.max(fw / iw, fh / ih);
+      const w = iw * k, h = ih * k;
+      // Si en un eje no sobra nada, la foto entra justa y no hay nada que
+      // correr: cualquier valor da lo mismo, se deja centrado.
+      const px = w - fw > 0.5 ? pin((foto.foco[0] * w - fw / 2) / (w - fw)) : 0.5;
+      const py = h - fh > 0.5 ? pin((foto.foco[1] * h - fh / 2) / (h - fh)) : 0.5;
+      return '.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]{object-position:'
+           + (px * 100).toFixed(1) + '% ' + (py * 100).toFixed(1) + '%}';
+    }).join('\n');
+    let hoja = document.getElementById('vr-foco');
+    if (!hoja) {
+      hoja = document.createElement('style');
+      hoja.id = 'vr-foco';
+      document.head.appendChild(hoja);
+    }
+    if (hoja.textContent !== reglas) hoja.textContent = reglas;
+  }
+
   initCarrusel() {
     if (this._carr) return;
     this._carr = true;
@@ -2294,9 +2368,7 @@ class Component extends DCLogic {
       errMsg: S.err, hasErr: !!S.err,
       botonPagar: S.pagando ? T.pagando : T.confirmar_pedido,
       heroFoto: Component.HERO[S.heroIdx % Component.HERO.length].src,
-      heroPos: Component.HERO[S.heroIdx % Component.HERO.length].pos,
       heroPrevFoto: Component.HERO[S.heroPrev % Component.HERO.length].src,
-      heroPrevPos: Component.HERO[S.heroPrev % Component.HERO.length].pos,
       heroCruceCls: S.heroCruce ? 'vr-cruzando' : '',
       carrIzq: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: -340, behavior: 'smooth' }); } },
       carrDer: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: 340, behavior: 'smooth' }); } },
@@ -2317,21 +2389,25 @@ Component.TICKET_PALETTE = [
 // Fotos que rota el hero. Se precargan al arrancar para que el cambio no
 // muestre un hueco mientras baja la siguiente.
 //
-// Cada una lleva SU punto de encuadre, no un recorte propio. El hueco del hero
-// cambia de forma con la ventana: es apaisado en un monitor y vertical en un
-// telefono, asi que ningun recorte fijo sirve para los dos. Lo que no cambia es
-// donde esta la medalla DENTRO de la foto, y eso es lo que dice `pos`.
+// Cada una declara DONDE ESTA SU MEDALLA dentro de la foto (`foco`, en tanto
+// por uno) y cuanto mide el archivo. El encuadre se calcula despues, en
+// encuadrarHero(), porque depende de la forma del hueco: es apaisado en un
+// monitor y vertical en un telefono, y ningun valor fijo sirve para los dos.
 //
-// El numero es el porcentaje de la foto que queda alineado con el mismo
-// porcentaje del hueco (object-position). Centrado al 50% las medallas caian
-// abajo, porque en estas tomas la pieza cuelga y la medalla vive cerca del 57%
-// del alto, no del medio. Medido foto por foto sobre una grilla de decimos.
+// OJO, esto no es un object-position. Poner object-position:57% NO centra lo
+// que esta al 57% de la foto: lo deja al 57% del HUECO, o sea igual de abajo.
+// Es la identidad que me comi la primera vez. La cuenta correcta esta en
+// encuadrarHero().
+//
+// `w`/`h` son las medidas reales del archivo. Si se cambia una foto por otra de
+// otro tamano hay que corregirlas, aunque el codigo igual se defiende leyendo
+// naturalWidth cuando la imagen ya cargo.
 Component.HERO = [
-  { src: 'assets/hero-medalla.webp', pos: '36% 57%' },  // medalla grande, corrida a la izquierda
-  { src: 'assets/hero-2.webp',       pos: '47% 65%' },  // el mono ocupa el tercio de arriba
-  { src: 'assets/hero-3.webp',       pos: '49% 57%' },
-  { src: 'assets/hero-4.webp',       pos: '51% 55%' },  // el camafeo, que es la pieza; la borla queda abajo
-  { src: 'assets/hero-5.webp',       pos: '55% 47%' }   // dos medallas: entran las dos, la grande arriba
+  { src: 'assets/hero-medalla.webp', w: 923,  h: 900,  foco: [0.36, 0.57] },  // medalla grande, corrida a la izquierda
+  { src: 'assets/hero-2.webp',       w: 1100, h: 1100, foco: [0.47, 0.60] },  // el mono ocupa el tercio de arriba
+  { src: 'assets/hero-3.webp',       w: 1100, h: 1100, foco: [0.49, 0.57] },
+  { src: 'assets/hero-4.webp',       w: 1100, h: 1100, foco: [0.51, 0.42] },  // el camafeo es la pieza; la borla queda abajo
+  { src: 'assets/hero-5.webp',       w: 1100, h: 1100, foco: [0.55, 0.45] }   // dos medallas: manda la de arriba, que es la grande
 ];
 
 Component.DATA = [
