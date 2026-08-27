@@ -388,6 +388,18 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   }
 }
 
+/* Cruce de fotos del hero */
+.vr-hero-a > div:first-child image-slot{transition:opacity .48s ease}
+.vr-hero-a > div:first-child image-slot.vr-hero-fade{opacity:0}
+
+/* Flechas de la coleccion */
+.vr-flechas{display:flex;gap:8px}
+.vr-flechas button{width:38px;height:38px;border:1px solid rgba(15,35,73,.25);
+  background:none;color:#0F2349;font-size:20px;line-height:1;cursor:pointer;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  transition:background .25s,border-color .25s;font-family:inherit;padding:0}
+.vr-flechas button:hover{background:#CF9D59;border-color:#CF9D59}
+
 .vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
 .vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
 .vr-p-color{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(15,35,73,.18);
@@ -1024,7 +1036,6 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <div>
           <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:#CF9D59;margin-bottom:14px">[ {{ t.nav_contacto }} ]</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:rgba(28,28,36,.75)">
-            <span>Email · {{ t.pendiente }}</span>
             <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
           </div>
         </div>
@@ -1061,7 +1072,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-hero-grid" style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:start">
       <div class="vr-hero-a">
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
-          <image-slot id="hero-inset" shape="rect" src="assets/hero-medalla.webp" placeholder="foto principal — medalla (cliente)"></image-slot>
+          <image-slot id="hero-inset" class="{{ heroFadeCls }}" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
           <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
                mismas variables que la sección de bienvenida, que en mobile se oculta,
@@ -1137,7 +1148,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:22px;padding-bottom:8px">
-          <span style="font-size:10px;font-weight:600;letter-spacing:.24em;color:rgba(28,28,36,.42);text-transform:uppercase">{{ t.arrastrar }}</span>
+          <div class="vr-flechas"><button type="button" onClick="{{ carrIzq }}" aria-label="Anterior">‹</button><button type="button" onClick="{{ carrDer }}" aria-label="Siguiente">›</button></div>
           <a href="#/tienda" style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#0F2349;border-bottom:1px solid #CF9D59;padding-bottom:5px">{{ t.ver_toda }} →</a>
         </div>
       </div>
@@ -1203,6 +1214,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 <main data-screen-label="Tienda" style="padding-top:132px">
   <section class="vr-shop-hero" style="background:#0F2349;padding:72px 24px 58px">
     <div style="max-width:1180px;margin:0 auto">
+      <a href="#/" style="display:inline-block;margin-bottom:18px;font-size:12px;font-weight:600;letter-spacing:.1em;color:rgba(249,240,237,.6)">‹ {{ t.volver_inicio }}</a>
       <div style="margin-bottom:14px;color:#CF9D59;font-size:11px;font-weight:600;letter-spacing:.34em">{{ t.shop_kicker }}</div>
       <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:14px">
         <h1 data-reveal="wipe" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(38px,4.6vw,56px);color:#F9F0ED;margin:0">{{ t.shop_title }}</h1>
@@ -1234,12 +1246,12 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <div class="vr-shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px">
       <sc-for list="{{ shopItems }}" as="item" hint-placeholder-count="6">
         <div class="vr-shop-card" data-reveal style="background:#ffffff;border:1px solid rgba(15,35,73,.08);display:flex;flex-direction:column;transition:transform .35s ease,box-shadow .35s ease" style-hover="transform:translateY(-5px);box-shadow:0 20px 44px rgba(15,35,73,.13)">
-          <div class="vr-shop-cardimg" style="position:relative;height:250px;overflow:hidden">
+          <a class="vr-shop-cardimg" href="#/producto/{{ item.slug }}" style="display:block;position:relative;height:250px;overflow:hidden">
             <image-slot id="shop-{{ item.slug }}" shape="rect" src="{{ item.cardImg }}" placeholder="foto de producto (cliente)"></image-slot>
             <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
               <span style="position:absolute;top:12px;left:12px;background:#CF9D59;color:#0F2349;font-size:10px;font-weight:700;letter-spacing:.14em;padding:6px 11px;pointer-events:none">{{ item.badge }}</span>
             </sc-if>
-          </div>
+          </a>
           <div class="vr-shop-cardbody" style="padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1">
             <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#0F2349;margin:0;line-height:1.2">{{ item.name }}</h3>
             <p style="font-size:12.5px;line-height:1.55;color:#5c5c63;margin:0;flex:1">{{ item.desc }}</p>
@@ -1789,10 +1801,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <div>
         <div data-reveal style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#CF9D59;margin-bottom:18px">{{ t.nav_contacto }}</div>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
-          <span>Email · {{ t.pendiente }}</span>
           <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
-          <span>Instagram · {{ t.pendiente }}</span>
-          <span>Facebook · {{ t.pendiente }}</span>
         </div>
       </div>
     </div>
@@ -1821,7 +1830,7 @@ class Component extends DCLogic {
     this.state = {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false, galSrc: null,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
-      scrolled: false, openFaq: -1, err: '', pagando: false,
+      scrolled: false, openFaq: -1, err: '', pagando: false, heroIdx: 0, heroFade: false,
       fCats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
@@ -1835,6 +1844,19 @@ class Component extends DCLogic {
     window.addEventListener('scroll', this._onScroll, { passive: true });
     window.addEventListener('resize', this._onResize);
     this._clock = setInterval(() => this.setState({ now: new Date() }), 60000);
+
+    // El hero rota entre varias fotos. Primero se desvanece la actual y recien
+    // despues se cambia el archivo, para que no haya un salto seco.
+    Component.HERO.forEach((u) => { const i = new Image(); i.src = u; });
+    this._hero = setInterval(() => {
+      if (this.state.route !== 'home' || Component.HERO.length < 2) return;
+      this.setState({ heroFade: true });
+      setTimeout(() => this.setState({
+        heroIdx: (this.state.heroIdx + 1) % Component.HERO.length, heroFade: false
+      }), 480);
+    }, 5200);
+
+    this.initCarrusel();
     // Al volver desde Square con la flecha atras, el navegador restaura la
     // pagina tal como estaba: con pagando en true. El bloqueo anti-doble-clic
     // entonces impide reintentar y el boton queda trabado en "Preparando el
@@ -1849,6 +1871,8 @@ class Component extends DCLogic {
   componentWillUnmount() {
     window.removeEventListener('hashchange', this._onHash);
     window.removeEventListener('pageshow', this._onShow);
+    clearInterval(this._hero);
+    clearInterval(this._carr);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
@@ -1905,6 +1929,28 @@ class Component extends DCLogic {
   // que se mide la imagen real y se escribe en --vr-num. Se cachea por src y
   // se reaplica en cada render, porque el re-render reescribe el style inline
   // del elemento y borraria la variable.
+  // La coleccion se desplaza sola, despacio. Se frena cuatro segundos cada vez
+  // que alguien la toca, para no pelearle el control al visitante.
+  initCarrusel() {
+    if (this._carr) return;
+    this._carr = setInterval(() => {
+      const r = document.querySelector('.vr-rail');
+      if (!r || r.scrollWidth <= r.clientWidth + 4) return;
+      if (!r._vrListo) {
+        r._vrListo = true;
+        ['mouseenter', 'pointerdown', 'touchstart', 'wheel'].forEach((ev) => {
+          r.addEventListener(ev, () => { r._vrPausa = Date.now(); }, { passive: true });
+        });
+      }
+      if (r._vrPausa && Date.now() - r._vrPausa < 4000) return;
+      if (r.scrollLeft + r.clientWidth >= r.scrollWidth - 2) {
+        r.scrollTo({ left: 0, behavior: 'smooth' });
+        r._vrPausa = Date.now();                    // respiro antes de volver a arrancar
+      } else {
+        r.scrollLeft += 1;
+      }
+    }, 30);
+  }
   initGalRatio() {
     const media = document.querySelector('.vr-p-media.is-contain');
     if (!media) return;
@@ -2196,6 +2242,10 @@ class Component extends DCLogic {
       form: S.form, on,
       errMsg: S.err, hasErr: !!S.err,
       botonPagar: S.pagando ? T.pagando : T.confirmar_pedido,
+      heroFoto: Component.HERO[S.heroIdx % Component.HERO.length],
+      heroFadeCls: S.heroFade ? 'vr-hero-fade' : '',
+      carrIzq: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: -340, behavior: 'smooth' }); } },
+      carrDer: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: 340, behavior: 'smooth' }); } },
       submitOrder: () => this.submitOrder(),
       orderNumber: orderNumber || 'VADE-000001',
       paymentReady: paymentEnabled, paymentPending: !paymentEnabled,
@@ -2210,6 +2260,16 @@ Component.TICKET_PALETTE = [
   { bg: '#1C1C24', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.7)' },
   { bg: '#16305e', ink: '#F9F0ED', front: '#F9F0ED', wm: 'rgba(249,240,237,.18)', sub: 'rgba(249,240,237,.75)' }
 ];
+// Fotos que rota el hero. Se precargan al arrancar para que el cambio no
+// muestre un hueco mientras baja la siguiente.
+Component.HERO = [
+  'assets/hero-medalla.webp',
+  'assets/cristal-1.webp',
+  'assets/cordon-1.webp',
+  'assets/laminada-1.webp',
+  'assets/giratorio-1.webp'
+];
+
 Component.DATA = [
   // TEMPORAL — pieza de prueba para confirmar que el cobro real funciona.
   // Va oculta: no aparece en la tienda ni en destacados, solo entrando a
@@ -2451,7 +2511,7 @@ Component.T = {
     footer_coleccion: 'Colección', footer_ayuda: 'Ayuda',
     footer_terminos: 'Términos y condiciones', footer_privacidad: 'Política de privacidad',
     pendiente: 'a confirmar',
-    volver_coleccion: 'Volver a la colección', producto_no_encontrado: 'Producto no encontrado.',
+    volver_coleccion: 'Volver a la colección', volver_inicio: 'Volver al inicio', producto_no_encontrado: 'Producto no encontrado.',
     cantidad: 'CANTIDAD', agregar: 'Agregar al carrito',
     agregado: 'Producto agregado al carrito.', ver_carrito: 'Ver carrito',
     pago_note: 'El pago se realiza mediante un link externo seguro, disponible al confirmar tu pedido.',
@@ -2625,7 +2685,7 @@ Component.T = {
     footer_coleccion: 'Collection', footer_ayuda: 'Help',
     footer_terminos: 'Terms and conditions', footer_privacidad: 'Privacy policy',
     pendiente: 'coming soon',
-    volver_coleccion: 'Back to the collection', producto_no_encontrado: 'Product not found.',
+    volver_coleccion: 'Back to the collection', volver_inicio: 'Back to home', producto_no_encontrado: 'Product not found.',
     cantidad: 'QUANTITY', agregar: 'Add to cart',
     agregado: 'Product added to cart.', ver_carrito: 'View cart',
     pago_note: 'Payment is made through a secure external link, available after confirming your order.',
