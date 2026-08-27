@@ -4,17 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>VADE RETRO · Pedidos</title>
+<title>VADE RETRO · Panel</title>
 <link rel="icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================================
-   Panel de pedidos. Lee la tabla vaderetro.pedidos de Supabase.
+   Panel de VADE RETRO. Dos pestañas: los pedidos que entraron y las piezas que
+   se venden. Las dos leen Supabase.
+
    La clave que va acá abajo es la ANÓNIMA: es pública por diseño y no da
-   acceso a nada por sí sola. Quien decide qué se puede ver son las reglas
-   de la base, atadas al UUID del administrador (ver PERMISOS.sql).
+   acceso a nada por sí sola. Quien decide qué se puede ver y qué se puede
+   tocar son las reglas de la base, atadas al UUID del administrador
+   (ver PERMISOS.sql y PRODUCTOS.sql).
    ========================================================================== */
 :root{--azul:#0F2349;--oro:#CF9D59;--marfil:#F9F0ED;--carbon:#1C1C24}
 *{box-sizing:border-box}
@@ -29,8 +32,12 @@ header .sub{font-size:11px;letter-spacing:.24em;color:var(--oro);text-transform:
 button{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;
   cursor:pointer;border:none;padding:9px 16px;border-radius:2px;transition:opacity .2s}
 button:hover{opacity:.85}
+button:disabled{opacity:.5;cursor:default}
 .b-oro{background:var(--oro);color:var(--azul)}
+.b-azul{background:var(--azul);color:var(--marfil)}
 .b-linea{background:none;border:1px solid rgba(249,240,237,.4);color:var(--marfil)}
+.b-gris{background:rgba(15,35,73,.08);color:var(--azul)}
+.b-rojo{background:none;border:1px solid rgba(138,43,30,.45);color:#8a2b1e}
 main{max-width:1100px;margin:0 auto;padding:24px}
 
 /* Login */
@@ -41,6 +48,13 @@ main{max-width:1100px;margin:0 auto;padding:24px}
 #login input{width:100%;padding:11px;border:1px solid rgba(15,35,73,.25);
   font-family:inherit;font-size:14px}
 #login button{width:100%;margin-top:22px;padding:13px}
+
+/* Pestañas */
+.pestanas{display:flex;gap:0;border-bottom:1px solid rgba(15,35,73,.15);margin-bottom:22px}
+.pestanas button{background:none;color:rgba(28,28,36,.5);font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase;padding:12px 20px;
+  border-bottom:2px solid transparent;border-radius:0}
+.pestanas button.on{color:var(--azul);border-bottom-color:var(--oro)}
 
 /* Barra */
 .barra{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
@@ -94,12 +108,70 @@ main{max-width:1100px;margin:0 auto;padding:24px}
   font-size:13px;line-height:1.6}
 .err{color:#8a2b1e;font-size:12.5px;margin-top:12px;line-height:1.5}
 .oculto{display:none}
+
+/* --- Productos ----------------------------------------------------------- */
+.prod{background:#fff;border:1px solid rgba(15,35,73,.1);border-left:3px solid var(--oro);
+  padding:14px 16px;margin-bottom:10px;display:flex;gap:16px;align-items:center}
+.prod.apagado{border-left-color:rgba(28,28,36,.2);opacity:.55}
+.prod img{width:64px;height:64px;object-fit:cover;flex-shrink:0;
+  background:rgba(15,35,73,.06)}
+.prod .cuerpo{flex:1;min-width:0}
+.prod .tit{font-weight:600;color:var(--azul);font-size:14px}
+.prod .sub{font-size:11.5px;color:rgba(28,28,36,.5);margin-top:3px}
+.prod .precio{font-family:'Cormorant Garamond',serif;font-size:22px;
+  font-weight:600;color:var(--azul);white-space:nowrap}
+.prod .acc{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:640px){.prod{flex-wrap:wrap}.prod .acc{width:100%;justify-content:flex-start}}
+
+/* Editor */
+#editor{position:fixed;inset:0;background:rgba(15,35,73,.55);z-index:50;
+  overflow-y:auto;padding:24px 12px}
+#editor .caja{max-width:820px;margin:0 auto;background:var(--marfil);
+  border-top:3px solid var(--oro)}
+#editor .cab{position:sticky;top:0;background:var(--azul);color:var(--marfil);
+  padding:16px 22px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;z-index:2}
+#editor .cab h2{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px}
+#editor .cuerpo{padding:22px}
+fieldset{border:none;border-top:1px solid rgba(15,35,73,.15);margin:0 0 6px;padding:18px 0 4px}
+legend{font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--oro);
+  text-transform:uppercase;padding-right:12px}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:660px){.campos{grid-template-columns:1fr}}
+.campo{display:flex;flex-direction:column}
+.campo.ancho{grid-column:1/-1}
+.campo label{font-size:10.5px;font-weight:700;letter-spacing:.13em;color:var(--azul);
+  text-transform:uppercase;margin-bottom:5px}
+.campo .pista{font-size:11px;color:rgba(28,28,36,.55);margin-top:4px;line-height:1.5}
+input[type=text],input[type=number],select,textarea{width:100%;padding:9px 11px;
+  border:1px solid rgba(15,35,73,.25);font-family:inherit;font-size:13.5px;
+  background:#fff;border-radius:2px}
+textarea{resize:vertical;min-height:74px;line-height:1.55}
+.fotos{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.foto{position:relative;width:92px}
+.foto img{width:92px;height:92px;object-fit:cover;display:block;
+  background:rgba(15,35,73,.06);border:1px solid rgba(15,35,73,.14)}
+.foto .x{position:absolute;top:-7px;right:-7px;width:22px;height:22px;padding:0;
+  border-radius:50%;background:#8a2b1e;color:#fff;font-size:13px;line-height:1}
+.foto .mv{display:flex;gap:3px;margin-top:4px}
+.foto .mv button{flex:1;padding:3px 0;font-size:11px;background:rgba(15,35,73,.08);color:var(--azul)}
+.subir{width:92px;height:92px;border:1px dashed rgba(15,35,73,.35);background:none;
+  color:rgba(15,35,73,.6);font-size:11px;line-height:1.35;padding:6px}
+.color{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.color .muestra{width:30px;height:30px;border:1px solid rgba(15,35,73,.2);flex-shrink:0}
+.color input{flex:1;min-width:120px}
+.pieEditor{position:sticky;bottom:0;background:var(--marfil);
+  border-top:1px solid rgba(15,35,73,.15);padding:16px 22px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.msg{font-size:12.5px;line-height:1.5;align-self:center}
+.msg.mal{color:#8a2b1e}
+.msg.bien{color:#5a6b4d}
 </style>
 </head>
 <body>
 
 <div id="login">
-  <h1>Pedidos</h1>
+  <h1>Panel</h1>
   <div style="font-size:11px;letter-spacing:.22em;color:var(--oro);text-transform:uppercase;margin-top:6px">Vade Retro</div>
   <label for="mail">Email</label>
   <input id="mail" type="email" autocomplete="username">
@@ -113,21 +185,39 @@ main{max-width:1100px;margin:0 auto;padding:24px}
   <header>
     <div>
       <div class="sub">Vade Retro</div>
-      <h1>Pedidos</h1>
+      <h1>Panel</h1>
     </div>
     <button class="b-linea" id="btn-salir">Salir</button>
   </header>
   <main>
-    <div class="barra">
-      <input id="buscar" placeholder="Buscar por número, nombre, ciudad o email…">
-      <button class="b-oro" id="btn-recargar">Recargar</button>
-      <span class="cuenta" id="cuenta"></span>
+    <div class="pestanas">
+      <button data-p="pedidos" class="on">Pedidos</button>
+      <button data-p="productos">Productos</button>
     </div>
-    <div class="resumen" id="resumen"></div>
-    <div class="filtros" id="filtros"></div>
-    <div id="lista"></div>
+
+    <section id="vista-pedidos">
+      <div class="barra">
+        <input id="buscar" placeholder="Buscar por número, nombre, ciudad o email…">
+        <button class="b-oro" id="btn-recargar">Recargar</button>
+        <span class="cuenta" id="cuenta"></span>
+      </div>
+      <div class="resumen" id="resumen"></div>
+      <div class="filtros" id="filtros"></div>
+      <div id="lista"></div>
+    </section>
+
+    <section id="vista-productos" class="oculto">
+      <div class="barra">
+        <button class="b-oro" id="btn-nuevo">+ Pieza nueva</button>
+        <button class="b-gris" id="btn-recargar-p">Recargar</button>
+        <span class="cuenta" id="cuenta-p"></span>
+      </div>
+      <div id="lista-p"></div>
+    </section>
   </main>
 </div>
+
+<div id="editor" class="oculto"></div>
 
 <script>
 // --- configuración ---------------------------------------------------------
@@ -139,8 +229,37 @@ const SCHEMA = 'vaderetro';
 
 const $ = (id) => document.getElementById(id);
 let token = null, pedidos = [], filtro = 'todos';
+let productos = [], borrador = null, guardando = false;
 
 try { token = localStorage.getItem('vr_admin_token'); } catch (e) {}
+
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g,
+  (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Un solo lugar arma las cabeceras de Supabase. Antes iban repetidas en cada
+// llamada y era cuestión de tiempo que a una le faltara el schema y devolviera
+// la tabla equivocada (o ninguna).
+function cab(extra) {
+  return Object.assign({
+    apikey: ANON,
+    Authorization: 'Bearer ' + token,
+    'Accept-Profile': SCHEMA,
+    'Content-Profile': SCHEMA
+  }, extra || {});
+}
+
+async function sb(ruta, opciones) {
+  const o = Object.assign({}, opciones);
+  o.headers = cab(o.headers);
+  const r = await fetch(URL_SB + '/rest/v1/' + ruta, o);
+  if (r.status === 401) { salir(); throw new Error('La sesión venció. Volvé a entrar.'); }
+  if (!r.ok) {
+    let d = null;
+    try { d = await r.json(); } catch (e) {}
+    throw new Error((d && (d.message || d.hint)) || ('La base respondió ' + r.status + '.'));
+  }
+  return r.status === 204 ? null : r.json();
+}
 
 // --- sesión ----------------------------------------------------------------
 async function entrar() {
@@ -177,21 +296,27 @@ function mostrarApp() {
   $('login').classList.add('oculto');
   $('app').classList.remove('oculto');
   cargar();
+  cargarProductos();
 }
 
-// --- datos -----------------------------------------------------------------
+function pestana(cual) {
+  document.querySelectorAll('.pestanas button').forEach((b) => {
+    b.classList.toggle('on', b.dataset.p === cual);
+  });
+  $('vista-pedidos').classList.toggle('oculto', cual !== 'pedidos');
+  $('vista-productos').classList.toggle('oculto', cual !== 'productos');
+}
+
+// ===========================================================================
+// PEDIDOS
+// ===========================================================================
 async function cargar() {
   $('lista').innerHTML = '<div class="aviso">Cargando…</div>';
   // Primero se le pregunta a Square quien pago. Si falla, se sigue igual: es
   // mejor mostrar los pedidos con el estado viejo que no mostrar nada.
   try { await fetch('../pago/estado.php', { cache: 'no-store' }); } catch (e) {}
   try {
-    const r = await fetch(URL_SB + '/rest/v1/pedidos?select=*&order=id.desc', {
-      headers: { apikey: ANON, Authorization: 'Bearer ' + token, 'Accept-Profile': SCHEMA }
-    });
-    if (r.status === 401) { salir(); return; }
-    if (!r.ok) throw new Error('La base respondió ' + r.status + '. Puede faltar correr PERMISOS.sql.');
-    pedidos = await r.json();
+    pedidos = await sb('pedidos?select=*&order=id.desc');
     pintar();
   } catch (e) {
     $('lista').innerHTML = '<div class="aviso">' + esc(e.message) + '</div>';
@@ -200,25 +325,16 @@ async function cargar() {
 
 async function marcar(id, estado) {
   try {
-    const r = await fetch(URL_SB + '/rest/v1/pedidos?id=eq.' + id, {
+    await sb('pedidos?id=eq.' + id, {
       method: 'PATCH',
-      headers: {
-        apikey: ANON, Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json', 'Content-Profile': SCHEMA,
-        Prefer: 'return=representation'
-      },
+      headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
       body: JSON.stringify({ estado })
     });
-    if (!r.ok) throw new Error('No se pudo actualizar (' + r.status + ').');
     const p = pedidos.find((x) => x.id === id);
     if (p) p.estado = estado;
     pintar();
   } catch (e) { alert(e.message); }
 }
-
-// --- pintado ---------------------------------------------------------------
-const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g,
-  (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function num(p) { return 'VADE-' + String(p.id).padStart(6, '0'); }
 function tarjeta(n, t) { return '<div class="tarj"><div class="n">' + n + '</div><div class="t">' + t + '</div></div>'; }
@@ -236,7 +352,6 @@ function pintar() {
     tarjeta(porDespachar, 'Por despachar') +
     tarjeta(pedidos.length, 'Pedidos en total');
 
-  // Filtros con su cuenta al lado
   const cuentas = {
     todos: pedidos.length,
     pagado: pedidos.filter((p) => p.estado === 'pagado').length,
@@ -311,12 +426,460 @@ function pintar() {
   });
 }
 
+// ===========================================================================
+// PRODUCTOS
+// ===========================================================================
+// Una pieza vacía. Los valores por omisión son los que ya usan las siete
+// piezas del sitio, así una nueva sale pareja con las demás sin tocar nada.
+function piezaVacia() {
+  return {
+    id: null, slug: '', orden: (productos.length + 1) * 10, activo: true,
+    precio: '', envio: '11.00',
+    datos: {
+      img: '', cardImg: '', imgs: [], fit: 'contain', ratioNum: '0.523',
+      oldPrice: null, cat: 'puerta', badgeTxt: null,
+      name: { es: '', en: '' }, desc: { es: '', en: '' },
+      descLong: { es: '', en: '' }, colors: [], specs: { es: [], en: [] }
+    }
+  };
+}
+
+async function cargarProductos() {
+  $('lista-p').innerHTML = '<div class="aviso">Cargando…</div>';
+  try {
+    productos = await sb('productos?select=*&order=orden.asc');
+    pintarProductos();
+  } catch (e) {
+    $('lista-p').innerHTML = '<div class="aviso">' + esc(e.message) +
+      '<br><br>Si dice que no existe la tabla, falta correr <strong>PRODUCTOS.sql</strong> en Supabase.</div>';
+  }
+}
+
+function pintarProductos() {
+  $('cuenta-p').textContent = productos.length + (productos.length === 1 ? ' pieza' : ' piezas');
+  if (!productos.length) {
+    $('lista-p').innerHTML = '<div class="aviso">No hay ninguna pieza cargada.<br><br>' +
+      'Si el sitio muestra las siete de siempre, es porque están escritas dentro de la ' +
+      'página como respaldo. Corré <strong>PRODUCTOS.sql</strong> en Supabase para ' +
+      'traerlas acá y poder editarlas.</div>';
+    return;
+  }
+  $('lista-p').innerHTML = productos.map((p) => {
+    const d = p.datos || {};
+    const foto = d.cardImg || d.img || (d.imgs && d.imgs[0]) || '';
+    return '<div class="prod' + (p.activo ? '' : ' apagado') + '">' +
+      (foto ? '<img src="../' + esc(foto) + '" alt="">' : '<img alt="">') +
+      '<div class="cuerpo">' +
+        '<div class="tit">' + esc((d.name && d.name.es) || p.slug) + '</div>' +
+        '<div class="sub">' + esc(p.slug) + ' · orden ' + esc(p.orden) +
+          ' · envío $' + esc(p.envio) + (p.activo ? '' : ' · OCULTA') + '</div>' +
+      '</div>' +
+      '<div class="precio">$' + esc(p.precio) + '</div>' +
+      '<div class="acc">' +
+        '<button class="b-gris" data-ver="' + p.id + '">' + (p.activo ? 'Ocultar' : 'Mostrar') + '</button>' +
+        '<button class="b-azul" data-edit="' + p.id + '">Editar</button>' +
+        '<button class="b-rojo" data-del="' + p.id + '">Borrar</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  $('lista-p').querySelectorAll('button[data-edit]').forEach((b) => {
+    b.onclick = () => abrirEditor(productos.find((p) => p.id === Number(b.dataset.edit)));
+  });
+  $('lista-p').querySelectorAll('button[data-ver]').forEach((b) => {
+    b.onclick = () => alternarVisible(Number(b.dataset.ver));
+  });
+  $('lista-p').querySelectorAll('button[data-del]').forEach((b) => {
+    b.onclick = () => borrarPieza(Number(b.dataset.del));
+  });
+}
+
+// Ocultar no es borrar. Es lo que conviene casi siempre: la pieza desaparece de
+// la tienda pero sigue acá con sus textos y sus fotos, lista para volver.
+async function alternarVisible(id) {
+  const p = productos.find((x) => x.id === id);
+  if (!p) return;
+  try {
+    await sb('productos?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ activo: !p.activo })
+    });
+    p.activo = !p.activo;
+    pintarProductos();
+  } catch (e) { alert(e.message); }
+}
+
+async function borrarPieza(id) {
+  const p = productos.find((x) => x.id === id);
+  if (!p) return;
+  const nombre = (p.datos && p.datos.name && p.datos.name.es) || p.slug;
+  if (!confirm('¿Borrar "' + nombre + '" para siempre?\n\n' +
+      'Los pedidos que ya la incluyen no se tocan: guardan su propia copia del ' +
+      'nombre y del precio.\n\nSi solo querés sacarla de la tienda, cancelá y usá ' +
+      '"Ocultar", que se puede deshacer.')) return;
+  try {
+    await sb('productos?id=eq.' + id, { method: 'DELETE' });
+    productos = productos.filter((x) => x.id !== id);
+    pintarProductos();
+  } catch (e) { alert(e.message); }
+}
+
+// --- editor ----------------------------------------------------------------
+const lineas = (a) => (Array.isArray(a) ? a.join('\n') : '');
+const aLineas = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
+
+// De "Bendición de San Benito · Cordón" a "bendicion-de-san-benito-cordon".
+function aSlug(s) {
+  return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+}
+
+function abrirEditor(p) {
+  // Copia profunda: si se cancela a mitad de camino, la lista de atrás tiene
+  // que quedar como estaba. Editar el objeto original dejaría los cambios
+  // pegados en pantalla aunque nunca se hayan guardado.
+  borrador = p ? JSON.parse(JSON.stringify(p)) : piezaVacia();
+  // Una fila guardada antes de que existiera algun campo llega sin el, y el
+  // editor lo leeria como undefined y lo pintaria como "undefined". Se
+  // completan los huecos contra la pieza vacia, sin pisar lo que si vino.
+  const base = piezaVacia().datos;
+  const d = borrador.datos || {};
+  Object.keys(base).forEach((k) => {
+    if (d[k] == null) { d[k] = base[k]; return; }
+    if (base[k] && typeof base[k] === 'object' && !Array.isArray(base[k])) {
+      d[k] = Object.assign({}, base[k], d[k]);
+    }
+  });
+  borrador.datos = d;
+  pintarEditor();
+  $('editor').classList.remove('oculto');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarEditor() {
+  borrador = null;
+  $('editor').classList.add('oculto');
+  $('editor').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+function campo(etiqueta, html, pista, ancho) {
+  return '<div class="campo' + (ancho ? ' ancho' : '') + '"><label>' + etiqueta + '</label>' +
+    html + (pista ? '<div class="pista">' + pista + '</div>' : '') + '</div>';
+}
+
+function pintarEditor() {
+  const b = borrador, d = b.datos;
+  const txt = (k, v, extra) => '<input type="text" data-k="' + k + '" value="' + esc(v) + '"' + (extra || '') + '>';
+  const area = (k, v, filas) => '<textarea data-k="' + k + '" rows="' + (filas || 3) + '">' + esc(v) + '</textarea>';
+
+  const fotoBox = (ruta, i) =>
+    '<div class="foto"><img src="../' + esc(ruta) + '" alt="">' +
+      '<button class="x" data-quita="' + i + '" title="Quitar">×</button>' +
+      '<div class="mv"><button data-mueve="' + i + '" data-dir="-1" title="Antes">←</button>' +
+      '<button data-mueve="' + i + '" data-dir="1" title="Después">→</button></div></div>';
+
+  $('editor').innerHTML =
+  '<div class="caja">' +
+    '<div class="cab">' +
+      '<h2>' + (b.id ? 'Editar pieza' : 'Pieza nueva') + '</h2>' +
+      '<button class="b-linea" id="ed-cerrar">Cerrar</button>' +
+    '</div>' +
+    '<div class="cuerpo">' +
+
+      '<fieldset><legend>Nombre y precio</legend><div class="campos">' +
+        campo('Nombre (español)', txt('name.es', d.name.es), '', true) +
+        campo('Nombre (inglés)', txt('name.en', d.name.en), '', true) +
+        campo('Identificador', txt('slug', b.slug) +
+          (b.id ? '' : ' <button class="b-gris" id="ed-slug" style="margin-top:6px">Sacarlo del nombre</button>'),
+          b.id ? 'Cambiarlo vacía esta pieza de los carritos que la tengan a medio comprar. Si no hay un motivo, dejalo.'
+               : 'Va en la dirección de la ficha. Solo minúsculas, números y guiones.') +
+        campo('Orden', '<input type="number" data-k="orden" value="' + esc(b.orden) + '" step="10">',
+          'Más chico, más arriba en la tienda.') +
+        campo('Precio (USD)', '<input type="number" data-k="precio" value="' + esc(b.precio) + '" step="0.01" min="0">',
+          'Es el que se cobra. El servidor no le cree al navegador: lo lee de acá.') +
+        campo('Envío (USD)', '<input type="number" data-k="envio" value="' + esc(b.envio) + '" step="0.01" min="0">',
+          'Por pedido se cobra UN envío: el más caro del carrito.') +
+        campo('Precio anterior', '<input type="number" data-k="datos.oldPrice" value="' +
+          esc(d.oldPrice == null ? '' : d.oldPrice) + '" step="0.01" min="0">',
+          'Se muestra tachado al lado del precio. Vacío = sin oferta.') +
+        campo('En la tienda',
+          '<select data-k="activo"><option value="1"' + (b.activo ? ' selected' : '') + '>Se muestra</option>' +
+          '<option value="0"' + (b.activo ? '' : ' selected') + '>Oculta</option></select>') +
+      '</div></fieldset>' +
+
+      '<fieldset><legend>Textos</legend><div class="campos">' +
+        campo('Descripción corta (español)', area('desc.es', d.desc.es, 2),
+          'Es la línea que se lee debajo del nombre en el catálogo.', true) +
+        campo('Descripción corta (inglés)', area('desc.en', d.desc.en, 2), '', true) +
+        campo('Descripción larga (español)', area('descLong.es', d.descLong.es, 4),
+          'Es el párrafo de la ficha del producto.', true) +
+        campo('Descripción larga (inglés)', area('descLong.en', d.descLong.en, 4), '', true) +
+        campo('Detalles (español)', area('specs.es', lineas(d.specs.es), 4),
+          'Uno por línea. Salen como lista en la ficha (medidas, material, etc.).', true) +
+        campo('Detalles (inglés)', area('specs.en', lineas(d.specs.en), 4), '', true) +
+      '</div></fieldset>' +
+
+      '<fieldset><legend>Foto del catálogo</legend>' +
+        '<div class="pista" style="margin-bottom:10px">Es el cuadrado que se ve en la grilla de la tienda. ' +
+        'Conviene que esté centrado en la medalla: en un cuadro chico la pieza entera no se lee.</div>' +
+        '<div class="fotos" id="ed-card">' +
+          (d.cardImg ? '<div class="foto"><img src="../' + esc(d.cardImg) + '" alt="">' +
+             '<button class="x" data-quita-card="1">×</button></div>' : '') +
+          '<button class="subir" data-sube="card">+ Subir</button>' +
+        '</div>' +
+      '</fieldset>' +
+
+      '<fieldset><legend>Fotos de la ficha</legend>' +
+        '<div class="pista" style="margin-bottom:10px">La primera es la grande. Las demás son las miniaturas, en este orden.</div>' +
+        '<div class="fotos" id="ed-fotos">' +
+          (d.imgs || []).map(fotoBox).join('') +
+          '<button class="subir" data-sube="ficha">+ Subir</button>' +
+        '</div>' +
+      '</fieldset>' +
+
+      '<fieldset><legend>Colores disponibles</legend>' +
+        '<div id="ed-colores">' + (d.colors || []).map((c, i) =>
+          '<div class="color">' +
+            '<span class="muestra" style="background:' + esc(c.css) + '"></span>' +
+            '<input type="text" data-col="' + i + '" data-cf="css" value="' + esc(c.css) + '" placeholder="#C9A46A">' +
+            '<input type="text" data-col="' + i + '" data-cf="es" value="' + esc(c.name && c.name.es) + '" placeholder="Miel">' +
+            '<input type="text" data-col="' + i + '" data-cf="en" value="' + esc(c.name && c.name.en) + '" placeholder="Honey">' +
+            '<button class="b-rojo" data-quita-col="' + i + '">Quitar</button>' +
+          '</div>').join('') + '</div>' +
+        '<button class="b-gris" id="ed-mas-color">+ Agregar color</button>' +
+        '<div class="pista">El primer campo es el color en sí: un código como <code>#C9A46A</code>, ' +
+        'o un degradado para las piezas de dos colores.</div>' +
+      '</fieldset>' +
+
+      '<fieldset><legend>Encuadre</legend><div class="campos">' +
+        campo('Cómo entra la foto grande',
+          '<select data-k="datos.fit">' +
+          '<option value="contain"' + (d.fit === 'cover' ? '' : ' selected') + '>Entera (con márgenes)</option>' +
+          '<option value="cover"' + (d.fit === 'cover' ? ' selected' : '') + '>Llena el cuadro (recorta)</option></select>',
+          '"Entera" es lo que usan las siete piezas: se ve toda la pieza, sin cortar el cordón.') +
+        campo('Proporción', txt('datos.ratioNum', d.ratioNum),
+          'Ancho dividido alto de la foto. 0.523 es una foto vertical de celular.') +
+      '</div></fieldset>' +
+
+    '</div>' +
+    '<div class="pieEditor">' +
+      '<div class="msg" id="ed-msg"></div>' +
+      '<div style="display:flex;gap:10px">' +
+        '<button class="b-gris" id="ed-cancelar">Cancelar</button>' +
+        '<button class="b-oro" id="ed-guardar">Guardar</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  conectarEditor();
+}
+
+// Lee un campo "a.b.c" del borrador y lo escribe. Los datos vienen de un
+// data-k en el HTML para no tener que enumerar cuarenta campos a mano.
+function meter(ruta, valor) {
+  const partes = ruta.split('.');
+  let o = borrador;
+  for (let i = 0; i < partes.length - 1; i++) {
+    if (o[partes[i]] == null || typeof o[partes[i]] !== 'object') o[partes[i]] = {};
+    o = o[partes[i]];
+  }
+  o[partes[partes.length - 1]] = valor;
+}
+
+function leerCampos() {
+  $('editor').querySelectorAll('[data-k]').forEach((el) => {
+    const k = el.dataset.k;
+    let v = el.value;
+    if (k === 'activo') { borrador.activo = v === '1'; return; }
+    if (k === 'orden') { borrador.orden = parseInt(v, 10) || 0; return; }
+    if (k === 'slug') { borrador.slug = aSlug(v); return; }
+    if (k === 'precio' || k === 'envio') { borrador[k] = v; return; }
+    if (k === 'datos.oldPrice') { borrador.datos.oldPrice = v === '' ? null : parseFloat(v); return; }
+    if (k === 'specs.es' || k === 'specs.en') {
+      borrador.datos.specs[k.split('.')[1]] = aLineas(v); return;
+    }
+    // Los textos con idioma viven bajo datos: name.es, desc.en, descLong.es…
+    if (k.indexOf('datos.') === 0) { meter(k, v); return; }
+    meter('datos.' + k, v);
+  });
+  // Colores
+  const cols = [];
+  $('editor').querySelectorAll('[data-col]').forEach((el) => {
+    const i = Number(el.dataset.col);
+    if (!cols[i]) cols[i] = { css: '', name: { es: '', en: '' } };
+    if (el.dataset.cf === 'css') cols[i].css = el.value.trim();
+    else cols[i].name[el.dataset.cf] = el.value.trim();
+  });
+  borrador.datos.colors = cols.filter((c) => c && c.css);
+}
+
+function conectarEditor() {
+  $('ed-cerrar').onclick = cerrarEditor;
+  $('ed-cancelar').onclick = cerrarEditor;
+  $('ed-guardar').onclick = guardarPieza;
+  $('ed-mas-color').onclick = () => {
+    leerCampos();
+    borrador.datos.colors.push({ css: '#C9A46A', name: { es: '', en: '' } });
+    pintarEditor();
+  };
+  const auto = $('ed-slug');
+  if (auto) auto.onclick = () => {
+    leerCampos();
+    borrador.slug = aSlug(borrador.datos.name.es);
+    pintarEditor();
+  };
+  $('editor').querySelectorAll('[data-quita-col]').forEach((b) => {
+    b.onclick = () => {
+      leerCampos();
+      borrador.datos.colors.splice(Number(b.dataset.quitaCol), 1);
+      pintarEditor();
+    };
+  });
+  $('editor').querySelectorAll('[data-quita]').forEach((b) => {
+    b.onclick = () => {
+      leerCampos();
+      borrador.datos.imgs.splice(Number(b.dataset.quita), 1);
+      pintarEditor();
+    };
+  });
+  const cardX = $('editor').querySelector('[data-quita-card]');
+  if (cardX) cardX.onclick = () => { leerCampos(); borrador.datos.cardImg = ''; pintarEditor(); };
+  $('editor').querySelectorAll('[data-mueve]').forEach((b) => {
+    b.onclick = () => {
+      leerCampos();
+      const i = Number(b.dataset.mueve), j = i + Number(b.dataset.dir);
+      const a = borrador.datos.imgs;
+      if (j < 0 || j >= a.length) return;
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+      pintarEditor();
+    };
+  });
+  $('editor').querySelectorAll('[data-sube]').forEach((b) => {
+    b.onclick = () => elegirFoto(b.dataset.sube);
+  });
+}
+
+// --- subir fotos -----------------------------------------------------------
+// Va contra pago/subir.php, que comprueba la sesión antes de escribir nada. El
+// servidor devuelve la ruta final: el nombre lo pone él, no el navegador.
+function elegirFoto(destino) {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'image/jpeg,image/png,image/webp';
+  inp.multiple = destino === 'ficha';
+  inp.onchange = async () => {
+    const archivos = Array.from(inp.files || []);
+    if (!archivos.length) return;
+    leerCampos();
+    msg('Subiendo…');
+    for (const f of archivos) {
+      try {
+        const fd = new FormData();
+        fd.append('foto', f);
+        fd.append('nombre', borrador.slug || aSlug(borrador.datos.name.es) || 'foto');
+        const r = await fetch('../pago/subir.php', {
+          method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd
+        });
+        const d = await r.json();
+        if (!r.ok || !d.ok) throw new Error(d.error || ('El servidor respondió ' + r.status));
+        if (destino === 'card') borrador.datos.cardImg = d.ruta;
+        else borrador.datos.imgs.push(d.ruta);
+      } catch (e) {
+        msg('No se pudo subir ' + f.name + ': ' + e.message, 'mal');
+        pintarEditor();
+        return;
+      }
+    }
+    pintarEditor();
+    msg(archivos.length === 1 ? 'Foto subida.' : archivos.length + ' fotos subidas.', 'bien');
+  };
+  inp.click();
+}
+
+function msg(t, clase) {
+  const el = $('ed-msg');
+  if (!el) return;
+  el.textContent = t;
+  el.className = 'msg' + (clase ? ' ' + clase : '');
+}
+
+// --- guardar ---------------------------------------------------------------
+async function guardarPieza() {
+  if (guardando) return;
+  leerCampos();
+  const b = borrador, d = b.datos;
+
+  // Se revisa antes de mandar. Media pieza en la tienda rompe la ficha y el
+  // cobro, y arreglarlo después es peor que no dejar guardarla.
+  const falta = [];
+  if (!d.name.es || !d.name.en) falta.push('el nombre en los dos idiomas');
+  if (!b.slug) falta.push('el identificador');
+  const precio = parseFloat(b.precio), envio = parseFloat(b.envio);
+  if (!isFinite(precio) || precio <= 0) falta.push('un precio mayor a cero');
+  if (!isFinite(envio) || envio < 0) falta.push('un envío válido');
+  if (!d.imgs.length && !d.cardImg) falta.push('al menos una foto');
+  if (productos.some((p) => p.slug === b.slug && p.id !== b.id)) {
+    falta.push('un identificador que no esté usado por otra pieza');
+  }
+  if (falta.length) { msg('Falta ' + falta.join(', ') + '.', 'mal'); return; }
+
+  // La foto grande es la primera de la ficha; el cuadro del catálogo cae a la
+  // misma si no se subió uno propio. Así una pieza nueva se ve bien con una
+  // sola foto, y quien quiera afinar el cuadro lo sube después.
+  d.img = d.imgs[0] || d.cardImg;
+  if (!d.cardImg) d.cardImg = d.img;
+  if (!d.imgs.length) d.imgs = [d.img];
+  if (!d.cat) d.cat = 'puerta';
+
+  const fila = {
+    slug: b.slug, orden: b.orden, activo: b.activo,
+    precio: precio.toFixed(2), envio: envio.toFixed(2), datos: d
+  };
+
+  guardando = true;
+  $('ed-guardar').disabled = true;
+  msg('Guardando…');
+  try {
+    if (b.id) {
+      await sb('productos?id=eq.' + b.id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+        body: JSON.stringify(fila)
+      });
+    } else {
+      await sb('productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Prefer: 'return=representation' },
+        body: JSON.stringify(fila)
+      });
+    }
+    cerrarEditor();
+    await cargarProductos();
+  } catch (e) {
+    msg(e.message, 'mal');
+  } finally {
+    guardando = false;
+    const g = $('ed-guardar');
+    if (g) g.disabled = false;
+  }
+}
+
 // --- arranque --------------------------------------------------------------
 $('btn-entrar').onclick = entrar;
 $('pass').onkeydown = (e) => { if (e.key === 'Enter') entrar(); };
 $('btn-salir').onclick = salir;
 $('btn-recargar').onclick = cargar;
+$('btn-recargar-p').onclick = cargarProductos;
+$('btn-nuevo').onclick = () => abrirEditor(null);
 $('buscar').oninput = pintar;
+document.querySelectorAll('.pestanas button').forEach((b) => {
+  b.onclick = () => pestana(b.dataset.p);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && borrador) cerrarEditor();
+});
 if (token) mostrarApp();
 </script>
 </body>

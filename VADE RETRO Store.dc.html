@@ -1892,6 +1892,7 @@ class Component extends DCLogic {
       });
     }, 6500);
 
+    this.cargarCatalogo();
     this.initCarrusel();
     this.observarHero();
     // Las medidas de la tabla son las de los archivos, pero si alguna difiere
@@ -2003,6 +2004,46 @@ class Component extends DCLogic {
   // de cada img: el marcado se vuelve a pintar en cada cambio de foto y se
   // llevaria puesto cualquier estilo puesto a mano.
   // ===========================================================================
+  // ===========================================================================
+  // CATALOGO
+  //
+  // Las piezas viven en la base y las sirve pago/catalogo.php. La lista escrita
+  // aca abajo (Component.DATA) queda como respaldo y se usa mientras la
+  // respuesta no llega, o si no llega nunca: en la vista previa de Vercel no
+  // hay PHP, y una tienda vacia es peor que una tienda con precios de ayer.
+  //
+  // Se acepta lo que viene solo si trae lo minimo para vender: identificador,
+  // precio y nombre en los dos idiomas. Media pieza en la vitrina rompe la
+  // ficha, el carrito y el cobro; mejor quedarse con el respaldo entero.
+  // ===========================================================================
+  cargarCatalogo() {
+    fetch('pago/catalogo.php', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d || !d.ok || !Array.isArray(d.items)) return;
+        const sirve = (p) => p && typeof p.slug === 'string' && p.slug &&
+          typeof p.price === 'number' && isFinite(p.price) &&
+          p.name && p.name.es && p.name.en;
+        const buenos = d.items.filter(sirve);
+        if (!buenos.length || buenos.length !== d.items.length) return;
+        Component.DATA = buenos.map((p) => Object.assign({
+          fit: 'contain', ratioNum: '0.523', imgs: [], colors: [],
+          specs: { es: [], en: [] }, oldPrice: null, stock: null,
+          cat: 'puerta', badgeTxt: null
+        }, p));
+        // Si el carrito tenia algo que ya no esta en el catalogo, se cae solo:
+        // no se puede cobrar una pieza que la vendedora dio de baja.
+        const vivos = {};
+        Component.DATA.forEach((p) => { vivos[p.slug] = true; });
+        const carro = {};
+        Object.keys(this.state.cart || {}).forEach((k) => {
+          if (vivos[k]) carro[k] = this.state.cart[k];
+        });
+        this.setState({ cart: carro });
+      })
+      .catch(() => {});
+  }
+
   // Vigila el hueco de la foto. No alcanza con calcular el encuadre al arrancar:
   // en ese momento el hueco todavia tiene la proporcion 4/5 del estilo base y
   // recien despues entra el @media de escritorio, que lo estira a lo alto de la
@@ -2438,6 +2479,10 @@ Component.HERO = [
   { src: 'assets/hero-5.webp',       w: 1100, h: 1100, foco: [0.525, 0.31] }   // la de arriba, que es la grande de las dos
 ];
 
+// RESPALDO del catalogo. La lista que manda es la de la base, que sirve
+// pago/catalogo.php y edita el panel de /admin. Esta de aca se usa mientras
+// esa respuesta no llega, y en la vista previa de Vercel, donde no hay PHP.
+// Si se cambia un precio, se cambia EN EL PANEL, no aca.
 Component.DATA = [
   { slug: 'bendicion-cristal', img: 'assets/cristal-1.webp', fit: 'contain', ratioNum: '0.523',
     cardImg: 'assets/cristal-card.webp',

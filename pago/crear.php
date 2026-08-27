@@ -10,7 +10,7 @@
 // ============================================================================
 
 define('VADE', 1);
-require __DIR__ . '/config.php';
+require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -18,8 +18,15 @@ function salir($codigo, $datos) { http_response_code($codigo); echo json_encode(
 
 // ---------------------------------------------------------------------------
 // CATÁLOGO — precios en centavos.
-// TIENE QUE COINCIDIR con Component.DATA del index.html. Si cambia un precio
-// allá, cambialo acá también o el cobro no va a dar lo que muestra la página.
+//
+// La lista de abajo ya NO es la fuente: ahora los precios los pone la tabla
+// vaderetro.productos, que es la misma que muestra la vitrina y la misma que
+// edita el panel. Antes había que cambiar el precio en dos archivos y si te
+// olvidabas de uno la página decía un número y Square cobraba otro.
+//
+// Queda igual como último respaldo, para el caso de que nunca se haya podido
+// hablar con la base. Ese caso implica que tampoco se pudo editar nada desde el
+// panel, así que estos precios son los que corresponden.
 // ---------------------------------------------------------------------------
 $CATALOGO = [
   'bendicion-cristal'  => ['n' => 'Bendición de San Benito · Cristal cortado',    'p' => 7000, 'e' => 1400],
@@ -30,6 +37,29 @@ $CATALOGO = [
   'decenario-madera'   => ['n' => 'Bendición de San Benito · Decenario en madera','p' => 2500, 'e' => 1100],
   'cordon-largo'       => ['n' => 'Bendición de San Benito · Cordón largo',       'p' => 3000, 'e' => 1100],
 ];
+
+// Los precios de verdad. Si la base contesta se usan los suyos; si no contesta
+// pero hay copia en disco, los de la copia, que son los ultimos buenos que se
+// conocieron. Recien si no hay ninguna de las dos manda la lista de arriba.
+define('VADE_CATALOGO_SOLO_FUNCIONES', 1);
+require_once __DIR__ . '/catalogo.php';
+$vivo = vade_catalogo();
+if ($vivo['origen'] !== 'nada') {
+  $tabla = [];
+  foreach ($vivo['items'] as $it) {
+    if (empty($it['slug'])) continue;
+    $tabla[$it['slug']] = [
+      // El nombre que va a la factura de Square sale en espanol: lo lee la
+      // vendedora, no el comprador.
+      'n' => (string) ($it['name']['es'] ?? $it['slug']),
+      // A centavos con round() y no con (int): (int)(0.29*100) da 28 en coma
+      // flotante, y ese centavo perdido aparece en la factura.
+      'p' => (int) round(((float) ($it['price'] ?? 0)) * 100),
+      'e' => (int) round(((float) ($it['ship']  ?? 0)) * 100),
+    ];
+  }
+  if ($tabla) $CATALOGO = $tabla;
+}
 
 if (TOKEN === '') salir(500, ['ok' => false, 'error' => 'Falta cargar el token en pago/config.php.']);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') salir(405, ['ok' => false, 'error' => 'Método no permitido.']);
