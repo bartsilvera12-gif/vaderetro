@@ -403,6 +403,16 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    archivo: eso dejaba ver el fondo azul en el medio, o sea foto -> fondo ->
    foto. Ahora la que sale queda ENCIMA y se desvanece revelando a la que ya
    esta debajo, asi que en ningun momento se ve lo que hay detras. */
+/* El telefono, en dos lineas: "(5873)" exactamente debajo de "LUPE".
+   El truco es que el pedazo que arranca en LUPE sea un bloque en linea: el
+   salto de linea de adentro cae en SU borde izquierdo, que es justo donde
+   empieza la L. Asi queda alineado con cualquier tipografia y cualquier
+   tamano de letra, sin numeros magicos.
+   vertical-align:top es imprescindible. Por omision un bloque en linea de dos
+   renglones se alinea por el ultimo, o sea que subiria hasta dejar "(5873)"
+   a la altura de "Tel ·" y "LUPE" por encima, que es al reves de lo buscado. */
+.vr-tel{display:inline-block;vertical-align:top;line-height:inherit}
+
 .vr-hero-capa{position:absolute;inset:0}
 /* La foto del hero va como <img> plano y no como slot editable: el slot centra
    el recorte siempre y no deja decir en que punto de la foto hay que fijarse.
@@ -1061,7 +1071,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <div>
           <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:#CF9D59;margin-bottom:14px">[ {{ t.nav_contacto }} ]</div>
           <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:rgba(28,28,36,.75)">
-            <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
+            <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.tel_antes }}<span class="vr-tel">{{ t.tel_letras }}<br>{{ t.tel_cifras }}</span></a>
           </div>
         </div>
         <div>
@@ -1827,7 +1837,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <div>
         <div data-reveal style="font-size:11px;font-weight:700;letter-spacing:.22em;color:#CF9D59;margin-bottom:18px">{{ t.nav_contacto }}</div>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
-          <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.telefono }}</a>
+          <a href="tel:+18335005873" style="color:inherit">Tel · {{ t.tel_antes }}<span class="vr-tel">{{ t.tel_letras }}<br>{{ t.tel_cifras }}</span></a>
         </div>
       </div>
     </div>
@@ -2738,7 +2748,14 @@ Component.T = {
     cada_uno: 'c/u', continuar: 'Continuar comprando', quitar: 'Quitar',
     resumen: 'Resumen', subtotal: 'Subtotal', total: 'TOTAL',
     envio: 'Envío', envio_valor: 'a coordinar', envio_suf: 'de envío', envio_unico: 'un solo envío por pedido',
+    // El numero va en dos lineas, con "(5873)" justo debajo de "LUPE". Por eso
+    // esta partido: el pedazo que arranca en LUPE se envuelve en un bloque
+    // propio, y ahi el salto de linea cae en su borde izquierdo. Alinear con
+    // espacios o con un margen fijo no sirve: el ancho de "Tel · 833-500-"
+    // cambia con la tipografia y con el tamano de letra de cada pantalla.
+    // `telefono` entero se sigue usando donde va como texto corrido (FAQ).
     telefono: '833-500-LUPE (5873)',
+    tel_antes: '833-500-', tel_letras: 'LUPE', tel_cifras: '(5873)',
     confirmar_compra: 'Confirmar compra', precios_usd: 'Todos los precios en USD',
     checkout_title: 'Finalizar pedido', datos_title: 'Tus datos',
     f_nombre: 'NOMBRE', f_apellido: 'APELLIDO', f_email: 'EMAIL', f_telefono: 'TELÉFONO',
@@ -2912,7 +2929,14 @@ Component.T = {
     cada_uno: 'each', continuar: 'Continue shopping', quitar: 'Remove',
     resumen: 'Summary', subtotal: 'Subtotal', total: 'TOTAL',
     envio: 'Shipping', envio_valor: 'to be arranged', envio_suf: 'shipping', envio_unico: 'one shipping charge per order',
+    // El numero va en dos lineas, con "(5873)" justo debajo de "LUPE". Por eso
+    // esta partido: el pedazo que arranca en LUPE se envuelve en un bloque
+    // propio, y ahi el salto de linea cae en su borde izquierdo. Alinear con
+    // espacios o con un margen fijo no sirve: el ancho de "Tel · 833-500-"
+    // cambia con la tipografia y con el tamano de letra de cada pantalla.
+    // `telefono` entero se sigue usando donde va como texto corrido (FAQ).
     telefono: '833-500-LUPE (5873)',
+    tel_antes: '833-500-', tel_letras: 'LUPE', tel_cifras: '(5873)',
     confirmar_compra: 'Checkout', precios_usd: 'All prices in USD',
     checkout_title: 'Checkout', datos_title: 'Your details',
     f_nombre: 'FIRST NAME', f_apellido: 'LAST NAME', f_email: 'EMAIL', f_telefono: 'PHONE',
