@@ -2086,20 +2086,24 @@ class Component extends DCLogic {
                 Math.max(1, fw * pide(fx) / (iw * kc), fh * pide(fy) / (ih * kc)));
       const w = iw * kc * z, h = ih * kc * z;
 
-      // 2. Donde arranca. Se corre para que el foco caiga en el medio, sin
+      // 2. Donde arranca. Se corre para que el foco caiga en la mira, sin
       //    despegarse de los bordes: la foto nunca puede dejar ver el fondo.
+      //    Si la mira queda fuera de lo que el recorte permite, se llega lo mas
+      //    cerca posible en vez de abrir un hueco.
+      const mira = foto.mira || [0.5, 0.5];
       const pin = (v, min, max) => Math.max(min, Math.min(max, v));
-      const l = pin(fw / 2 - fx * w, fw - w, 0);
-      const t = pin(fh / 2 - fy * h, fh - h, 0);
+      const l = pin(fw * mira[0] - fx * w, fw - w, 0);
+      const t = pin(fh * mira[1] - fy * h, fh - h, 0);
 
-      // 3. El zoom lento del scroll crece desde el centro del HUECO, no desde el
-      //    centro de la foto: son distintos ahora que la foto es mas grande y va
+      // 3. El zoom lento del scroll crece desde la medalla, no desde el centro
+      //    de la foto: son distintos ahora que la foto es mas grande y va
       //    corrida, y creciendo desde su propio centro la medalla se iria de a
-      //    poco para un costado.
+      //    poco para un costado mientras se hace scroll.
       return '.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]{'
            + 'width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;'
            + 'left:' + l.toFixed(1) + 'px;top:' + t.toFixed(1) + 'px;'
-           + 'transform-origin:' + (fw / 2 - l).toFixed(1) + 'px ' + (fh / 2 - t).toFixed(1) + 'px}';
+           + 'transform-origin:' + (fw * mira[0] - l).toFixed(1) + 'px '
+                                 + (fh * mira[1] - t).toFixed(1) + 'px}';
     }).join('\n');
     let hoja = document.getElementById('vr-foco');
     if (!hoja) {
@@ -2466,13 +2470,27 @@ Component.TICKET_PALETTE = [
 // borde exterior de la medalla. La primera vez los saque de una tira de
 // miniaturas y salieron todos corridos; a ese tamano no se ve donde termina la
 // pieza y donde empieza el fondo.
-// Hasta cuanto se puede acercar una foto para poder centrarle la medalla. Es
-// un tope de seguridad: acercar es agrandar, y agrandar de mas se ve blando.
-// Con los focos de abajo el maximo que se usa es 1,44 (hero-2).
-Component.HERO_ZOOM = 1.6;
+// Hasta cuanto se puede acercar una foto para centrarle la medalla.
+//
+// Acercar recorta, y recortar de mas deja la medalla sola llenando el cuadro:
+// se pierde la puerta, el mono, el cordon — todo lo que muestra que es una
+// pieza colgada y no una moneda. Con 1,6 la segunda foto se iba a 1,44 y era
+// exactamente eso.
+//
+// A 1,15 tres fotos quedan centradas justas y las otras dos se acercan lo mas
+// que pueden sin pasarse: la segunda queda un 10% abajo del centro, la quinta
+// un 2% arriba. Preferible eso a un primer plano.
+//
+// Es la unica perilla de todo esto. Subirlo centra mejor y recorta mas; bajarlo
+// al reves. La cuenta de encuadrarHero() se acomoda sola.
+Component.HERO_ZOOM = 1.15;
 
+// `mira` es a que altura del HUECO se quiere la medalla, y por omision es el
+// medio. No confundirla con `foco`, que es donde esta la medalla DENTRO de la
+// foto: eso se mide, esto se elige. La primera pide un poco mas arriba porque
+// centrada le entraba demasiado piso.
 Component.HERO = [
-  { src: 'assets/hero-medalla.webp', w: 923,  h: 900,  foco: [0.440, 0.63] },
+  { src: 'assets/hero-medalla.webp', w: 923,  h: 900,  foco: [0.440, 0.63], mira: [0.5, 0.45] },
   { src: 'assets/hero-2.webp',       w: 1100, h: 1100, foco: [0.494, 0.74] },  // cuelga bajo: el mono se lleva la mitad de arriba
   { src: 'assets/hero-3.webp',       w: 1100, h: 1100, foco: [0.500, 0.60] },
   { src: 'assets/hero-4.webp',       w: 1100, h: 1100, foco: [0.470, 0.42] },  // el camafeo es la pieza; la borla queda abajo
