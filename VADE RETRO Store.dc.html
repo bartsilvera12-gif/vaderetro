@@ -998,7 +998,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <span style="width:26px;height:2px;background:#0F2349;display:block"></span>
         <span style="width:26px;height:2px;background:#0F2349;display:block"></span>
       </button>
-      <a class="vr-hd-logo" href="#/" onClick="{{ goHome }}" style="display:flex;align-items:center"><img src="assets/logo.png" alt="VADE RETRO" style="width:186px;height:auto;display:block"></a>
+      <a class="vr-hd-logo" href="#/" onClick="{{ goHome }}" style="display:flex;align-items:center"><img src="assets/logo.png?v=2" alt="VADE RETRO" style="width:186px;height:auto;display:block"></a>
     </div>
     <sc-if value="{{ notMobile }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1 1 0%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2.5vw,40px);padding:0 clamp(14px,2.5vw,36px);font-size:12px;font-weight:600;letter-spacing:.1em;color:#F9F0ED;text-transform:uppercase;white-space:nowrap">
@@ -1030,7 +1030,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-menu-nav" style="background:#F9F0ED;padding:34px clamp(24px,3vw,44px) 40px;display:flex;flex-direction:column;overflow-y:auto;animation:{{ menuAnimLeft }}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
         <div>
-          <img src="assets/logo.png" alt="VADE RETRO" style="width:240px;height:auto;display:block">
+          <img src="assets/logo.png?v=2" alt="VADE RETRO" style="width:240px;height:auto;display:block">
           <div style="font-size:11px;font-weight:600;letter-spacing:.16em;color:rgba(28,28,36,.6);margin-top:14px;text-transform:uppercase">{{ t.menu_sub }}</div>
         </div>
         <button onClick="{{ closeMenu }}" aria-label="Cerrar" style="border:none;background:none;cursor:pointer;font-size:30px;line-height:1;color:#0F2349;padding:0 4px">×</button>
@@ -1790,7 +1790,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-ft-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:44px;padding-bottom:52px;border-bottom:1px solid rgba(249,240,237,.12)">
       <div>
         <div data-reveal style="display:inline-block;background:#F9F0ED;padding:8px;margin-bottom:20px">
-          <div style="border:1px solid rgba(207,157,89,.6);padding:16px 28px"><img src="assets/logo.png" alt="VADE RETRO" style="height:58px;width:auto;display:block"></div>
+          <div style="border:1px solid rgba(207,157,89,.6);padding:16px 28px"><img src="assets/logo.png?v=2" alt="VADE RETRO" style="height:58px;width:auto;display:block"></div>
         </div>
         <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.6;margin:0;max-width:250px;color:#CF9D59">{{ t.footer_tagline }}</p>
       </div>
@@ -1892,7 +1892,7 @@ class Component extends DCLogic {
     window.removeEventListener('hashchange', this._onHash);
     window.removeEventListener('pageshow', this._onShow);
     clearInterval(this._hero);
-    clearInterval(this._carr);
+    cancelAnimationFrame(this._carrRAF);
     window.removeEventListener('scroll', this._onScroll);
     window.removeEventListener('resize', this._onResize);
     if (this._clock) clearInterval(this._clock);
@@ -1949,27 +1949,44 @@ class Component extends DCLogic {
   // que se mide la imagen real y se escribe en --vr-num. Se cachea por src y
   // se reaplica en cada render, porque el re-render reescribe el style inline
   // del elemento y borraria la variable.
-  // La coleccion se desplaza sola, despacio. Se frena cuatro segundos cada vez
-  // que alguien la toca, para no pelearle el control al visitante.
+  // La coleccion se desplaza sola, despacio.
+  //
+  // Va con requestAnimationFrame y no con setInterval: el navegador recorta
+  // los intervalos cortos con mano dura —medido en vivo, un intervalo de 30ms
+  // se disparaba cinco veces en cuatro segundos— y el riel quedaba practicamente
+  // quieto. rAF va sincronizado con el refresco de pantalla.
+  //
+  // El avance se calcula por tiempo transcurrido, asi que la velocidad es la
+  // misma en una pantalla de 60Hz que en una de 120.
+  //
+  // Solo frena ante una interaccion real: arrastre, toque o rueda. Con el
+  // simple hover no, porque apoyar el cursor para mirar una pieza detenia todo
+  // y parecia que nunca se movia.
   initCarrusel() {
     if (this._carr) return;
-    this._carr = setInterval(() => {
+    this._carr = true;
+    let previo = 0;
+    const paso = (t) => {
+      this._carrRAF = requestAnimationFrame(paso);
       const r = document.querySelector('.vr-rail');
-      if (!r || r.scrollWidth <= r.clientWidth + 4) return;
+      if (!r || r.scrollWidth <= r.clientWidth + 4) { previo = t; return; }
       if (!r._vrListo) {
         r._vrListo = true;
-        ['mouseenter', 'pointerdown', 'touchstart', 'wheel'].forEach((ev) => {
+        ['pointerdown', 'touchstart', 'wheel'].forEach((ev) => {
           r.addEventListener(ev, () => { r._vrPausa = Date.now(); }, { passive: true });
         });
       }
-      if (r._vrPausa && Date.now() - r._vrPausa < 4000) return;
+      const dt = previo ? Math.min(t - previo, 120) : 16;
+      previo = t;
+      if (r._vrPausa && Date.now() - r._vrPausa < 2500) return;
       if (r.scrollLeft + r.clientWidth >= r.scrollWidth - 2) {
         r.scrollTo({ left: 0, behavior: 'smooth' });
-        r._vrPausa = Date.now();                    // respiro antes de volver a arrancar
+        r._vrPausa = Date.now();
       } else {
-        r.scrollLeft += 1;
+        r.scrollLeft += dt * 0.035;          // unos 35px por segundo
       }
-    }, 30);
+    };
+    this._carrRAF = requestAnimationFrame(paso);
   }
   initGalRatio() {
     const media = document.querySelector('.vr-p-media.is-contain');
