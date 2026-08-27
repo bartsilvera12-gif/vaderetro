@@ -388,11 +388,14 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
   }
 }
 
-/* Cruce de fotos del hero. La opacidad va en una capa propia y no sobre el
-   image-slot: ese elemento maneja sus propios atributos y puede pisar la
-   clase. Un segundo entero de cruce, que a medio segundo se sentia un corte. */
-.vr-hero-capa{position:absolute;inset:0;transition:opacity 1s cubic-bezier(.4,0,.2,1)}
-.vr-hero-capa.vr-hero-fade{opacity:0}
+/* Cruce de fotos del hero, con dos capas superpuestas.
+   Antes la foto se desvanecia a transparente y recien despues cambiaba de
+   archivo: eso dejaba ver el fondo azul en el medio, o sea foto -> fondo ->
+   foto. Ahora la que sale queda ENCIMA y se desvanece revelando a la que ya
+   esta debajo, asi que en ningun momento se ve lo que hay detras. */
+.vr-hero-capa{position:absolute;inset:0}
+.vr-capa-sale{opacity:0;transition:opacity 1.15s cubic-bezier(.4,0,.2,1);pointer-events:none}
+.vr-capa-sale.vr-cruzando{opacity:1;transition:none}
 
 /* Flechas de la coleccion */
 /* El riel trae scroll-snap y eso revierte cada empujon de un pixel: el
@@ -1080,7 +1083,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     <div class="vr-hero-grid" style="max-width:1400px;margin:0 auto;padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,72px);align-items:start">
       <div class="vr-hero-a">
         <div style="position:relative;aspect-ratio:4 / 5;border:1px solid rgba(15,35,73,.14);overflow:hidden">
-          <div class="vr-hero-capa {{ heroFadeCls }}"><image-slot id="hero-inset" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot></div>
+          <div class="vr-hero-capa"><image-slot id="hero-inset" shape="rect" src="{{ heroFoto }}" placeholder="foto principal — medalla (cliente)"></image-slot></div>
+          <div class="vr-hero-capa vr-capa-sale {{ heroCruceCls }}"><image-slot id="hero-sale" shape="rect" src="{{ heroPrevFoto }}" placeholder=" "></image-slot></div>
           <div style="position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%22220%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/><feColorMatrix type=%22saturate%22 values=%220%22/></filter><rect width=%22220%22 height=%22220%22 filter=%22url(%23n)%22/></svg>');background-size:220px 220px"></div>
           <!-- Portada de teléfono: el titular va montado sobre la foto. Sale de las
                mismas variables que la sección de bienvenida, que en mobile se oculta,
@@ -1838,7 +1842,7 @@ class Component extends DCLogic {
     this.state = {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false, galSrc: null,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
-      scrolled: false, openFaq: -1, err: '', pagando: false, heroIdx: 0, heroFade: false,
+      scrolled: false, openFaq: -1, err: '', pagando: false, heroIdx: 0, heroPrev: 0, heroCruce: false,
       fCats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
@@ -1858,10 +1862,18 @@ class Component extends DCLogic {
     Component.HERO.forEach((u) => { const i = new Image(); i.src = u; });
     this._hero = setInterval(() => {
       if (this.state.route !== 'home' || Component.HERO.length < 2) return;
-      this.setState({ heroFade: true });
-      setTimeout(() => this.setState({
-        heroIdx: (this.state.heroIdx + 1) % Component.HERO.length, heroFade: false
-      }), 1000);
+      // La capa de arriba toma la foto que se va, sin transicion, y la de abajo
+      // ya muestra la nueva. Recien en el cuadro siguiente se le suelta la
+      // opacidad, para que el navegador tenga algo desde donde animar.
+      this.setState({
+        heroPrev: this.state.heroIdx,
+        heroIdx: (this.state.heroIdx + 1) % Component.HERO.length,
+        heroCruce: true
+      }, () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          this.setState({ heroCruce: false });
+        }));
+      });
     }, 6500);
 
     this.initCarrusel();
@@ -2251,7 +2263,8 @@ class Component extends DCLogic {
       errMsg: S.err, hasErr: !!S.err,
       botonPagar: S.pagando ? T.pagando : T.confirmar_pedido,
       heroFoto: Component.HERO[S.heroIdx % Component.HERO.length],
-      heroFadeCls: S.heroFade ? 'vr-hero-fade' : '',
+      heroPrevFoto: Component.HERO[S.heroPrev % Component.HERO.length],
+      heroCruceCls: S.heroCruce ? 'vr-cruzando' : '',
       carrIzq: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: -340, behavior: 'smooth' }); } },
       carrDer: () => { const r = document.querySelector('.vr-rail'); if (r) { r._vrPausa = Date.now(); r.scrollBy({ left: 340, behavior: 'smooth' }); } },
       submitOrder: () => this.submitOrder(),
@@ -2270,12 +2283,15 @@ Component.TICKET_PALETTE = [
 ];
 // Fotos que rota el hero. Se precargan al arrancar para que el cambio no
 // muestre un hueco mientras baja la siguiente.
+// Encuadres propios para el hero, centrados en la medalla. Las fotos de
+// producto son verticales y el hueco del hero es casi cuadrado: al recortarlas
+// solas se veia el cordon arriba y la medalla quedaba abajo del todo.
 Component.HERO = [
   'assets/hero-medalla.webp',
-  'assets/cristal-1.webp',
-  'assets/cordon-1.webp',
-  'assets/laminada-1.webp',
-  'assets/giratorio-1.webp'
+  'assets/hero-2.webp',
+  'assets/hero-3.webp',
+  'assets/hero-4.webp',
+  'assets/hero-5.webp'
 ];
 
 Component.DATA = [
