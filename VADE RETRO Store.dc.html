@@ -188,13 +188,23 @@ main[data-screen-label="Nuestra historia"] > section:first-of-type > div[style*=
 }
 
 /* ==========================================================================
-   BARRA SUPERIOR: fuera la fecha y la linea de utilidades
-   El bloque del medio llevaba "MEDALLAS DE SAN BENITO · USD" y la fecha del
-   dia. Ninguna de las dos ayuda a comprar, y la fecha ademas envejecia la
-   barra sin motivo. La barra queda con marca a la izquierda y controles a la
-   derecha.
+   BARRA SUPERIOR: el bloque del medio
+   Llevaba "MEDALLAS DE SAN BENITO · USD" y la fecha del dia. Ninguna de las
+   dos ayudaba a comprar, asi que el hueco quedo vacio y ahora lo ocupa el
+   lema. Los :not() de abajo apuntan a ese residuo: si alguna vez vuelve a
+   aparecer un hijo del medio sin la clase, se sigue ocultando.
    ========================================================================== */
-.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right){display:none!important}
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right):not(.vr-hd-mid){display:none!important}
+
+/* El lema va por alto, no por ancho: la barra mide 132px y la marca de la
+   izquierda ocupa 90 de esos. Con 52px el lema respira y no compite con el
+   logo. El max-width lo achica solo cuando la ventana no da para tanto, en
+   vez de empujar el carrito fuera de la pantalla. La imagen viene con fondo
+   transparente, asi que apoya sobre la crema de la barra sin recuadro. */
+.vr-hd-mid{pointer-events:none}
+.vr-hd-lema{max-height:52px;width:auto;max-width:100%;object-fit:contain}
+@media (max-width:1180px){ .vr-hd-lema{max-height:40px} }
+@media (max-width:759.98px){ .vr-hd-mid{display:none!important} }
 
 /* ==========================================================================
    MENU: panel izquierdo mas angosto
@@ -513,8 +523,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 .vr-hd{background:#F9F0ED!important;border-bottom:1px solid rgba(15,35,73,.10)}
 .vr-hd-brand{background:none!important}
 /* bloque de utilidades: es el hijo del medio, entre la marca y los controles */
-.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right){color:#0F2349!important}
-.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right) > span:last-child{
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right):not(.vr-hd-mid){color:#0F2349!important}
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right):not(.vr-hd-mid) > span:last-child{
   color:rgba(15,35,73,.62)!important}
 /* idioma: inactivo y separador en dorado, activo en azul. Las dos formas del
    valor porque el framework reserializa los estilos inline via CSSOM y los
@@ -540,7 +550,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
    los dos idiomas y nada se mueve. La fecha usa cifras de ancho fijo por el
    mismo motivo. */
 .vr-hd-cart{min-width:180px;justify-content:center}
-.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right) > span:last-child{
+.vr-hd-bar > div:not(.vr-hd-brand):not(.vr-hd-right):not(.vr-hd-mid) > span:last-child{
   font-variant-numeric:tabular-nums}
 
 /* ==========================================================================
@@ -1001,9 +1011,8 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <a class="vr-hd-logo" href="#/" onClick="{{ goHome }}" style="display:flex;align-items:center"><img src="assets/logo.png?v=2" alt="VADE RETRO" style="width:186px;height:auto;display:block"></a>
     </div>
     <sc-if value="{{ notMobile }}" hint-placeholder-val="{{ true }}">
-      <div style="flex:1 1 0%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2.5vw,40px);padding:0 clamp(14px,2.5vw,36px);font-size:12px;font-weight:600;letter-spacing:.1em;color:#F9F0ED;text-transform:uppercase;white-space:nowrap">
-        <span style="overflow:hidden">{{ t.util_left }}</span>
-        <sc-if value="{{ showClockDate }}" hint-placeholder-val="{{ true }}"><span style="text-transform:none;letter-spacing:.03em;font-weight:500;color:rgba(249,240,237,.7);flex-shrink:0">{{ clockDate }}</span></sc-if>
+      <div class="vr-hd-mid" style="flex:1 1 0%;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0 clamp(14px,2.5vw,36px)">
+        <img class="vr-hd-lema" src="assets/lema-demonios.webp" alt="Protegiendo a tu familia y tu hogar contra demonios" style="max-width:100%;height:auto;display:block">
       </div>
     </sc-if>
     <div class="vr-hd-right" style="margin-left:auto;display:flex;align-items:center;gap:18px;flex-shrink:0;padding:0 clamp(20px,2.5vw,36px)">
