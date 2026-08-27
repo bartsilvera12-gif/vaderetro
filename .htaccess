@@ -1,0 +1,22 @@
+# ============================================================================
+# VADE RETRO — que el navegador no sirva una pagina vieja
+#
+# El servidor no manda ninguna instruccion de cache para el HTML. Sin
+# instruccion, cada navegador inventa la suya a partir de la fecha del archivo,
+# y Chrome puede quedarse mostrando la version anterior un buen rato despues de
+# subir una nueva. Paso de verdad: la pagina de la tienda estaba actualizada en
+# el servidor y el navegador seguia dibujando la de antes.
+#
+# "no-cache" NO quiere decir "no guardes". Quiere decir "guardala, pero
+# preguntame antes de usarla". Si no cambio nada el servidor contesta 304 y no
+# se vuelve a bajar: sigue siendo rapido, pero nunca desactualizado.
+#
+# Las fotos y los .js no se tocan: esos si conviene que queden cacheados, y
+# cuando hay que forzar uno se le cambia la ruta (assets/logo.png?v=2).
+# ============================================================================
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>

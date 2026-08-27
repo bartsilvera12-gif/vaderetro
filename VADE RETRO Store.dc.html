@@ -407,7 +407,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 /* La foto del hero va como <img> plano y no como slot editable: el slot centra
    el recorte siempre y no deja decir en que punto de la foto hay que fijarse.
    object-position si, y es por foto (ver Component.HERO). */
-.vr-hero-img{position:absolute;inset:0;width:100%;height:100%;
+.vr-hero-img{position:absolute;left:0;top:0;width:100%;height:100%;
   object-fit:cover;display:block;background:#F9F0ED}
 .vr-capa-sale{opacity:0;transition:opacity 1.15s cubic-bezier(.4,0,.2,1);pointer-events:none}
 .vr-capa-sale.vr-cruzando{opacity:1;transition:none}
@@ -2025,21 +2025,40 @@ class Component extends DCLogic {
     if (!marco) return;
     const fw = marco.clientWidth, fh = marco.clientHeight;
     if (!fw || !fh) return;
-    const pin = (v) => Math.max(0, Math.min(1, v));
     const reglas = Component.HERO.map((foto) => {
       // Si la imagen ya cargo, mandan sus medidas reales por sobre la tabla.
       const viva = document.querySelector('.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]');
       const iw = (viva && viva.naturalWidth) || foto.w;
       const ih = (viva && viva.naturalHeight) || foto.h;
       if (!iw || !ih) return '';
-      const k = Math.max(fw / iw, fh / ih);
-      const w = iw * k, h = ih * k;
-      // Si en un eje no sobra nada, la foto entra justa y no hay nada que
-      // correr: cualquier valor da lo mismo, se deja centrado.
-      const px = w - fw > 0.5 ? pin((foto.foco[0] * w - fw / 2) / (w - fw)) : 0.5;
-      const py = h - fh > 0.5 ? pin((foto.foco[1] * h - fh / 2) / (h - fh)) : 0.5;
-      return '.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]{object-position:'
-           + (px * 100).toFixed(1) + '% ' + (py * 100).toFixed(1) + '%}';
+      const fx = foto.foco[0], fy = foto.foco[1];
+
+      // 1. Cuanto tiene que medir la foto. Con solo taparlo (cover) un eje queda
+      //    justo, sin sobra, y sin sobra no hay nada que correr: la medalla se
+      //    queda donde cayo. Para llevar algo que esta al X% hasta el medio, la
+      //    foto tiene que medir como minimo hueco / (2 * lo que le queda al
+      //    borde mas cerca). Una medalla al 44% pide 1,14 veces el hueco; una
+      //    al 50% no pide nada.
+      const kc = Math.max(fw / iw, fh / ih);
+      const pide = (f) => 1 / (2 * Math.min(f, 1 - f));
+      const z = Math.min(Component.HERO_ZOOM,
+                Math.max(1, fw * pide(fx) / (iw * kc), fh * pide(fy) / (ih * kc)));
+      const w = iw * kc * z, h = ih * kc * z;
+
+      // 2. Donde arranca. Se corre para que el foco caiga en el medio, sin
+      //    despegarse de los bordes: la foto nunca puede dejar ver el fondo.
+      const pin = (v, min, max) => Math.max(min, Math.min(max, v));
+      const l = pin(fw / 2 - fx * w, fw - w, 0);
+      const t = pin(fh / 2 - fy * h, fh - h, 0);
+
+      // 3. El zoom lento del scroll crece desde el centro del HUECO, no desde el
+      //    centro de la foto: son distintos ahora que la foto es mas grande y va
+      //    corrida, y creciendo desde su propio centro la medalla se iria de a
+      //    poco para un costado.
+      return '.vr-hero-img[src$="' + foto.src.split('/').pop() + '"]{'
+           + 'width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;'
+           + 'left:' + l.toFixed(1) + 'px;top:' + t.toFixed(1) + 'px;'
+           + 'transform-origin:' + (fw / 2 - l).toFixed(1) + 'px ' + (fh / 2 - t).toFixed(1) + 'px}';
     }).join('\n');
     let hoja = document.getElementById('vr-foco');
     if (!hoja) {
@@ -2402,12 +2421,21 @@ Component.TICKET_PALETTE = [
 // `w`/`h` son las medidas reales del archivo. Si se cambia una foto por otra de
 // otro tamano hay que corregirlas, aunque el codigo igual se defiende leyendo
 // naturalWidth cuando la imagen ya cargo.
+// Medidos sobre cada foto ampliada a 800px con una grilla cada 5%, tomando el
+// borde exterior de la medalla. La primera vez los saque de una tira de
+// miniaturas y salieron todos corridos; a ese tamano no se ve donde termina la
+// pieza y donde empieza el fondo.
+// Hasta cuanto se puede acercar una foto para poder centrarle la medalla. Es
+// un tope de seguridad: acercar es agrandar, y agrandar de mas se ve blando.
+// Con los focos de abajo el maximo que se usa es 1,44 (hero-2).
+Component.HERO_ZOOM = 1.6;
+
 Component.HERO = [
-  { src: 'assets/hero-medalla.webp', w: 923,  h: 900,  foco: [0.36, 0.57] },  // medalla grande, corrida a la izquierda
-  { src: 'assets/hero-2.webp',       w: 1100, h: 1100, foco: [0.47, 0.60] },  // el mono ocupa el tercio de arriba
-  { src: 'assets/hero-3.webp',       w: 1100, h: 1100, foco: [0.49, 0.57] },
-  { src: 'assets/hero-4.webp',       w: 1100, h: 1100, foco: [0.51, 0.42] },  // el camafeo es la pieza; la borla queda abajo
-  { src: 'assets/hero-5.webp',       w: 1100, h: 1100, foco: [0.55, 0.45] }   // dos medallas: manda la de arriba, que es la grande
+  { src: 'assets/hero-medalla.webp', w: 923,  h: 900,  foco: [0.440, 0.63] },
+  { src: 'assets/hero-2.webp',       w: 1100, h: 1100, foco: [0.494, 0.74] },  // cuelga bajo: el mono se lleva la mitad de arriba
+  { src: 'assets/hero-3.webp',       w: 1100, h: 1100, foco: [0.500, 0.60] },
+  { src: 'assets/hero-4.webp',       w: 1100, h: 1100, foco: [0.470, 0.42] },  // el camafeo es la pieza; la borla queda abajo
+  { src: 'assets/hero-5.webp',       w: 1100, h: 1100, foco: [0.525, 0.31] }   // la de arriba, que es la grande de las dos
 ];
 
 Component.DATA = [
