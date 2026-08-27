@@ -745,7 +745,13 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     width:62px!important;height:62px!important}
   :root{
     /* alto real de la barra fija, con el notch sumado */
-    --vr-hd-h:calc(58px + env(safe-area-inset-top,0px));
+    /* 70 y no 58: el logotipo mide 2,07 de ancho por 1 de alto, asi que a
+       118px de ancho ocupaba 57 de alto y la barra tenia 58. Quedaba medio
+       pixel arriba y medio abajo, o sea pegado al borde de la pantalla.
+       Con 70 de barra y 104 de logotipo (50 de alto) quedan 10 arriba y 10
+       abajo. Todo lo demas del telefono se mide contra esta variable, asi
+       que baja solo. */
+    --vr-hd-h:calc(70px + env(safe-area-inset-top,0px));
   }
   html{-webkit-text-size-adjust:100%}
   body{overflow-x:hidden}
@@ -767,7 +773,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
     padding-top:env(safe-area-inset-top,0px)}
   .vr-hd-brand{position:static!important;flex:1 1 auto!important;justify-content:center!important;
     background:none!important;padding:0!important;gap:0!important;min-width:0}
-  .vr-hd-logo img{width:118px!important}
+  .vr-hd-logo img{width:104px!important}
   .vr-hd-burger{position:absolute;left:12px;top:50%;margin-top:calc(env(safe-area-inset-top,0px) / 2);
     transform:translateY(-50%);padding:9px 7px!important;gap:5px!important;z-index:2}
   .vr-hd-burger span{width:21px!important}
