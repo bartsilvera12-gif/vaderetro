@@ -74,3 +74,16 @@ insert into vaderetro.productos (slug, orden, activo, precio, envio, datos) valu
   ('decenario-madera', 60, true, 25.00, 11.00, '{"img":"assets/decenario-1.webp","fit":"contain","ratioNum":"0.667","cardImg":"assets/decenario-card.webp","imgs":["assets/decenario-1.webp","assets/decenario-2.webp","assets/decenario-3.webp","assets/decenario-4.webp"],"oldPrice":null,"cat":"puerta","badgeTxt":null,"name":{"es":"Bendición de San Benito · Decenario en madera","en":"Saint Benedict Blessing · Wooden decade"},"desc":{"es":"Decenario con cuentas de madera y medalla en metal.","en":"Wooden-bead decade with a metal medal."},"descLong":{"es":"Bendición de San Benito en formato decenario, con cuentas de madera y medalla en metal. Se ajusta de dos maneras en la entrada: colgando a lo largo de la manija, o en redondo alrededor de ella.","en":"Saint Benedict blessing in decade format, with wooden beads and a metal medal. It fits the entrance two ways: hanging long from the handle, or wrapped round it."},"colors":[],"specs":{"es":["Decenario con cuentas en madera.","Medalla en metal.","Dos modos de ajuste: largo o redondo.","Medidas: 14 pulgadas de largo · medalla 1 3/4 pulgadas de ancho."],"en":["Decade with wooden beads.","Metal medal.","Two ways to fit it: long or round.","Dimensions: 14 inches long · medal 1 3/4 inches wide."]}}'::jsonb),
   ('cordon-largo', 70, true, 30.00, 11.00, '{"img":"assets/cordon-1.webp","fit":"contain","ratioNum":"0.523","cardImg":"assets/cordon-card.webp","imgs":["assets/cordon-1.webp","assets/cordon-2.webp","assets/cordon-3.webp","assets/cordon-4.webp"],"oldPrice":null,"cat":"puerta","badgeTxt":null,"name":{"es":"Bendición de San Benito · Cordón largo","en":"Saint Benedict Blessing · Long cord"},"desc":{"es":"Medalla en metal sobre cordón con cuentas.","en":"Metal medal on a beaded cord."},"descLong":{"es":"Bendición de San Benito para colgar de la manija de la entrada, con la medalla en metal sobre cordón con cuentas. Es la pieza más larga del catálogo, pensada para puertas altas donde se ve de cuerpo entero.","en":"Saint Benedict blessing to hang from the handle of the entrance door, with a metal medal on a beaded cord. It is the longest piece in the catalogue, made for tall doors where it is seen full length."},"colors":[],"specs":{"es":["Medalla en metal.","Medidas: 20 pulgadas de largo · 3 1/2 pulgadas de ancho de la medalla."],"en":["Metal medal.","Dimensions: 20 inches long · 3 1/2 inches wide at the medal."]}}'::jsonb)
 on conflict (slug) do nothing;
+
+-- ----------------------------------------------------------------------------
+-- Avisarle a la API que hay una tabla nueva.
+--
+-- PostgREST —lo que atiende /rest/v1— no mira la base en cada pedido: se guarda
+-- un mapa de las tablas al arrancar. Una tabla recién creada no está en ese
+-- mapa, así que responde "Could not find the table ... in the schema cache",
+-- que es la misma frase que usa cuando la tabla de verdad no existe.
+--
+-- En el Supabase de la nube esto se dispara solo. En uno propio, como el de
+-- api.neura.com.py, hay que pedirlo. Es instantáneo y no interrumpe nada.
+-- ----------------------------------------------------------------------------
+notify pgrst, 'reload schema';

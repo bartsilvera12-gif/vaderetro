@@ -450,8 +450,19 @@ async function cargarProductos() {
     productos = await sb('productos?select=*&order=orden.asc');
     pintarProductos();
   } catch (e) {
+    // "no encuentro la tabla en el schema cache" sale igual si la tabla no
+    // existe y si existe pero PostgREST todavia no la vio. Las dos salidas van
+    // juntas porque desde aca no se puede distinguir cual de las dos es.
+    const cache = /schema cache|does not exist|no existe/i.test(e.message || '');
     $('lista-p').innerHTML = '<div class="aviso">' + esc(e.message) +
-      '<br><br>Si dice que no existe la tabla, falta correr <strong>PRODUCTOS.sql</strong> en Supabase.</div>';
+      (cache
+        ? '<br><br>Eso quiere decir una de dos:<br><br>' +
+          '1. Falta correr <strong>PRODUCTOS.sql</strong> en Supabase.<br>' +
+          '2. Ya lo corriste, pero la API todavía no vio la tabla nueva. ' +
+          'Corré esta sola línea en el SQL Editor:<br>' +
+          '<code style="display:inline-block;margin-top:6px;background:rgba(15,35,73,.07);padding:5px 9px">' +
+          "notify pgrst, 'reload schema';</code>"
+        : '') + '</div>';
   }
 }
 
