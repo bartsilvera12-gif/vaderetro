@@ -20,7 +20,17 @@
 if (!defined('VADE')) define('VADE', 1);
 require_once __DIR__ . '/config.php';
 
-const VADE_CACHE_CATALOGO = __DIR__ . '/catalogo-cache.json';
+// La copia va en un .php y no en un .json, y arranca con una linea que corta
+// la ejecucion. Asi, si alguien pide el archivo por su direccion, el servidor
+// lo interpreta, se topa con el exit y devuelve una pagina vacia en vez del
+// contenido. Con .json quedaba a la vista de cualquiera que adivinara el
+// nombre. No hay nada secreto ahi —son los mismos precios de la vitrina— pero
+// es un archivo interno y no tiene por que servirse.
+//
+// La otra salida era bloquearlo por .htaccess. Esta no depende de que el
+// servidor este configurado de una manera concreta.
+const VADE_CACHE_CATALOGO = __DIR__ . '/catalogo-cache.php';
+const VADE_CACHE_TAPA     = "<?php http_response_code(404); exit; ?>\n";
 
 /**
  * Trae las piezas activas. Devuelve null si la base no contesta — null es
@@ -68,7 +78,13 @@ function vade_catalogo_de_la_base() {
 /** La última copia buena que se guardó en disco, o null si no hay. */
 function vade_catalogo_de_cache() {
   if (!is_readable(VADE_CACHE_CATALOGO)) return null;
-  $j = json_decode((string) file_get_contents(VADE_CACHE_CATALOGO), true);
+  $crudo = (string) file_get_contents(VADE_CACHE_CATALOGO);
+  // Sacar la tapa antes de leer el JSON.
+  if (strpos($crudo, '<?php') === 0) {
+    $corte = strpos($crudo, "\n");
+    $crudo = $corte === false ? '' : substr($crudo, $corte + 1);
+  }
+  $j = json_decode($crudo, true);
   return is_array($j) && $j ? $j : null;
 }
 
@@ -80,7 +96,8 @@ function vade_catalogo_de_cache() {
 function vade_catalogo() {
   $vivo = vade_catalogo_de_la_base();
   if ($vivo !== null && count($vivo)) {
-    @file_put_contents(VADE_CACHE_CATALOGO, json_encode($vivo, JSON_UNESCAPED_UNICODE), LOCK_EX);
+    @file_put_contents(VADE_CACHE_CATALOGO,
+      VADE_CACHE_TAPA . json_encode($vivo, JSON_UNESCAPED_UNICODE), LOCK_EX);
     return ['origen' => 'base', 'items' => $vivo];
   }
   $copia = vade_catalogo_de_cache();
