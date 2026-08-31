@@ -59,9 +59,10 @@ if ($http < 200 || $http >= 300) {
 $sq = json_decode((string) $r, true);
 
 // --- 2. quién pagó y quién no ----------------------------------------------
-$pagados = [];
-$caidos  = [];
-$detalle = [];
+$pagados   = [];
+$caidos    = [];
+$devueltos = [];
+$detalle   = [];
 foreach (($sq['orders'] ?? []) as $o) {
   $ref = $o['reference_id'] ?? '';
   if (!preg_match('/^VADE-(\d{6})$/', $ref, $m)) continue;   // los de respaldo no se tocan
@@ -84,24 +85,54 @@ foreach (($sq['orders'] ?? []) as $o) {
     if (isset($cd['card']['card_brand'])) $motivos[] = 'tarjeta: ' . $cd['card']['card_brand'];
     if ($st === 'CAPTURED') $cobrado += $t['amount_money']['amount'] ?? 0;
   }
+  // --- plata que volvio ------------------------------------------------------
+  // Una devolucion NO borra el cobro: el tender sigue diciendo CAPTURED para
+  // siempre, porque esa captura ocurrio de verdad. Mirando solo los tenders,
+  // un pedido devuelto se veia igual que uno cobrado, y el panel lo dejaba en
+  // "pagado" — o sea que la vendedora podia despachar mercaderia por la que ya
+  // no tiene la plata. Eso es lo que arregla este bloque.
+  //
+  // Se leen las dos vias que informa Square porque no siempre viene la misma:
+  // la lista de devoluciones, y el total devuelto de la orden. Se toma la
+  // mayor, que es la lectura prudente: ante la duda, menos cobrado.
+  $devuelto = 0;
+  foreach (($o['refunds'] ?? []) as $r) {
+    $ed = strtoupper($r['status'] ?? '');
+    if ($ed === 'REJECTED' || $ed === 'FAILED') continue;   // no salio plata
+    $devuelto += $r['amount_money']['amount'] ?? 0;
+    $motivos[] = 'devolucion ' . number_format(($r['amount_money']['amount'] ?? 0) / 100, 2)
+               . ($ed ? ' (' . $ed . ')' : '');
+  }
+  $porOrden = $o['return_amounts']['total_money']['amount'] ?? 0;
+  if ($porOrden > $devuelto) {
+    if (!$devuelto) $motivos[] = 'devolucion ' . number_format($porOrden / 100, 2);
+    $devuelto = $porOrden;
+  }
+
   $total = $o['total_money']['amount'] ?? 0;
-  $ok = ($cobrado > 0 && $cobrado >= $total);
+  $neto  = $cobrado - $devuelto;
+  $ok    = ($neto > 0 && $neto >= $total);
   if ($ok) $pagados[] = $id; else $caidos[] = $id;
+  // Un pedido devuelto no es lo mismo que uno que nunca se pago: hay que poder
+  // distinguirlos de un vistazo, sobre todo si ya se habia despachado.
+  if ($devuelto > 0) $devueltos[] = $id;
   $detalle[] = [
-    'ref'     => $ref,
-    'orden'   => $o['state'] ?? null,
-    'total'   => number_format($total / 100, 2),
-    'cobros'  => $estados ?: ['(ninguno)'],
-    'motivo'  => $motivos ?: ['-'],
-    'pagado'  => $ok,
+    'ref'       => $ref,
+    'orden'     => $o['state'] ?? null,
+    'total'     => number_format($total / 100, 2),
+    'cobrado'   => number_format($cobrado / 100, 2),
+    'devuelto'  => number_format($devuelto / 100, 2),
+    'cobros'    => $estados ?: ['(ninguno)'],
+    'motivo'    => $motivos ?: ['-'],
+    'pagado'    => $ok,
   ];
 }
 
 // --- 3. actualizar la base --------------------------------------------------
-function patch($ids, $estado) {
+function patch($ids, $estado, $respetarDespachado = true) {
   if (!$ids) return 0;
   $url = rtrim(SUPABASE_URL, '/') . '/rest/v1/pedidos?id=in.(' . implode(',', $ids) . ')'
-       . '&estado=neq.despachado';   // lo ya despachado no se pisa
+       . ($respetarDespachado ? '&estado=neq.despachado' : '');   // lo ya despachado no se pisa
   $ch = curl_init($url);
   curl_setopt_array($ch, [
     CURLOPT_CUSTOMREQUEST  => 'PATCH',
@@ -122,17 +153,24 @@ function patch($ids, $estado) {
   return is_array($j) ? count($j) : 0;
 }
 
-$n1 = patch($pagados, 'pagado');
-$n2 = patch($caidos,  'sin pagar');
+// Los devueltos se marcan al final y SIN respetar "despachado": justamente el
+// caso peligroso es el que ya se despacho y despues le devolvieron la plata.
+// Ese tiene que saltar a la vista, no quedarse escondido como despachado.
+$sinDevueltos = array_values(array_diff($pagados, $devueltos));
+$caidosLimpio = array_values(array_diff($caidos,  $devueltos));
+$n1 = patch($sinDevueltos, 'pagado');
+$n2 = patch($caidosLimpio, 'sin pagar');
+$n3 = patch($devueltos,    'devuelto', false);
 
 // La version permite comprobar desde afuera que subio el archivo correcto.
 // Sin esto no habia forma de distinguir una version vieja de una nueva cuando
 // los numeros que devuelven coinciden por casualidad.
 fin(200, [
   'ok'           => true,
-  'version'      => 'v4-motivos',
+  'version'      => 'v5-devoluciones',
   'detalle'      => $detalle,
-  'pagados'      => count($pagados),
-  'sin_pagar'    => count($caidos),
-  'actualizados' => $n1 + $n2,
+  'pagados'      => count($sinDevueltos),
+  'sin_pagar'    => count($caidosLimpio),
+  'devueltos'    => count($devueltos),
+  'actualizados' => $n1 + $n2 + $n3,
 ]);
