@@ -88,10 +88,6 @@ main{max-width:1100px;margin:0 auto;padding:24px}
 .e-despachado{background:rgba(138,154,123,.2);color:#5a6b4d}
 .e-pagado{background:rgba(15,35,73,.12);color:#0F2349}
 .e-sinpagar{background:rgba(28,28,36,.08);color:rgba(28,28,36,.45)}
-/* Devuelto va en rojo y no en gris: no es "todavia no pago", es "pago y le
-   volvio la plata". Si ya se despacho, es una perdida y tiene que gritar. */
-.e-devuelto{background:rgba(138,43,30,.14);color:#8a2b1e}
-.pedido.devuelto{border-left-color:#8a2b1e!important;opacity:1!important}
 .pedido.sinpagar{border-left-color:rgba(28,28,36,.2);opacity:.6}
 /* Resumen */
 .resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -347,8 +343,6 @@ function pintar() {
   const q = $('buscar').value.trim().toLowerCase();
 
   // Resumen: solo cuenta lo cobrado. Un pedido sin pagar no es una venta.
-  // "devuelto" queda afuera a proposito: si se devolvio la plata no fue una
-  // venta, y sumarla al total daria una facturacion que no existe.
   const cobrados = pedidos.filter((p) => p.estado === 'pagado' || p.estado === 'despachado');
   const facturado = cobrados.reduce((a, p) => a + parseFloat(p.total || 0), 0);
   const porDespachar = pedidos.filter((p) => p.estado === 'pagado').length;
@@ -362,12 +356,11 @@ function pintar() {
     todos: pedidos.length,
     pagado: pedidos.filter((p) => p.estado === 'pagado').length,
     despachado: pedidos.filter((p) => p.estado === 'despachado').length,
-    'sin pagar': pedidos.filter((p) => p.estado === 'sin pagar').length,
-    devuelto: pedidos.filter((p) => p.estado === 'devuelto').length
+    'sin pagar': pedidos.filter((p) => p.estado === 'sin pagar').length
   };
   $('filtros').innerHTML = [
     ['todos', 'Todos'], ['pagado', 'Por despachar'],
-    ['despachado', 'Despachados'], ['sin pagar', 'Sin pagar'], ['devuelto', 'Devueltos']
+    ['despachado', 'Despachados'], ['sin pagar', 'Sin pagar']
   ].map(([k, t]) => '<button class="chip' + (filtro === k ? ' on' : '') +
       '" data-f="' + k + '">' + t + ' · ' + (cuentas[k] || 0) + '</button>').join('');
   $('filtros').querySelectorAll('button[data-f]').forEach((b) => {
@@ -396,15 +389,14 @@ function pintar() {
     const c = p.cliente || {};
     const desp   = p.estado === 'despachado';
     const impago = p.estado === 'sin pagar';
-    const devu   = p.estado === 'devuelto';
-    const clase  = devu ? 'e-devuelto' : (desp ? 'e-despachado' : (impago ? 'e-sinpagar' : (p.estado === 'pagado' ? 'e-pagado' : 'e-pendiente')));
+    const clase  = desp ? 'e-despachado' : (impago ? 'e-sinpagar' : (p.estado === 'pagado' ? 'e-pagado' : 'e-pendiente'));
     const dir = [c.direccion, c.ciudad, [c.estado, c.zip].filter(Boolean).join(' ')]
       .filter(Boolean).map(esc).join(', ');
     const items = (p.items || []).map((i) => {
       const precio = i.base_price_money ? (i.base_price_money.amount / 100).toFixed(2) : '?';
       return '<li>' + esc(i.quantity) + ' × ' + esc(i.name) + ' — $' + precio + '</li>';
     }).join('');
-    return '<div class="pedido' + (desp ? ' despachado' : '') + (impago ? ' sinpagar' : '') + (devu ? ' devuelto' : '') + '">' +
+    return '<div class="pedido' + (desp ? ' despachado' : '') + (impago ? ' sinpagar' : '') + '">' +
       '<div class="fila1">' +
         '<div><div class="num">' + num(p) + '</div>' +
         '<div class="fecha">' + esc(new Date(p.creado).toLocaleString('es')) + '</div></div>' +
