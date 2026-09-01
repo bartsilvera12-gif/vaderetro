@@ -48,10 +48,17 @@ if ($vivo['origen'] !== 'nada') {
   $tabla = [];
   foreach ($vivo['items'] as $it) {
     if (empty($it['slug'])) continue;
+    // Los colores, en el mismo orden que los muestra la vitrina: el navegador
+    // manda el indice, asi que el orden es lo que los identifica.
+    $colores = [];
+    foreach ((array) ($it['colors'] ?? []) as $c) {
+      $colores[] = (string) ($c['name']['es'] ?? '');
+    }
     $tabla[$it['slug']] = [
       // El nombre que va a la factura de Square sale en espanol: lo lee la
       // vendedora, no el comprador.
       'n' => (string) ($it['name']['es'] ?? $it['slug']),
+      'c' => $colores,
       // A centavos con round() y no con (int): (int)(0.29*100) da 28 en coma
       // flotante, y ese centavo perdido aparece en la factura.
       'p' => (int) round(((float) ($it['price'] ?? 0)) * 100),
@@ -68,15 +75,28 @@ $body = json_decode(file_get_contents('php://input'), true);
 if (!is_array($body) || empty($body['items'])) salir(400, ['ok' => false, 'error' => 'Pedido vacío.']);
 
 // --- armar las líneas con los precios de acá, no los del navegador ---------
+// Los colores viajan en la clave, como "slug::0". El precio NO depende del
+// color, asi que para cobrar se usa siempre la parte de antes de los dos
+// puntos. El color solo se agrega al nombre, para que la vendedora sepa cual
+// de las variantes tiene que armar y mandar. Si el indice no existe en el
+// catalogo se ignora en silencio: mejor un pedido sin color aclarado que un
+// pedido rechazado.
 $lineas = [];
 $envio  = 0;
-foreach ($body['items'] as $slug => $cant) {
+foreach ($body['items'] as $clave => $cant) {
+  $partes = explode('::', (string) $clave, 2);
+  $slug   = $partes[0];
+  // ctype_digit y no (int): (int)'a' da 0, y eso etiquetaria la pieza con el
+  // primer color por una clave con basura. Solo digitos cuentan como color.
+  $iColor = isset($partes[1]) && ctype_digit($partes[1]) ? (int) $partes[1] : -1;
   if (!isset($CATALOGO[$slug])) continue;               // slug desconocido: se ignora
   $cant = (int) $cant;
   if ($cant < 1 || $cant > 20) continue;                // cantidad fuera de rango
   $art = $CATALOGO[$slug];
+  $nombre = $art['n'];
+  if ($iColor >= 0 && !empty($art['c'][$iColor])) $nombre .= ' · ' . $art['c'][$iColor];
   $lineas[] = [
-    'name'             => $art['n'],
+    'name'             => $nombre,
     'quantity'         => (string) $cant,
     'base_price_money' => ['amount' => $art['p'], 'currency' => 'USD'],
   ];

@@ -438,8 +438,29 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
 
 .vr-p-colors-h{font-size:11px;font-weight:700;letter-spacing:.2em;color:#0F2349;margin:0 0 12px}
 .vr-p-colors{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 26px}
+/* Los colores son botones, no etiquetas. Antes eran un <span> y parecian
+   elegibles sin serlo: la gente los tocaba y no pasaba nada. */
 .vr-p-color{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(15,35,73,.18);
-  padding:8px 14px 8px 10px;font-size:12.5px;color:#4a4a52}
+  padding:8px 14px 8px 10px;font-size:12.5px;color:#4a4a52;background:none;
+  font-family:inherit;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+.vr-p-color:hover{border-color:rgba(207,157,89,.75)}
+/* El elegido se marca por borde, fondo y peso, no solo por color: un solo
+   indicio no se ve en una pantalla al sol ni para quien no distingue matices. */
+.vr-p-color.is-sel{border-color:#0F2349;background:rgba(15,35,73,.06);
+  color:#0F2349;font-weight:700}
+.vr-p-color.is-sel .vr-p-color-dot{box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),0 0 0 2px #0F2349}
+/* Renglon propio: en linea se pegaba al final del nombre y se leia como parte
+   del titulo. flex con ancho ajustado lo baja sin estirar la caja. */
+/* En telefono se tocan con el pulgar: 33px de alto es poco y se falla el
+   toque. 44 es la medida que recomiendan Apple y Google. Va DESPUES de la
+   regla de arriba a proposito: tienen la misma especificidad, asi que lo
+   unico que decide es el orden. Puesta antes, no hacia nada. */
+@media (max-width:759.98px){
+  .vr-p-color{padding:13px 16px 13px 12px;font-size:13.5px}
+}
+.vr-cart-color{display:flex;width:fit-content;align-items:center;gap:8px;
+  margin-top:10px;font-size:12px;color:#4a4a52;
+  border:1px solid rgba(15,35,73,.16);padding:5px 11px 5px 8px}
 .vr-p-color-dot{width:15px;height:15px;border-radius:50%;flex-shrink:0;
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
 
@@ -1630,7 +1651,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
         <div class="vr-p-colors-h">{{ t.colores }}</div>
         <div class="vr-p-colors">
           <sc-for list="{{ cur.colors }}" as="c" hint-placeholder-count="2">
-            <span class="vr-p-color"><span class="vr-p-color-dot" style="background:{{ c.css }}"></span>{{ c.name }}</span>
+            <button type="button" class="vr-p-color {{ c.selCls }}" onClick="{{ c.pick }}"><span class="vr-p-color-dot" style="background:{{ c.css }}"></span>{{ c.name }}</button>
           </sc-for>
         </div>
       </sc-if>
@@ -1701,7 +1722,10 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
             <image-slot id="cart-{{ l.slug }}" shape="rect" src="{{ l.img }}" placeholder="foto"></image-slot>
           </div>
           <div class="vr-cart-info" style="flex:1;min-width:180px">
-            <a href="#/producto/{{ l.slug }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.2vw,28px);font-weight:600;color:#0F2349;line-height:1.15" style-hover="color:#b9873f">{{ l.name }}</a>
+            <a href="#/producto/{{ l.base }}" style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.2vw,28px);font-weight:600;color:#0F2349;line-height:1.15" style-hover="color:#b9873f">{{ l.name }}</a>
+            <sc-if value="{{ l.hasColor }}" hint-placeholder-val="{{ false }}">
+              <div class="vr-cart-color"><span class="vr-p-color-dot" style="background:{{ l.colorCss }}"></span>{{ l.colorName }}</div>
+            </sc-if>
             <div style="display:flex;align-items:center;gap:14px;margin-top:10px;font-size:11px;font-weight:600;letter-spacing:.14em;color:rgba(28,28,36,.5);text-transform:uppercase">
               <span>{{ l.unitFmt }} {{ t.cada_uno }}</span>
               <span style="width:5px;height:5px;background:#CF9D59;transform:rotate(45deg)"></span>
@@ -1777,7 +1801,7 @@ footer#contacto > div > div:last-child{margin-top:10px!important}
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#0F2349;margin:0 0 20px">{{ t.resumen }}</h2>
       <div style="display:flex;flex-direction:column;gap:10px;border-bottom:1px solid rgba(15,35,73,.1);padding-bottom:16px;margin-bottom:6px">
         <sc-for list="{{ cartLines }}" as="l" hint-placeholder-count="2">
-          <div style="display:flex;justify-content:space-between;gap:14px;font-size:13px;color:#4a4a52"><span>{{ l.name }} × {{ l.qtyN }}</span><span style="font-weight:600;color:#0F2349;white-space:nowrap">{{ l.lineFmt }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:13px;color:#4a4a52"><span>{{ l.name }}<sc-if value="{{ l.hasColor }}" hint-placeholder-val="{{ false }}"> · {{ l.colorName }}</sc-if> × {{ l.qtyN }}</span><span style="font-weight:600;color:#0F2349;white-space:nowrap">{{ l.lineFmt }}</span></div>
         </sc-for>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#5c5c63;padding:8px 0"><span>{{ t.subtotal }}</span><span>{{ subtotalFmt }}</span></div>
@@ -1872,7 +1896,7 @@ class Component extends DCLogic {
     this.state = {
       lang, cart, route: 'home', slug: null, qty: 1, menuOpen: false, added: false, galSrc: null,
       isMobile: typeof window !== 'undefined' && window.innerWidth < 760,
-      scrolled: false, openFaq: -1, err: '', pagando: false, heroIdx: 0, heroPrev: 0, heroCruce: false,
+      scrolled: false, openFaq: -1, err: '', pagando: false, colorSel: {}, heroIdx: 0, heroPrev: 0, heroCruce: false,
       fCats: [], fMax: 100, fStock: false, sort: 'featured', filtersOpen: false, sortOpen: false, counter: 0, now: new Date(),
       form: { nombre: '', apellido: '', email: '', telefono: '', direccion: '', ciudad: '', estado: '', zip: '', obs: '' },
       lastOrder: null
@@ -2053,7 +2077,7 @@ class Component extends DCLogic {
         Component.DATA.forEach((p) => { vivos[p.slug] = true; });
         const carro = {};
         Object.keys(this.state.cart || {}).forEach((k) => {
-          if (vivos[k]) carro[k] = this.state.cart[k];
+          if (vivos[this.baseDe(k)]) carro[k] = this.state.cart[k];
         });
         this.setState({ cart: carro });
       })
@@ -2219,6 +2243,40 @@ class Component extends DCLogic {
       if (changed) window.scrollTo(0, 0);
     });
   }
+  // ===========================================================================
+  // COLORES
+  //
+  // El carrito se guardaba con el slug de la pieza como clave. Con colores eso
+  // no alcanza: dos veces la misma pieza en distinto color son dos renglones
+  // distintos, con su propia cantidad. Si la clave siguiera siendo el slug, al
+  // agregar el segundo color el primero se pisaria sin avisar.
+  //
+  // Asi que la clave pasa a ser "slug::indice-del-color", y "slug" pelado
+  // cuando la pieza no tiene colores. Los dos puntos no pueden aparecer en un
+  // slug (solo minusculas, numeros y guiones), asi que no hay ambiguedad.
+  //
+  // Todo lo que buscaba la pieza por la clave tiene que pasar antes por
+  // baseDe(). El precio sale de la pieza, no del color: los colores no cambian
+  // lo que se cobra.
+  // ===========================================================================
+  baseDe(clave) { return String(clave).split('::')[0]; }
+  colorDe(clave) {
+    const p = String(clave).split('::');
+    return p.length > 1 ? parseInt(p[1], 10) : -1;
+  }
+  claveDe(slug, idx) { return idx >= 0 ? slug + '::' + idx : slug; }
+  // Que color queda elegido para una pieza. Si la pieza tiene colores siempre
+  // hay uno: el primero. Nunca se manda un pedido sin color de una pieza que
+  // los tiene, que era el riesgo de dejarlo en "ninguno".
+  colorElegido(p) {
+    if (!p || !p.colors || !p.colors.length) return -1;
+    const e = (this.state.colorSel || {})[p.slug];
+    return (typeof e === 'number' && p.colors[e]) ? e : 0;
+  }
+  elegirColor(slug, idx) {
+    return () => this.setState({ colorSel: Object.assign({}, this.state.colorSel, { [slug]: idx }) });
+  }
+
   saveCart(cart) { try { localStorage.setItem('vaderetro_cart', JSON.stringify(cart)); } catch (e) {} }
   // stock null significa "sin dato", no cero: con `p.stock <= 0` la funcion
   // salia sin agregar nada, y con Math.min(1, null) la cantidad quedaba en 0.
@@ -2226,17 +2284,21 @@ class Component extends DCLogic {
   addToCart(slug, qty) {
     const p = this.products().find((x) => x.slug === slug);
     if (!p || p.stock === 0) return;
+    // Cinturon: agregar menos de una unidad no es agregar. Sin esto un qty en
+    // cero creaba un renglon fantasma de cero unidades.
+    qty = Math.max(1, parseInt(qty, 10) || 1);
+    const clave = this.claveDe(slug, this.colorElegido(p));
     const tope = typeof p.stock === 'number' ? p.stock : Infinity;
     const cart = Object.assign({}, this.state.cart);
-    cart[slug] = Math.min((cart[slug] || 0) + qty, tope);
+    cart[clave] = Math.min((cart[clave] || 0) + qty, tope);
     this.saveCart(cart);
     this.setState({ cart, added: true });
   }
-  setQty(slug, q) {
-    const p = this.products().find((x) => x.slug === slug);
+  setQty(clave, q) {
+    const p = this.products().find((x) => x.slug === this.baseDe(clave));
     const cart = Object.assign({}, this.state.cart);
     const tope = (p && typeof p.stock === 'number') ? p.stock : Infinity;
-    if (q <= 0) delete cart[slug]; else cart[slug] = Math.min(q, tope);
+    if (q <= 0) delete cart[clave]; else cart[clave] = Math.min(q, tope);
     this.saveCart(cart);
     this.setState({ cart });
   }
@@ -2272,9 +2334,11 @@ class Component extends DCLogic {
     const num = 'VADE-' + String(seq).padStart(6, '0');
 
     const prods = this.products();
-    const items = Object.entries(this.state.cart).map(([slug, q]) => {
-      const p = prods.find((x) => x.slug === slug);
-      return { product_name: p ? p.name : slug, quantity: q, unit_price: p ? p.price : 0, shipping: p ? (p.ship || 0) * q : 0, subtotal: p ? p.price * q : 0 };
+    const items = Object.entries(this.state.cart).map(([clave, q]) => {
+      const p = prods.find((x) => x.slug === this.baseDe(clave));
+      const ic = this.colorDe(clave);
+      const col = (p && ic >= 0 && p.colors && p.colors[ic]) ? p.colors[ic].name : '';
+      return { product_name: (p ? p.name : clave) + (col ? ' · ' + col : ''), quantity: q, unit_price: p ? p.price : 0, shipping: p ? (p.ship || 0) * q : 0, subtotal: p ? p.price * q : 0 };
     });
     const subtotal = items.reduce((a, i) => a + i.subtotal, 0);
     const shipping = items.reduce((a, i) => a + i.shipping, 0);
@@ -2322,7 +2386,12 @@ class Component extends DCLogic {
       hasThumbs: !!(p.imgs && p.imgs.length),
       noThumbs: !(p.imgs && p.imgs.length),
       specs: p.specs || [], hasSpecs: !!(p.specs && p.specs.length),
-      colors: p.colors || [], hasColors: !!(p.colors && p.colors.length),
+      colors: (p.colors || []).map((c, i) => Object.assign({}, c, {
+        sel: i === this.colorElegido(p),
+        selCls: i === this.colorElegido(p) ? 'is-sel' : '',
+        pick: this.elegirColor(p.slug, i)
+      })),
+      hasColors: !!(p.colors && p.colors.length),
       hasOld: !!p.oldPrice, oldFmt: p.oldPrice ? fmt(p.oldPrice) : '',
       hasBadge: !!p.badge,
       inStock: p.stock !== 0, outStock: p.stock === 0,
@@ -2339,15 +2408,18 @@ class Component extends DCLogic {
     if (S.sort === 'asc') shopItems = shopItems.slice().sort((a, b) => pv(a) - pv(b));
     else if (S.sort === 'desc') shopItems = shopItems.slice().sort((a, b) => pv(b) - pv(a));
     const cur = S.slug ? items.find((p) => p.slug === S.slug) : null;
-    const lines = Object.entries(S.cart).map(([slug, q]) => {
-      const p = items.find((x) => x.slug === slug);
+    const lines = Object.entries(S.cart).map(([clave, q]) => {
+      const p = items.find((x) => x.slug === this.baseDe(clave));
       if (!p) return null;
+      const ic = this.colorDe(clave);
+      const col = (ic >= 0 && p.colors && p.colors[ic]) ? p.colors[ic] : null;
       return {
-        slug, name: p.name, img: p.img, qtyN: q, unitFmt: fmt(p.price), lineFmt: fmt(p.price * q),
+        slug: clave, base: p.slug, name: p.name, img: p.img, qtyN: q, unitFmt: fmt(p.price), lineFmt: fmt(p.price * q),
         unit: p.price, shipUnit: p.ship || 0,
-        inc: () => this.setQty(slug, q + 1),
-        dec: () => this.setQty(slug, q - 1),
-        remove: () => this.setQty(slug, 0),
+        colorName: col ? col.name : '', colorCss: col ? col.css : '', hasColor: !!col,
+        inc: () => this.setQty(clave, q + 1),
+        dec: () => this.setQty(clave, q - 1),
+        remove: () => this.setQty(clave, 0),
         ship: (p.ship || 0) * q
       };
     }).filter(Boolean);
@@ -2428,7 +2500,12 @@ class Component extends DCLogic {
       isCart: S.route === 'cart', isCheckout: S.route === 'checkout', isThanks: S.route === 'thanks',
       cur: cur || {}, hasCur: !!cur, noCur: S.route === 'product' && !cur,
       qty: S.qty,
-      incQty: () => this.setState({ qty: Math.min(S.qty + 1, cur ? cur.stock : 99) }),
+      // stock null significa "sin dato", no cero. Math.min(2, null) da 0, asi que
+      // el boton + dejaba la cantidad en cero y "Agregar al carrito" metia un
+      // renglon de cero unidades: la pieza no entraba y nada lo avisaba. Es el
+      // mismo error que ya habia corregido en addToCart; se me escapo aca.
+      incQty: () => this.setState({ qty: Math.min(S.qty + 1,
+        (cur && typeof cur.stock === 'number') ? cur.stock : 99) }),
       decQty: () => this.setState({ qty: Math.max(1, S.qty - 1) }),
       addCur: () => { if (cur) this.addToCart(cur.slug, S.qty); },
       galSrc: cur ? (S.galSrc || cur.img) : '',
